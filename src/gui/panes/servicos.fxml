@@ -16,12 +16,12 @@
          <children>
             <VBox layoutX="29.0" layoutY="49.0">
                <children>
-                  <TextField fx:id="tfTipo" prefWidth="190.0" promptText="Tipo">
+                  <TextField fx:id="tfTipo" disable="true" prefWidth="190.0" promptText="Tipo">
                      <VBox.margin>
                         <Insets bottom="5.0" />
                      </VBox.margin>
                   </TextField>
-                  <TextField fx:id="tfPreco" prefHeight="26.0" prefWidth="190.0" promptText="Preço/Hora">
+                  <TextField fx:id="tfPreco" disable="true" prefHeight="26.0" prefWidth="190.0" promptText="Preço/Hora">
                      <VBox.margin>
                         <Insets bottom="5.0" />
                      </VBox.margin>
@@ -37,20 +37,20 @@
                <children>
                   <HBox>
                      <children>
-                        <Button mnemonicParsing="false" onAction="#novo" prefWidth="65.0" text="Novo">
+                        <Button fx:id="btnNovo" mnemonicParsing="false" onAction="#novo" prefWidth="65.0" text="Novo">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#editar" prefWidth="65.0" text="Editar">
+                        <Button fx:id="btnEditar" mnemonicParsing="false" onAction="#editar" prefWidth="65.0" text="Editar">
                            <HBox.margin>
                               <Insets bottom="5.0" right="5.0" />
                            </HBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#salvar" prefWidth="65.0" text="Salvar" />
+                        <Button fx:id="btnSalvar" disable="true" mnemonicParsing="false" onAction="#salvar" prefWidth="65.0" text="Salvar" />
                      </children>
                   </HBox>
-                  <Button mnemonicParsing="false" onAction="#excluir" prefHeight="26.0" prefWidth="65.0" text="Excluir">
+                  <Button fx:id="btnExcluir" mnemonicParsing="false" onAction="#excluir" prefHeight="26.0" prefWidth="65.0" text="Excluir">
                      <VBox.margin>
                         <Insets left="70.0" />
                      </VBox.margin>
@@ -59,7 +59,7 @@
             </VBox>
          </children>
       </Pane>
-      <TableView fx:id="tbl" layoutX="413.0" layoutY="26.0" prefHeight="457.0" prefWidth="534.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="260.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+      <TableView fx:id="tbl" layoutX="413.0" layoutY="26.0" onMouseClicked="#selecionar" prefHeight="457.0" prefWidth="534.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="260.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
         <columns>
           <TableColumn fx:id="colId" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" text="ID" />
           <TableColumn fx:id="colTipo" prefWidth="285.0" text="Nome" />

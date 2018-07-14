@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -13,7 +12,6 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
 <AnchorPane id="AnchorPane" prefHeight="495.0" prefWidth="960.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.SementesController">
    <children>
@@ -21,24 +19,24 @@
          <children>
             <VBox layoutX="29.0" layoutY="49.0">
                <children>
-                  <TextField fx:id="tfNome" prefWidth="190.0" promptText="Nome">
+                  <TextField fx:id="tfNome" disable="true" prefWidth="190.0" promptText="Nome">
                      <VBox.margin>
                         <Insets bottom="5.0" />
                      </VBox.margin>
                   </TextField>
-                  <TextField fx:id="tfEspecie" prefHeight="26.0" prefWidth="190.0" promptText="Espécie">
+                  <TextField fx:id="tfEspecie" disable="true" prefHeight="26.0" prefWidth="190.0" promptText="Espécie">
                      <VBox.margin>
                         <Insets bottom="5.0" />
                      </VBox.margin>
                   </TextField>
-                  <TextField fx:id="tfPreco" prefHeight="26.0" prefWidth="190.0" promptText="Preço">
+                  <TextField fx:id="tfPreco" disable="true" prefHeight="26.0" prefWidth="190.0" promptText="Preço">
                      <VBox.margin>
                         <Insets bottom="3.0" />
                      </VBox.margin>
                   </TextField>
                   <HBox>
                      <children>
-                        <RadioButton fx:id="rbGramas" mnemonicParsing="false" text="gramas" textFill="WHITE">
+                        <RadioButton fx:id="rbGramas" disable="true" mnemonicParsing="false" selected="true" text="gramas" textFill="WHITE">
                            <toggleGroup>
                               <ToggleGroup fx:id="preco" />
                            </toggleGroup>
@@ -46,38 +44,23 @@
                               <Insets right="10.0" />
                            </HBox.margin>
                         </RadioButton>
-                        <RadioButton fx:id="rbUnidades" mnemonicParsing="false" text="unidades" textFill="WHITE" toggleGroup="$preco" />
+                        <RadioButton fx:id="rbUnidades" disable="true" mnemonicParsing="false" text="unidades" textFill="WHITE" toggleGroup="$preco" />
                      </children>
                      <VBox.margin>
                         <Insets bottom="10.0" />
                      </VBox.margin>
                   </HBox>
-                  <Label text="Tipo de plantio:" textFill="WHITE">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                  </Label>
                   <HBox>
-                     <children>
-                        <RadioButton fx:id="rbDireto" mnemonicParsing="false" text="Direto" textFill="WHITE">
-                           <toggleGroup>
-                              <ToggleGroup fx:id="plantio" />
-                           </toggleGroup>
-                           <HBox.margin>
-                              <Insets right="17.0" />
-                           </HBox.margin>
-                        </RadioButton>
-                        <RadioButton fx:id="rbIndireto" mnemonicParsing="false" text="Indireto" textFill="WHITE" toggleGroup="$plantio">
-                           <HBox.margin>
-                              <Insets bottom="10.0" />
-                           </HBox.margin>
-                        </RadioButton>
-                     </children>
                      <VBox.margin>
                         <Insets bottom="10.0" />
                      </VBox.margin>
                   </HBox>
-                  <ComboBox fx:id="cbDormencia" prefHeight="26.0" prefWidth="190.0" promptText="Quebra de dormência">
+                  <ComboBox fx:id="cbPlantio" disable="true" prefHeight="26.0" prefWidth="190.0" promptText="Tipo de Plantio">
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </ComboBox>
+                  <ComboBox fx:id="cbDormencia" disable="true" prefHeight="26.0" prefWidth="190.0" promptText="Quebra de dormência">
                      <VBox.margin>
                         <Insets bottom="20.0" />
                      </VBox.margin>
@@ -88,20 +71,20 @@
                <children>
                   <HBox>
                      <children>
-                        <Button mnemonicParsing="false" onAction="#novo" prefWidth="65.0" text="Novo">
+                        <Button fx:id="btnNovo" mnemonicParsing="false" onAction="#novo" prefWidth="65.0" text="Novo">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#editar" prefWidth="65.0" text="Editar">
+                        <Button fx:id="btnEditar" mnemonicParsing="false" onAction="#editar" prefWidth="65.0" text="Editar">
                            <HBox.margin>
                               <Insets bottom="5.0" right="5.0" />
                            </HBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#salvar" prefWidth="65.0" text="Salvar" />
+                        <Button fx:id="btnSalvar" disable="true" mnemonicParsing="false" onAction="#salvar" prefWidth="65.0" text="Salvar" />
                      </children>
                   </HBox>
-                  <Button mnemonicParsing="false" onAction="#excluir" prefHeight="26.0" prefWidth="65.0" text="Excluir">
+                  <Button fx:id="btnExcluir" mnemonicParsing="false" onAction="#excluir" prefHeight="26.0" prefWidth="65.0" text="Excluir">
                      <VBox.margin>
                         <Insets left="70.0" />
                      </VBox.margin>
@@ -110,7 +93,7 @@
             </VBox>
          </children>
       </Pane>
-      <TableView fx:id="tbl" layoutX="413.0" layoutY="26.0" prefHeight="457.0" prefWidth="534.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="260.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+      <TableView fx:id="tbl" layoutX="413.0" layoutY="26.0" onMouseClicked="#selecionar" prefHeight="457.0" prefWidth="534.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="260.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
         <columns>
           <TableColumn fx:id="colId" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" text="ID" />
           <TableColumn fx:id="colNome" prefWidth="285.0" text="Nome" />
