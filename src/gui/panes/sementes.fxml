@@ -37,14 +37,14 @@
                   <HBox>
                      <children>
                         <RadioButton fx:id="rbGramas" disable="true" mnemonicParsing="false" selected="true" text="gramas" textFill="WHITE">
-                           <toggleGroup>
-                              <ToggleGroup fx:id="preco" />
-                           </toggleGroup>
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
+                           <toggleGroup>
+                              <ToggleGroup fx:id="tgPreco" />
+                           </toggleGroup>
                         </RadioButton>
-                        <RadioButton fx:id="rbUnidades" disable="true" mnemonicParsing="false" text="unidades" textFill="WHITE" toggleGroup="$preco" />
+                        <RadioButton fx:id="rbUnidades" disable="true" mnemonicParsing="false" text="unidades" textFill="WHITE" toggleGroup="$tgPreco" />
                      </children>
                      <VBox.margin>
                         <Insets bottom="10.0" />

@@ -6,6 +6,7 @@
 package gui.controllers;
 
 import beans.Servico;
+import db.dao.ServicoDAO;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
@@ -18,6 +19,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import util.AlertBox;
 import util.Validate;
 
 /**
@@ -31,7 +33,7 @@ public class ServicosController implements Initializable {
     private TextField tfTipo;
     @FXML
     private TextField tfPreco;
-    
+
     @FXML
     private Button btnNovo;
 
@@ -43,7 +45,7 @@ public class ServicosController implements Initializable {
 
     @FXML
     private Button btnExcluir;
-    
+
     @FXML
     private TableView<Servico> tbl;
     @FXML
@@ -70,21 +72,29 @@ public class ServicosController implements Initializable {
 
     @FXML
     private void novo(ActionEvent event) {
-        tfTipo.setText("");
-        tfPreco.setText("");
+        clean();
+
         changeDisable(false);
         novoItem = true;
     }
 
     @FXML
     private void editar(ActionEvent event) {
-        changeDisable(false);
-        novoItem = false;
+        try {
+            if (getSelectionedObject() != null) {
+                changeDisable(false);
+                novoItem = false;
+            }
+        } catch (RuntimeException ex) {
+            AlertBox.warning("Nenhuma coluna selecionada.");
+        }
     }
 
     @FXML
     private void salvar(ActionEvent event) {
+        ServicoDAO dao = new ServicoDAO();
         Servico s;
+
         String tipo = tfTipo.getText();
         String precoString = tfPreco.getText();
 
@@ -92,28 +102,48 @@ public class ServicosController implements Initializable {
             double preco = Double.parseDouble(precoString);
             if (novoItem) {
                 s = new Servico(tipo, preco);
-                lista.add(s);
+                if (dao.create(s)) {
+                    lista.add(dao.readLast());
+                    clean();
+                }
             } else {
                 s = getSelectionedObject();
                 s.setTipo(tipo);
                 s.setPreco(preco);
+                dao.update(s);
             }
             changeDisable(true);
+            tbl.getSelectionModel().select(s);
         }
     }
 
     @FXML
     private void excluir(ActionEvent event) {
-        int i = getSelectionedIndex();
-        lista.remove(i);
+        ServicoDAO dao = new ServicoDAO();
+
+        try {
+            Servico s = getSelectionedObject();
+
+            if (AlertBox.confirmDelete()) {
+                if (dao.delete(s.getId())) {
+                    lista.remove(s);
+                    clean();
+                }
+            }
+        } catch (RuntimeException ex) {
+            AlertBox.warning("Nenhuma coluna selecionada.");
+        }
     }
 
     @FXML
     void selecionar(MouseEvent event) {
-        Servico s = getSelectionedObject();
+        try {
+            Servico s = getSelectionedObject();
 
-        tfTipo.setText(s.getTipo());
-        tfPreco.setText(String.valueOf(s.getPreco()));
+            tfTipo.setText(s.getTipo());
+            tfPreco.setText(String.valueOf(s.getPreco()));
+        } catch (RuntimeException ex) {
+        }
     }
 
     private int getSelectionedIndex() {
@@ -135,6 +165,11 @@ public class ServicosController implements Initializable {
         btnEditar.setDisable(!opt);
         btnExcluir.setDisable(!opt);
         tbl.setDisable(!opt);
+    }
+
+    private void clean() {
+        tfTipo.setText("");
+        tfPreco.setText("");
     }
 
 }

@@ -6,6 +6,7 @@
 package gui.controllers;
 
 import beans.Semente;
+import db.dao.SementeDAO;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
@@ -22,6 +23,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
+import util.AlertBox;
 import util.Validate;
 
 /**
@@ -44,7 +46,7 @@ public class SementesController implements Initializable {
     private RadioButton rbGramas;
 
     @FXML
-    private ToggleGroup preco;
+    private ToggleGroup tgPreco;
 
     @FXML
     private RadioButton rbUnidades;
@@ -104,17 +106,14 @@ public class SementesController implements Initializable {
         colPreco.setCellValueFactory(cellData -> cellData.getValue().precoProperty().asObject());
         colDormencia.setCellValueFactory(cellData -> cellData.getValue().dormenciaProperty());
 
+        SementeDAO dao = new SementeDAO();
+        lista.addAll(dao.read());
         tbl.setItems(lista);
     }
 
     @FXML
     void novo(ActionEvent event) {
-        tfNome.setText("");
-        tfEspecie.setText("");
-        tfPreco.setText("");
-        rbGramas.setSelected(true);
-        cbPlantio.setValue(null);
-        cbDormencia.setValue(null);
+        clean();
         
         changeDisable(false);
         novoItem = true;
@@ -122,16 +121,23 @@ public class SementesController implements Initializable {
 
     @FXML
     void editar(ActionEvent event) {
-        changeDisable(false);
-        novoItem = false;
+        try {
+            if (getSelectionedObject() != null) {
+                changeDisable(false);
+                novoItem = false;
+            }
+        } catch (RuntimeException ex) {
+            AlertBox.warning("Nenhuma coluna selecionada.");
+        }
     }
 
     @FXML
     void salvar(ActionEvent event) {
-        String nome, especie, plantio, dormencia;
+        SementeDAO dao = new SementeDAO();
         Semente s;
-        String precoString;
+        String nome, especie, plantio, dormencia, precoString;
         boolean precoEmGramas;
+
         nome = tfNome.getText();
         especie = tfEspecie.getText();
         plantio = cbPlantio.getValue();
@@ -139,11 +145,14 @@ public class SementesController implements Initializable {
         precoString = tfPreco.getText();
         precoEmGramas = rbGramas.isSelected();
 
-        if (Validate.semente(nome, especie,precoString, plantio, dormencia)) {
+        if (Validate.semente(nome, especie, precoString, plantio, dormencia)) {
             double preco = Double.parseDouble(precoString);
             if (novoItem) {
-                s = new Semente(nome, especie,preco, precoEmGramas, plantio, dormencia);
-                lista.add(s);
+                s = new Semente(nome, especie, preco, precoEmGramas, plantio, dormencia);
+                if (dao.create(s)) {
+                    lista.add(dao.readLast());
+                     clean();
+                }
             } else {
                 s = getSelectionedObject();
                 s.setNome(nome);
@@ -152,6 +161,7 @@ public class SementesController implements Initializable {
                 s.setDomercia(dormencia);
                 s.setPreco(preco);
                 s.setPrecoEmGramas(precoEmGramas);
+                dao.update(s);
             }
             changeDisable(true);
         }
@@ -159,21 +169,36 @@ public class SementesController implements Initializable {
 
     @FXML
     void excluir(ActionEvent event) {
-        int i = getSelectionedIndex();
-        lista.remove(i);
+        SementeDAO dao = new SementeDAO();
+        
+        try {
+            Semente s = getSelectionedObject();
+
+            if (AlertBox.confirmDelete()) {
+                if (dao.delete(s.getId())) {
+                    lista.remove(s);
+                    clean();
+                }
+            }
+        } catch (RuntimeException ex) {
+            AlertBox.warning("Nenhuma coluna selecionada.");
+        }
     }
 
     @FXML
     void selecionar(MouseEvent event) {
-        Semente s = getSelectionedObject();
+        try {
+            Semente s = getSelectionedObject();
 
-        tfNome.setText(s.getNome());
-        tfEspecie.setText(s.getEspecie());
-        tfPreco.setText(String.valueOf(s.getPreco()));
-        rbGramas.setSelected(s.isPrecoEmGramas());
-        rbUnidades.setSelected(!s.isPrecoEmGramas());
-        cbPlantio.setValue(s.getTipoPlantio());
-        cbDormencia.setValue(s.getDormencia());
+            tfNome.setText(s.getNome());
+            tfEspecie.setText(s.getEspecie());
+            tfPreco.setText(String.valueOf(s.getPreco()));
+            rbGramas.setSelected(s.isPrecoEmGramas());
+            rbUnidades.setSelected(!s.isPrecoEmGramas());
+            cbPlantio.setValue(s.getTipoPlantio());
+            cbDormencia.setValue(s.getDormencia());
+
+        } catch (RuntimeException ex) {}
     }
 
     private int getSelectionedIndex() {
@@ -200,5 +225,14 @@ public class SementesController implements Initializable {
         btnEditar.setDisable(!opt);
         btnExcluir.setDisable(!opt);
         tbl.setDisable(!opt);
+    }
+
+    private void clean() {
+        tfNome.setText("");
+        tfEspecie.setText("");
+        tfPreco.setText("");
+        rbGramas.setSelected(true);
+        cbPlantio.setValue(null);
+        cbDormencia.setValue(null);
     }
 }

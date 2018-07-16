@@ -5,9 +5,6 @@
  */
 package util;
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.stage.StageStyle;
 
 /**
  *
@@ -25,6 +22,10 @@ public abstract class Validate {
         }
 
         return valid;
+    }
+    
+    private static boolean text(String txt){
+        return (txt.length() <= 512 || txt == null);
     }
     
     private static boolean decimal(String stg){
@@ -61,7 +62,7 @@ public abstract class Validate {
         if (error.equals("")) {
             valid = true;
         } else {
-            createAlertBox(error);
+            AlertBox.error(error);
         }
         return valid;
     }
@@ -83,12 +84,12 @@ public abstract class Validate {
         if (error.equals("")) {
             valid = true;
         } else {
-            createAlertBox(error);
+            AlertBox.error(error);
         }
         return valid;
     }
     
-    public static boolean substrato(String nome, String preco){
+    public static boolean substrato(String nome, String preco,String descricao){
         boolean valid = false;
         String error = "";
         if (!string(nome)) {
@@ -97,12 +98,14 @@ public abstract class Validate {
         if(!decimal(preco)){
             error += "O campo \"Preço\" não pode ser vazio e precisa ser numérico.\n";
         }
-        
+        if (!text(descricao)) {
+            error += "O campo \"Descrição\"  não ter mais de 512 caracteres.\n";
+        }
         
         if (error.equals("")) {
             valid = true;
         } else {
-            createAlertBox(error);
+            AlertBox.error(error);
         }
         return valid;
     }
@@ -121,21 +124,9 @@ public abstract class Validate {
         if (error.equals("")) {
             valid = true;
         } else {
-            createAlertBox(error);
+           AlertBox.error(error);
         }
         return valid;
-    }
-
-    private static void createAlertBox(String text) {
-        Alert alert = new Alert(AlertType.ERROR);
-        
-        alert.initStyle(StageStyle.UNDECORATED);
-        alert.getDialogPane().setStyle("-fx-pref-width: 600px; -fx-background-color: #ABCDEF;");
-        alert.setHeaderText(null);
-        alert.setTitle("Campo Inválido");
-        alert.setContentText(text);
-
-        alert.showAndWait();
     }
 
 }
