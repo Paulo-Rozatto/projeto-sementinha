@@ -6,6 +6,7 @@
 package gui.controllers;
 
 import beans.Recipiente;
+import db.dao.RecipienteDAO;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
@@ -18,6 +19,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import util.AlertBox;
 import util.Validate;
 
 /**
@@ -62,6 +64,9 @@ public class RecipientesController implements Initializable {
 
     /**
      * Initializes the controller class.
+     *
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -71,14 +76,14 @@ public class RecipientesController implements Initializable {
         colVolume.setCellValueFactory(cellData -> cellData.getValue().volumeProperty().asObject());
         colPreco.setCellValueFactory(cellData -> cellData.getValue().precoProperty().asObject());
 
+        RecipienteDAO dao = new RecipienteDAO();
+        lista.addAll(dao.read());
         tbl.setItems(lista);
     }
 
     @FXML
     private void novo(ActionEvent event) {
-        tfNome.setText("");
-        tfVolume.setText("");
-        tfPreco.setText("");
+        clean();
 
         changeDisable(false);
         novoItem = true;
@@ -86,29 +91,40 @@ public class RecipientesController implements Initializable {
 
     @FXML
     private void editar(ActionEvent event) {
-        changeDisable(false);
-        novoItem = false;
+        try {
+            if (getSelectionedObject() != null) {
+                changeDisable(false);
+                novoItem = false;
+            }
+        } catch (RuntimeException ex) {
+            AlertBox.warning("Nenhuma coluna selecionada.");
+        }
     }
 
     @FXML
     private void salvar(ActionEvent event) {
+        RecipienteDAO dao = new RecipienteDAO();
         Recipiente r;
+
         String nome = tfNome.getText();
         String volumeString = tfVolume.getText();
         String precoString = tfPreco.getText();
 
-        if (Validate.recipiente(nome,volumeString,precoString)) {
+        if (Validate.recipiente(nome, volumeString, precoString)) {
             double volume = Double.parseDouble(volumeString);
             double preco = Double.parseDouble(precoString);
             if (novoItem) {
                 r = new Recipiente(nome, volume, preco);
-                lista.add(r);
+                if (dao.create(r)) {
+                    lista.add(dao.readLast());
+                    clean();
+                }
             } else {
                 r = getSelectionedObject();
                 r.setNome(nome);
                 r.setVolume(volume);
                 r.setPreco(preco);
-
+                dao.update(r);
             }
             changeDisable(true);
         }
@@ -116,17 +132,31 @@ public class RecipientesController implements Initializable {
 
     @FXML
     private void excluir(ActionEvent event) {
-        int i = getSelectionedIndex();
-        lista.remove(i);
+        RecipienteDAO dao = new RecipienteDAO();
+
+        try {
+            Recipiente r = getSelectionedObject();
+
+            if (AlertBox.confirmDelete()) {
+                if (dao.delete(r.getId())) {
+                    lista.remove(r);
+                }
+            }
+        } catch (RuntimeException ex) {
+            AlertBox.warning("Nenhuma coluna selecionada.");
+        }
     }
 
     @FXML
     void selecionar(MouseEvent event) {
-        Recipiente r = getSelectionedObject();
+        try {
+            Recipiente r = getSelectionedObject();
 
-        tfNome.setText(r.getNome());
-        tfVolume.setText(String.valueOf(r.getVolume()));
-        tfPreco.setText(String.valueOf(r.getPreco()));
+            tfNome.setText(r.getNome());
+            tfVolume.setText(String.valueOf(r.getVolume()));
+            tfPreco.setText(String.valueOf(r.getPreco()));
+        } catch (RuntimeException ex) {
+        }
     }
 
     private int getSelectionedIndex() {
@@ -149,6 +179,12 @@ public class RecipientesController implements Initializable {
         btnEditar.setDisable(!opt);
         btnExcluir.setDisable(!opt);
         tbl.setDisable(!opt);
+    }
+
+    private void clean() {
+        tfNome.setText("");
+        tfVolume.setText("");
+        tfPreco.setText("");
     }
 
 }
