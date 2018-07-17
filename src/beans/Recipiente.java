@@ -56,8 +56,8 @@ public class Recipiente {
         return nome;
     }
     
-     public void setVolume(double preco) {
-        this.preco.set(preco);
+     public void setVolume(double volume) {
+        this.volume.set(volume);
     }
 
     public double getVolume() {

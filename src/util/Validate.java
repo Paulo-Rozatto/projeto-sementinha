@@ -5,7 +5,6 @@
  */
 package util;
 
-
 /**
  *
  * @author paulo
@@ -23,24 +22,25 @@ public abstract class Validate {
 
         return valid;
     }
-    
-    private static boolean text(String txt){
+
+    private static boolean text(String txt) {
         return (txt.length() <= 512 || txt == null);
     }
-    
-    private static boolean decimal(String stg){
+
+    private static boolean decimal(String stg) {
         boolean valid = false;
-        
-        try{
-            Double.parseDouble(stg);
-            valid = true;
+
+        try {
+            if (Double.parseDouble(stg) >= 0) {
+                valid = true;
+            }
+        } catch (RuntimeException ex) {
         }
-        catch(RuntimeException ex){}
-        
+
         return valid;
     }
 
-    public static boolean semente(String nome, String especie,String preco,String tipoPlantio, String dormencia) {
+    public static boolean semente(String nome, String especie, String preco, String tipoPlantio, String dormencia) {
         boolean valid = false;
         String error = "";
         if (!string(nome)) {
@@ -49,8 +49,8 @@ public abstract class Validate {
         if (!string(especie)) {
             error += "O campo \"Espécie\" não pode ser vazio ou ter mais de 255 caracteres.\n";
         }
-        if(!decimal(preco)){
-            error += "O campo \"Preço\" não pode ser vazio e precisa ser numérico.\n";
+        if (!decimal(preco)) {
+            error += "O campo \"Preço\" não pode ser vazio, conter letras, ou ser negativo.\n";
         }
         if (!string(tipoPlantio)) {
             error += "O campo \"Tipo de Plantio\" precisa ter um valor selecionado.\n";
@@ -58,7 +58,7 @@ public abstract class Validate {
         if (!string(dormencia)) {
             error += "O campo \"Quebra de Dormência\" precisa ter um valor selecionado.\n";
         }
-        
+
         if (error.equals("")) {
             valid = true;
         } else {
@@ -66,21 +66,20 @@ public abstract class Validate {
         }
         return valid;
     }
-    
-    public static boolean recipiente(String nome, String volume, String preco){
+
+    public static boolean recipiente(String nome, String volume, String preco) {
         boolean valid = false;
         String error = "";
         if (!string(nome)) {
             error += "O campo \"Nome\"   não pode ser vazio ou ter mais de 255 caracteres.\n";
         }
         if (!decimal(volume)) {
-            error += "O campo \"Volume\" não pode ser vazio e precisa ser numérico.\n";
+            error += "O campo \"Volume\" não pode ser vazio, conter letras, ou ser negativo.\n";
         }
-        if(!decimal(preco)){
-            error += "O campo \"Preço\"  não pode ser vazio e precisa ser numérico.\n";
+        if (!decimal(preco)) {
+            error += "O campo \"Preço\"  não pode ser vazio, conter letras, ou ser negativo.\n";
         }
-        
-        
+
         if (error.equals("")) {
             valid = true;
         } else {
@@ -88,20 +87,20 @@ public abstract class Validate {
         }
         return valid;
     }
-    
-    public static boolean substrato(String nome, String preco,String descricao){
+
+    public static boolean substrato(String nome, String preco, String descricao) {
         boolean valid = false;
         String error = "";
         if (!string(nome)) {
             error += "O campo \"Nome\"  não pode ser vazio ou ter mais de 255 caracteres.\n";
         }
-        if(!decimal(preco)){
-            error += "O campo \"Preço\" não pode ser vazio e precisa ser numérico.\n";
+        if (!decimal(preco)) {
+            error += "O campo \"Preço\" não pode ser vazio, conter letras, ou ser negativo.\n";
         }
         if (!text(descricao)) {
             error += "O campo \"Descrição\"  não ter mais de 512 caracteres.\n";
         }
-        
+
         if (error.equals("")) {
             valid = true;
         } else {
@@ -109,22 +108,21 @@ public abstract class Validate {
         }
         return valid;
     }
-    
-    public static boolean servico(String tipo, String preco){
-         boolean valid = false;
+
+    public static boolean servico(String tipo, String preco) {
+        boolean valid = false;
         String error = "";
         if (!string(tipo)) {
             error += "O campo \"Tipo\"  não pode ser vazio ou ter mais de 255 caracteres.\n";
         }
-        if(!decimal(preco)){
-            error += "O campo \"Preço\" não pode ser vazio e precisa ser numérico.\n";
+        if (!decimal(preco)) {
+            error += "O campo \"Preço\" não pode ser vazio, conter letras, ou ser negativo.\n";
         }
-        
-        
+
         if (error.equals("")) {
             valid = true;
         } else {
-           AlertBox.error(error);
+            AlertBox.error(error);
         }
         return valid;
     }

@@ -66,7 +66,9 @@ public class ServicosController implements Initializable {
         colId.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
         colTipo.setCellValueFactory(cellData -> cellData.getValue().tipoProperty());
         colPreco.setCellValueFactory(cellData -> cellData.getValue().precoProperty().asObject());
-
+        
+        ServicoDAO dao = new ServicoDAO();
+        lista.addAll(dao.read());
         tbl.setItems(lista);
     }
 

@@ -26,7 +26,6 @@ public abstract class AlertBox {
         alert.initStyle(StageStyle.UNDECORATED);
         alert.getDialogPane().setStyle("-fx-pref-width: 600px; -fx-background-color: #ABCDEF;");
         alert.setHeaderText(null);
-        alert.setTitle("Campo Inválido");
         alert.setContentText(text);
 
         alert.showAndWait();
@@ -38,7 +37,6 @@ public abstract class AlertBox {
         alert.initStyle(StageStyle.UNDECORATED);
         alert.getDialogPane().setStyle("-fx-pref-width: 600px; -fx-background-color: #ABCDEF;");
         alert.setHeaderText(null);
-        alert.setTitle("Campo Inválido");
         alert.setContentText(text);
 
         alert.showAndWait();
@@ -53,7 +51,6 @@ public abstract class AlertBox {
         alert.initStyle(StageStyle.UNDECORATED);
         alert.getDialogPane().setStyle("-fx-pref-width: 610px; -fx-background-color: #ABCDEF;");
         alert.setHeaderText(null);
-        alert.setTitle("Campo Inválido");
 
         ta.setMaxHeight(100);
 
@@ -75,7 +72,6 @@ public abstract class AlertBox {
         alert.initStyle(StageStyle.UNDECORATED);
         alert.getDialogPane().setStyle("-fx-pref-width: 600px; -fx-background-color: #ABCDEF;");
         alert.setHeaderText(null);
-        alert.setTitle("Campo Inválido");
         alert.setContentText("Tem certeza que deseja excluir?\n"
                 + "Não é possivel desfazer essa operação.");
 
@@ -86,6 +82,19 @@ public abstract class AlertBox {
         } else {
             return false;
         }
+    }
+    
+    public static void describe(String text) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        
+
+        alert.initStyle(StageStyle.UNDECORATED);
+        alert.getDialogPane().setStyle("-fx-pref-width: 600px; -fx-background-color: #ABCDEF;");
+        alert.setHeaderText(null);
+        
+        alert.setContentText(text);
+
+        alert.showAndWait();
     }
 
 }

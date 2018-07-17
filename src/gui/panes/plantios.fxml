@@ -16,65 +16,93 @@
 
 <AnchorPane id="AnchorPane" prefHeight="495.0" prefWidth="960.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.PlantiosController">
    <children>
-      <Pane prefHeight="495.0" prefWidth="250.0" style="-fx-background-color: #aaf;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <Pane prefHeight="495.0" prefWidth="280.0" style="-fx-background-color: #aaf;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <VBox layoutX="4.0" layoutY="24.0" prefHeight="394.0" prefWidth="242.0">
+            <VBox layoutX="4.0" layoutY="24.0" prefHeight="394.0" prefWidth="275.0">
                <children>
-                  <DatePicker fx:id="date" prefHeight="26.0" prefWidth="150.0" promptText="Data">
-                     <VBox.margin>
-                        <Insets bottom="10.0" />
-                     </VBox.margin>
-                  </DatePicker>
                   <HBox>
                      <children>
-                        <ComboBox fx:id="cbSemente" prefHeight="26.0" prefWidth="150.0" promptText="Semente">
+                        <DatePicker fx:id="date" prefHeight="26.0" prefWidth="140.0" promptText="Data">
                            <HBox.margin>
-                              <Insets right="5.0" />
+                              <Insets right="33.0" />
                            </HBox.margin>
-                        </ComboBox>
-                        <Label text="Qtd:" textFill="WHITE" />
-                        <TextField fx:id="tfSemente" prefHeight="26.0" prefWidth="40.0" />
+                        </DatePicker>
+                        <Button fx:id="btnAtualizar" mnemonicParsing="false" onAction="#atualizar" text="Atualizar" />
                      </children>
                      <VBox.margin>
                         <Insets bottom="5.0" />
                      </VBox.margin>
                   </HBox>
                   <HBox>
-                     <VBox.margin>
-                        <Insets bottom="10.0" />
-                     </VBox.margin>
-                  </HBox>
-                  <HBox layoutX="10.0" layoutY="10.0">
                      <children>
-                        <ComboBox fx:id="cbRecipiente" prefHeight="26.0" prefWidth="150.0" promptText="Recipiente">
+                        <ComboBox fx:id="cbSemente" onAction="#selectedSemente" prefHeight="26.0" prefWidth="140.0" promptText="Semente">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
                         </ComboBox>
                         <Label text="Qtd:" textFill="WHITE" />
-                        <TextField fx:id="tfRecipiente" prefHeight="26.0" prefWidth="40.0" />
+                        <TextField fx:id="tfSemente" prefHeight="26.0" prefWidth="70.0" promptText="gramas" />
                      </children>
                      <VBox.margin>
-                        <Insets bottom="10.0" />
+                        <Insets bottom="5.0" />
                      </VBox.margin>
                   </HBox>
-                  <HBox>
+                  <HBox layoutX="10.0" layoutY="10.0">
                      <children>
-                        <ComboBox fx:id="cbSubstrato" prefWidth="150.0" promptText="Substrato">
+                        <ComboBox fx:id="cbRecipiente" onAction="#selectedRecipiente" prefHeight="26.0" prefWidth="140.0" promptText="Recipiente">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
                         </ComboBox>
-                        <Button fx:id="btnDescricao" mnemonicParsing="false" onAction="#descreverSubstrato" text="Descrição" />
+                        <Label text="Qtd:" textFill="WHITE" />
+                        <TextField fx:id="tfRecipiente" prefHeight="26.0" prefWidth="70.0" promptText="unidade" />
                      </children>
-                     <padding>
-                        <Insets bottom="10.0" />
-                     </padding>
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
                   </HBox>
-                  <TableView fx:id="tblServicos" prefHeight="188.0" prefWidth="242.0">
+                  <HBox prefHeight="29.0" prefWidth="242.0">
+                     <children>
+                        <ComboBox fx:id="cbSubstrato" onAction="#selectedSubstrato" prefWidth="140.0" promptText="Substrato">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </ComboBox>
+                        <Label text="Qtd:" textFill="WHITE" />
+                        <TextField fx:id="tfRecipiente1" prefHeight="26.0" prefWidth="70.0" promptText="cm³" />
+                        <Button fx:id="btnDescricao" mnemonicParsing="false" onAction="#descreverSubstrato" text="i" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox>
+                     <children>
+                        <ComboBox fx:id="cbServico" prefWidth="140.0" promptText="Serviços">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </ComboBox>
+                        <Button fx:id="btnAddServico" mnemonicParsing="false" onAction="#addServico" text="+">
+                           <HBox.margin>
+                              <Insets right="1.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="btnRmServico" mnemonicParsing="false" onAction="#rmServico" prefHeight="26.0" text="x" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox alignment="CENTER">
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <TableView fx:id="tblServicos" prefHeight="150.0" prefWidth="242.0">
                     <columns>
-                      <TableColumn fx:id="colServicos" prefWidth="75.0" text="Serviços" />
-                        <TableColumn fx:id="colHoras" prefWidth="75.0" text="Horas" />
+                      <TableColumn fx:id="colServicos" prefWidth="118.0" text="Serviços" />
+                        <TableColumn fx:id="colHoras" prefWidth="75.0" sortable="false" text="Horas" />
                     </columns>
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -83,17 +111,20 @@
                         <Insets bottom="10.0" />
                      </VBox.margin>
                   </TableView>
-                  <HBox>
+                  <HBox alignment="CENTER" centerShape="false" nodeOrientation="LEFT_TO_RIGHT">
                      <children>
                         <Label fx:id="lblTotal" text="Total: R$___,__ " textFill="WHITE">
                            <font>
                               <Font size="17.0" />
                            </font>
                            <HBox.margin>
-                              <Insets right="30.0" />
+                              <Insets />
                            </HBox.margin>
                         </Label>
-                        <Button fx:id="btnCalcularTotal" mnemonicParsing="false" onAction="#calcularTotal" text="Calcular" />
+                        <Button fx:id="btnCalcularTotal" alignment="TOP_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#calcularTotal" text="Calcular">
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin></Button>
                      </children>
                   </HBox>
                </children>
@@ -124,7 +155,7 @@
             </VBox>
          </children>
       </Pane>
-      <TableView fx:id="tbl" layoutX="413.0" layoutY="26.0" prefHeight="457.0" prefWidth="534.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="260.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+      <TableView fx:id="tbl" layoutX="413.0" layoutY="26.0" prefHeight="457.0" prefWidth="660.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="290.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
         <columns>
           <TableColumn fx:id="colId" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" text="ID" />
           <TableColumn fx:id="colSemente" prefWidth="285.0" text="Semente" />

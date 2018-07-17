@@ -79,6 +79,7 @@ public class RecipientesController implements Initializable {
         RecipienteDAO dao = new RecipienteDAO();
         lista.addAll(dao.read());
         tbl.setItems(lista);
+        
     }
 
     @FXML
@@ -113,6 +114,7 @@ public class RecipientesController implements Initializable {
         if (Validate.recipiente(nome, volumeString, precoString)) {
             double volume = Double.parseDouble(volumeString);
             double preco = Double.parseDouble(precoString);
+            
             if (novoItem) {
                 r = new Recipiente(nome, volume, preco);
                 if (dao.create(r)) {
