@@ -17,11 +17,12 @@ import javafx.beans.property.StringProperty;
  * @author paulo
  */
 public class Servico {
+
     private final IntegerProperty id;
     private final StringProperty tipo;
     private final DoubleProperty preco;
-    
-     public Servico(int id, String tipo, double preco) {
+
+    public Servico(int id, String tipo, double preco) {
         this.id = new SimpleIntegerProperty(id);
         this.tipo = new SimpleStringProperty(tipo);
         this.preco = new SimpleDoubleProperty(preco);
@@ -32,8 +33,14 @@ public class Servico {
         this.tipo = new SimpleStringProperty(tipo);
         this.preco = new SimpleDoubleProperty(preco);
     }
-    
-     public int getId() {
+
+    public void setId(int id) {
+        if (this.id.get() == 0) {
+            this.id.set(id);
+        }
+    }
+
+    public int getId() {
         return id.get();
     }
 
@@ -48,7 +55,7 @@ public class Servico {
     public String getTipo() {
         return tipo.get();
     }
-    
+
     public StringProperty tipoProperty() {
         return tipo;
     }

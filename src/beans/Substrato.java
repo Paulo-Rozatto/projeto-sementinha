@@ -36,6 +36,12 @@ public class Substrato {
         this.preco = new SimpleDoubleProperty(preco);
         this.descricao = descricao;
     }
+    
+    public void setId(int id){
+        if(this.id.get() == 0){
+            this.id.set(id);
+        }
+    }
 
     public int getId() {
         return id.get();

@@ -22,12 +22,12 @@
                <children>
                   <HBox>
                      <children>
-                        <DatePicker fx:id="date" prefHeight="26.0" prefWidth="140.0" promptText="Data">
+                        <DatePicker fx:id="date" disable="true" prefHeight="26.0" prefWidth="140.0" promptText="Data">
                            <HBox.margin>
                               <Insets right="33.0" />
                            </HBox.margin>
                         </DatePicker>
-                        <Button fx:id="btnAtualizar" mnemonicParsing="false" onAction="#atualizar" text="Atualizar" />
+                        <Button fx:id="btnAtualizar" disable="true" mnemonicParsing="false" onAction="#atualizar" text="Atualizar" />
                      </children>
                      <VBox.margin>
                         <Insets bottom="5.0" />
@@ -35,13 +35,13 @@
                   </HBox>
                   <HBox>
                      <children>
-                        <ComboBox fx:id="cbSemente" onAction="#selectedSemente" prefHeight="26.0" prefWidth="140.0" promptText="Semente">
+                        <ComboBox fx:id="cbSemente" disable="true" onAction="#selectedSemente" prefHeight="26.0" prefWidth="140.0" promptText="Semente">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
                         </ComboBox>
                         <Label text="Qtd:" textFill="WHITE" />
-                        <TextField fx:id="tfSemente" prefHeight="26.0" prefWidth="70.0" promptText="gramas" />
+                        <TextField fx:id="tfSemente" disable="true" prefHeight="26.0" prefWidth="70.0" />
                      </children>
                      <VBox.margin>
                         <Insets bottom="5.0" />
@@ -49,13 +49,13 @@
                   </HBox>
                   <HBox layoutX="10.0" layoutY="10.0">
                      <children>
-                        <ComboBox fx:id="cbRecipiente" onAction="#selectedRecipiente" prefHeight="26.0" prefWidth="140.0" promptText="Recipiente">
+                        <ComboBox fx:id="cbRecipiente" disable="true" onAction="#selectedRecipiente" prefHeight="26.0" prefWidth="140.0" promptText="Recipiente">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
                         </ComboBox>
                         <Label text="Qtd:" textFill="WHITE" />
-                        <TextField fx:id="tfRecipiente" prefHeight="26.0" prefWidth="70.0" promptText="unidade" />
+                        <TextField fx:id="tfRecipiente" disable="true" prefHeight="26.0" prefWidth="70.0" promptText="unidade" />
                      </children>
                      <VBox.margin>
                         <Insets bottom="5.0" />
@@ -63,14 +63,14 @@
                   </HBox>
                   <HBox prefHeight="29.0" prefWidth="242.0">
                      <children>
-                        <ComboBox fx:id="cbSubstrato" onAction="#selectedSubstrato" prefWidth="140.0" promptText="Substrato">
+                        <ComboBox fx:id="cbSubstrato" disable="true" onAction="#selectedSubstrato" prefWidth="140.0" promptText="Substrato">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
                         </ComboBox>
                         <Label text="Qtd:" textFill="WHITE" />
-                        <TextField fx:id="tfRecipiente1" prefHeight="26.0" prefWidth="70.0" promptText="cm³" />
-                        <Button fx:id="btnDescricao" mnemonicParsing="false" onAction="#descreverSubstrato" text="i" />
+                        <TextField fx:id="tfSubstrato" disable="true" prefHeight="26.0" prefWidth="70.0" promptText="cm³" />
+                        <Button fx:id="btnDescricao" disable="true" mnemonicParsing="false" onAction="#descreverSubstrato" text="i" />
                      </children>
                      <VBox.margin>
                         <Insets bottom="5.0" />
@@ -78,17 +78,17 @@
                   </HBox>
                   <HBox>
                      <children>
-                        <ComboBox fx:id="cbServico" prefWidth="140.0" promptText="Serviços">
+                        <ComboBox fx:id="cbServico" disable="true" prefWidth="140.0" promptText="Serviços">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
                         </ComboBox>
-                        <Button fx:id="btnAddServico" mnemonicParsing="false" onAction="#addServico" text="+">
+                        <Button fx:id="btnAddServico" disable="true" mnemonicParsing="false" onAction="#addServico" text="+">
                            <HBox.margin>
                               <Insets right="1.0" />
                            </HBox.margin>
                         </Button>
-                        <Button fx:id="btnRmServico" mnemonicParsing="false" onAction="#rmServico" prefHeight="26.0" text="x" />
+                        <Button fx:id="btnRmServico" disable="true" mnemonicParsing="false" onAction="#rmServico" prefHeight="26.0" text="x" />
                      </children>
                      <VBox.margin>
                         <Insets bottom="5.0" />
@@ -99,7 +99,7 @@
                         <Insets bottom="5.0" />
                      </VBox.margin>
                   </HBox>
-                  <TableView fx:id="tblServicos" prefHeight="150.0" prefWidth="242.0">
+                  <TableView fx:id="tblServicos" disable="true" prefHeight="150.0" prefWidth="242.0">
                     <columns>
                       <TableColumn fx:id="colServicos" prefWidth="118.0" text="Serviços" />
                         <TableColumn fx:id="colHoras" prefWidth="75.0" sortable="false" text="Horas" />
@@ -121,7 +121,7 @@
                               <Insets />
                            </HBox.margin>
                         </Label>
-                        <Button fx:id="btnCalcularTotal" alignment="TOP_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#calcularTotal" text="Calcular">
+                        <Button fx:id="btnCalcularTotal" alignment="TOP_RIGHT" contentDisplay="CENTER" disable="true" mnemonicParsing="false" onAction="#calcularTotal" text="Calcular">
                            <HBox.margin>
                               <Insets left="10.0" />
                            </HBox.margin></Button>
@@ -133,20 +133,20 @@
                <children>
                   <HBox>
                      <children>
-                        <Button mnemonicParsing="false" onAction="#novo" prefWidth="65.0" text="Novo">
+                        <Button fx:id="btnNovo" mnemonicParsing="false" onAction="#novo" prefWidth="65.0" text="Novo">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#editar" prefWidth="65.0" text="Editar">
+                        <Button fx:id="btnEditar" mnemonicParsing="false" onAction="#editar" prefWidth="65.0" text="Editar">
                            <HBox.margin>
                               <Insets bottom="5.0" right="5.0" />
                            </HBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#salvar" prefWidth="65.0" text="Salvar" />
+                        <Button fx:id="btnSalvar" disable="true" mnemonicParsing="false" onAction="#salvar" prefWidth="65.0" text="Salvar" />
                      </children>
                   </HBox>
-                  <Button mnemonicParsing="false" onAction="#excluir" prefHeight="26.0" prefWidth="65.0" text="Excluir">
+                  <Button fx:id="btnExcluir" mnemonicParsing="false" onAction="#excluir" prefHeight="26.0" prefWidth="65.0" text="Excluir">
                      <VBox.margin>
                         <Insets left="70.0" />
                      </VBox.margin>
@@ -155,7 +155,7 @@
             </VBox>
          </children>
       </Pane>
-      <TableView fx:id="tbl" layoutX="413.0" layoutY="26.0" prefHeight="457.0" prefWidth="660.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="290.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+      <TableView fx:id="tbl" layoutX="413.0" layoutY="26.0" onMouseClicked="#selecionar" prefHeight="457.0" prefWidth="660.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="290.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
         <columns>
           <TableColumn fx:id="colId" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" text="ID" />
           <TableColumn fx:id="colSemente" prefWidth="285.0" text="Semente" />

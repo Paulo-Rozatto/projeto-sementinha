@@ -115,7 +115,7 @@ public class SubstratosController implements Initializable {
             if (novoItem) {
                 s = new Substrato(nome, preco, descricao);
                 if (dao.create(s)) {
-                    lista.add(dao.readLast());
+                    lista.add(s);
                     clean();
                 }
             } else {

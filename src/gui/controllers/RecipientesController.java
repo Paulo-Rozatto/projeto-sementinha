@@ -93,7 +93,7 @@ public class RecipientesController implements Initializable {
     @FXML
     private void editar(ActionEvent event) {
         try {
-            if (getSelectionedObject() != null) {
+            if (selectionedObject() != null) {
                 changeDisable(false);
                 novoItem = false;
             }
@@ -118,11 +118,11 @@ public class RecipientesController implements Initializable {
             if (novoItem) {
                 r = new Recipiente(nome, volume, preco);
                 if (dao.create(r)) {
-                    lista.add(dao.readLast());
+                    lista.add(r);
                     clean();
                 }
             } else {
-                r = getSelectionedObject();
+                r = selectionedObject();
                 r.setNome(nome);
                 r.setVolume(volume);
                 r.setPreco(preco);
@@ -137,11 +137,12 @@ public class RecipientesController implements Initializable {
         RecipienteDAO dao = new RecipienteDAO();
 
         try {
-            Recipiente r = getSelectionedObject();
+            Recipiente r = selectionedObject();
 
             if (AlertBox.confirmDelete()) {
                 if (dao.delete(r.getId())) {
                     lista.remove(r);
+                    clean();
                 }
             }
         } catch (RuntimeException ex) {
@@ -152,7 +153,7 @@ public class RecipientesController implements Initializable {
     @FXML
     void selecionar(MouseEvent event) {
         try {
-            Recipiente r = getSelectionedObject();
+            Recipiente r = selectionedObject();
 
             tfNome.setText(r.getNome());
             tfVolume.setText(String.valueOf(r.getVolume()));
@@ -161,13 +162,13 @@ public class RecipientesController implements Initializable {
         }
     }
 
-    private int getSelectionedIndex() {
+    private int selectionedIndex() {
         int selectedIndex = tbl.getSelectionModel().getSelectedIndex();
         return selectedIndex;
     }
 
-    private Recipiente getSelectionedObject() {
-        Recipiente r = tbl.getItems().get(getSelectionedIndex());
+    private Recipiente selectionedObject() {
+        Recipiente r = tbl.getItems().get(selectionedIndex());
         return r;
     }
 

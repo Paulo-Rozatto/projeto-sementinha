@@ -5,6 +5,10 @@
  */
 package util;
 
+import beans.ServicoPrestado;
+import java.time.LocalDate;
+import java.util.List;
+
 /**
  *
  * @author paulo
@@ -124,6 +128,46 @@ public abstract class Validate {
         } else {
             AlertBox.error(error);
         }
+        return valid;
+    }
+
+    public static boolean plantio(LocalDate data,int semId, String quantSem, int recId, String quantRec, int subId, String quantSub, List<ServicoPrestado> sp) {
+        boolean valid = false;
+        String error = "";
+        if (data == null) {
+            error += "O campo \"Data\"  não pode ser vazio.\n";
+        }
+        if(semId == -1){
+            error += "O campo \"Semente\" precisa ter um valor selecionado.\n";
+        }
+        if (!decimal(quantSem)) {
+            error += "O campo \"Quantidade de sementes\" não pode ser vazio, conter letras, ou ser negativo.\n";
+        }
+        if(recId == -1){
+            error += "O campo \"Recipiente\" precisa ter um valor selecionado.\n";
+        }
+        if (!decimal(quantRec)) {
+            error += "O campo \"Quantidade de Recipientes\" não pode ser vazio, conter letras, ou ser negativo.\n";
+        }
+        if(subId == -1){
+            error += "O campo \"Substrato\" precisa ter um valor selecionado.\n";
+        }
+        if (!decimal(quantSub)) {
+            error += "O campo \"Quantidade de substrato\" não pode ser vazio, conter letras,\n ou ser negativo.\n";
+        }
+        for (ServicoPrestado s : sp) {
+            if (!decimal(s.getHoras())) {
+                error += "O campo \"Horas\" não pode conter letras, ou ser negativo.\n";
+                break;
+            }
+        }
+        
+        if (error.equals("")) {
+            valid = true;
+        } else {
+            AlertBox.error(error);
+        }
+
         return valid;
     }
 

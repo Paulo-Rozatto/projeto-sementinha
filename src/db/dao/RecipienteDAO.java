@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import util.AlertBox;
@@ -28,14 +29,21 @@ public class RecipienteDAO {
     public boolean create(Recipiente r) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
+        ResultSet rs = null;
 
         try {
-            stmt = con.prepareStatement("INSERT INTO Recipientes(nome,volume,preco) values(?,?,?)");
+            stmt = con.prepareStatement("INSERT INTO Recipientes(nome,volume,preco) values(?,?,?)", Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, r.getNome());
             stmt.setDouble(2, r.getVolume());
             stmt.setDouble(3, r.getPreco());
 
             stmt.executeUpdate();
+            
+            rs = stmt.getGeneratedKeys();
+            
+            if(rs.next()){
+                r.setId(rs.getInt(1));
+            }
 
             System.out.println("Criação de registro executada com sucesso.");
             return true;
@@ -74,34 +82,6 @@ public class RecipienteDAO {
            ConnectionFactory.closeConection(con, stmt, rs);
         }
         return recipientes;
-    }
-
-    public Recipiente readLast() {
-        Connection con = ConnectionFactory.getConnection();
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        Recipiente r = null;
-
-        try {
-            stmt = con.prepareStatement("SELECT * FROM Recipientes ORDER BY rec_id DESC LIMIT 1");
-            rs = stmt.executeQuery();
-
-            if (rs.last()) {
-               r = new Recipiente(
-                        rs.getInt("rec_id"),
-                        rs.getString("nome"),
-                        rs.getDouble("volume"),
-                        rs.getDouble("preco"));
-            }
-
-            System.out.println("Leitura do último campo executada com sucesso.");
-
-        } catch (SQLException ex) {
-            AlertBox.exception("Não foi possível ler último campo do banco de dados: ", ex);
-        } finally {
-            ConnectionFactory.closeConection(con, stmt, rs);
-        }
-        return r;
     }
 
     public boolean update(Recipiente r) {

@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import util.AlertBox;
@@ -28,9 +29,10 @@ public class SementeDAO {
     public boolean create(Semente s) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
+        ResultSet rs = null;
 
         try {
-            stmt = con.prepareStatement("INSERT INTO Sementes(nome,especie,preco,preco_em_gramas,tipoPlantio,dormencia) values(?,?,?,?,?,?)");
+            stmt = con.prepareStatement("INSERT INTO Sementes(nome,especie,preco,preco_em_gramas,tipoPlantio,dormencia) values(?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, s.getNome());
             stmt.setString(2, s.getEspecie());
             stmt.setDouble(3, s.getPreco());
@@ -39,6 +41,12 @@ public class SementeDAO {
             stmt.setString(6, s.getDormencia());
 
             stmt.executeUpdate();
+            
+            rs = stmt.getGeneratedKeys();
+            
+            if(rs.next()){
+                s.setId(rs.getInt(1));
+            }
 
             System.out.println("Criação de registro executada com sucesso.");
             return true;
@@ -80,37 +88,6 @@ public class SementeDAO {
             ConnectionFactory.closeConection(con, stmt, rs);
         }
         return sementes;
-    }
-
-    public Semente readLast() {
-        Connection con = ConnectionFactory.getConnection();
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        Semente s = null;
-
-        try {
-            stmt = con.prepareStatement("SELECT * FROM Sementes ORDER BY sem_id DESC LIMIT 1");
-            rs = stmt.executeQuery();
-
-            if (rs.last()) {
-                s = new Semente(
-                        rs.getInt("sem_id"),
-                        rs.getString("nome"),
-                        rs.getString("especie"),
-                        rs.getDouble("preco"),
-                        rs.getBoolean("preco_em_gramas"),
-                        rs.getString("tipoPlantio"),
-                        rs.getString("dormencia"));
-            }
-
-            System.out.println("Leitura do último campo executada com sucesso.");
-
-        } catch (SQLException ex) {
-            AlertBox.exception("Não foi possível ler último campo do banco de dados: ", ex);
-        } finally {
-            ConnectionFactory.closeConection(con, stmt, rs);
-        }
-        return s;
     }
 
     public boolean update(Semente s) {

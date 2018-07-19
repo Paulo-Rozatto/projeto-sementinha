@@ -48,6 +48,12 @@ public class Semente {
         this.dormencia = new SimpleStringProperty(dormencia);
     }
 
+    public void setId(int id){
+        if(this.id.get() == 0){
+            this.id.set(id);
+        }
+    }
+    
     public int getId() {
         return id.get();
     }

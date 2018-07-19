@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import util.AlertBox;
@@ -28,14 +29,21 @@ public class SubstratoDAO {
     public boolean create(Substrato s) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
+        ResultSet rs = null;
 
         try {
-            stmt = con.prepareStatement("INSERT INTO Substratos(nome,preco,descricao) values(?,?,?)");
+            stmt = con.prepareStatement("INSERT INTO Substratos(nome,preco,descricao) values(?,?,?)", Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, s.getNome());
             stmt.setDouble(2, s.getPreco());
             stmt.setString(3, s.getDescricao());
 
             stmt.executeUpdate();
+            
+            rs = stmt.getGeneratedKeys();
+            
+            if(rs.next()){
+                s.setId(rs.getInt(1));
+            }
 
             System.out.println("Criação de registro executada com sucesso.");
             return true;
@@ -74,34 +82,6 @@ public class SubstratoDAO {
            ConnectionFactory.closeConection(con, stmt, rs);
         }
         return substratos;
-    }
-
-    public Substrato readLast() {
-        Connection con = ConnectionFactory.getConnection();
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        Substrato s = null;
-
-        try {
-            stmt = con.prepareStatement("SELECT * FROM Substratos ORDER BY sub_id DESC LIMIT 1");
-            rs = stmt.executeQuery();
-
-            if (rs.last()) {
-               s = new Substrato(
-                        rs.getInt("sub_id"),
-                        rs.getString("nome"),
-                        rs.getDouble("preco"),
-                        rs.getString("descricao"));
-            }
-
-            System.out.println("Leitura do último campo executada com sucesso.");
-
-        } catch (SQLException ex) {
-            AlertBox.exception("Não foi possível ler último campo do banco de dados: ", ex);
-        } finally {
-            ConnectionFactory.closeConection(con, stmt, rs);
-        }
-        return s;
     }
 
     public boolean update(Substrato s) {

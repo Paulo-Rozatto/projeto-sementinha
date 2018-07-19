@@ -5,9 +5,7 @@
  */
 package beans;
 
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -20,21 +18,20 @@ public class ServicoPrestado {
     private final IntegerProperty plaId;
     private final IntegerProperty serId;
     private final StringProperty servico;
-    private DoubleProperty horas;
-    private final StringProperty horaString;
+    private final StringProperty horas;
 
-    public ServicoPrestado(int plaId, int serId, String servico, String horaString) {
+    public ServicoPrestado(int plaId, int serId, String horas) {
         this.plaId = new SimpleIntegerProperty(plaId);
         this.serId = new SimpleIntegerProperty(serId);
-        this.servico = new SimpleStringProperty(servico);
-        this.horaString = new SimpleStringProperty(horaString);
+        this.servico = new SimpleStringProperty();
+        this.horas = new SimpleStringProperty(horas);
     }
     
-    public ServicoPrestado( int serId, String servico, String horaString) {
+    public ServicoPrestado( int serId, String servico, String horas) {
         this.plaId = new SimpleIntegerProperty();
         this.serId = new SimpleIntegerProperty(serId);
         this.servico = new SimpleStringProperty(servico);
-        this.horaString = new SimpleStringProperty(horaString);
+        this.horas = new SimpleStringProperty(horas);
     }
     
     public int getPlaId() {
@@ -53,15 +50,15 @@ public class ServicoPrestado {
         return serId;
     }
     
-    public void setHoras(double horas) {
+    public void setHoras(String horas) {
         this.horas.set(horas);
     }
 
-    public double getHoras() {
+    public String getHoras() {
         return horas.get();
     }
 
-    public DoubleProperty horasProperty() {
+    public StringProperty horasProperty() {
         return horas;
     }
     
@@ -75,17 +72,5 @@ public class ServicoPrestado {
     
     public StringProperty servicoProperty(){
         return servico;
-    }
-    
-    public void setHoraString(String horaString){
-        this.horaString.set(horaString);
-    }
-    
-    public String getHoraString() {
-        return horaString.get();
-    }
-    
-    public StringProperty horaStringProperty(){
-        return horaString;
     }
 }

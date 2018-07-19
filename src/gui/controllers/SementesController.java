@@ -150,7 +150,7 @@ public class SementesController implements Initializable {
             if (novoItem) {
                 s = new Semente(nome, especie, preco, precoEmGramas, plantio, dormencia);
                 if (dao.create(s)) {
-                    lista.add(dao.readLast());
+                    lista.add(s);
                      clean();
                 }
             } else {

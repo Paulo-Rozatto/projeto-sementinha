@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import util.AlertBox;
@@ -28,13 +29,20 @@ public class ServicoDAO {
     public boolean create(Servico s) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
+        ResultSet rs = null;
 
         try {
-            stmt = con.prepareStatement("INSERT INTO Servicos(tipo,preco) values(?,?)");
+            stmt = con.prepareStatement("INSERT INTO Servicos(tipo,preco) values(?,?)", Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, s.getTipo());
             stmt.setDouble(2, s.getPreco());
 
             stmt.executeUpdate();
+            
+            rs = stmt.getGeneratedKeys();
+            
+            if(rs.next()){
+                s.setId(rs.getInt(1));
+            }
 
             System.out.println("Criação de registro executada com sucesso.");
             return true;
@@ -72,33 +80,6 @@ public class ServicoDAO {
            ConnectionFactory.closeConection(con, stmt, rs);
         }
         return servicos;
-    }
-
-    public Servico readLast() {
-        Connection con = ConnectionFactory.getConnection();
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        Servico s = null;
-
-        try {
-            stmt = con.prepareStatement("SELECT * FROM Servicos ORDER BY ser_id DESC LIMIT 1");
-            rs = stmt.executeQuery();
-
-            if (rs.last()) {
-               s = new Servico(
-                        rs.getInt("ser_id"),
-                        rs.getString("tipo"),
-                        rs.getDouble("preco"));
-            }
-
-            System.out.println("Leitura do último campo executada com sucesso.");
-
-        } catch (SQLException ex) {
-            AlertBox.exception("Não foi possível ler último campo do banco de dados: ", ex);
-        } finally {
-            ConnectionFactory.closeConection(con, stmt, rs);
-        }
-        return s;
     }
 
     public boolean update(Servico s) {

@@ -105,7 +105,7 @@ public class ServicosController implements Initializable {
             if (novoItem) {
                 s = new Servico(tipo, preco);
                 if (dao.create(s)) {
-                    lista.add(dao.readLast());
+                    lista.add(s);
                     clean();
                 }
             } else {
