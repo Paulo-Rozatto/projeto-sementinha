@@ -42,31 +42,26 @@ public class MainController implements Initializable {
     @FXML
     void switchToSementes(ActionEvent event) {
         switchToChild(0);
-        changeMenuColor(btnSementes);
     }
 
     @FXML
     void switchToRecipientes(ActionEvent event) {
         switchToChild(1);
-        changeMenuColor(btnRecipientes);
     }
 
     @FXML
     void switchToSubstratos(ActionEvent event) {
         switchToChild(2);
-        changeMenuColor(btnSubstratos);
     }
 
     @FXML
     void switchToServicos(ActionEvent event) {
         switchToChild(3);
-        changeMenuColor(btnServicos);
     }
 
     @FXML
     void switchToPlantio(ActionEvent event) {
          switchToChild(4);
-        changeMenuColor(btnPlantio);
     }
 
     /**
@@ -89,15 +84,4 @@ public class MainController implements Initializable {
         
         stackPane.getChildren().get(index).setVisible(true);
     }
-
-    private void changeMenuColor(Button btn) {
-        btnSementes.setStyle("-fx-background-color: #123456");
-        btnRecipientes.setStyle("-fx-background-color: #123456");
-        btnSubstratos.setStyle("-fx-background-color: #123456");
-        btnServicos.setStyle("-fx-background-color: #123456");
-        btnPlantio.setStyle("-fx-background-color: #123456");
-
-        btn.setStyle("-fx-background-color: #123478");
-    }
-    
 }

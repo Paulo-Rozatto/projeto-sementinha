@@ -9,10 +9,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="560.0" prefWidth="960.0" style="-fx-background-color: #2bf;" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.MainController">
+<AnchorPane id="AnchorPane" prefHeight="560.0" prefWidth="910.0" style="-fx-background-color: #2bf;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.MainController">
    <children>
-      <HBox prefHeight="65.0" prefWidth="960.0" style="-fx-background-color: #123456;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <HBox prefHeight="65.0" prefWidth="960.0" style="-fx-background-color: #123456;" stylesheets="@estilocss.css" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <ImageView fitHeight="65.0" fitWidth="130.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -21,13 +22,19 @@
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin>
+               <cursor>
+                  <Cursor fx:constant="DEFAULT" />
+               </cursor>
             </ImageView>
             <Label prefHeight="65.0" prefWidth="180.0" text="SOFTWARE DE CONTROLE  &#10;DE CUSTOS DO VIVEIRO -&#10;CAMPUS PINHEIRAL" textAlignment="JUSTIFY" textFill="WHITE">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin>
+               <font>
+                  <Font name="Arial Black" size="11.0" />
+               </font>
             </Label>
-            <Button fx:id="btnSementes" mnemonicParsing="false" onAction="#switchToSementes" prefHeight="64.0" prefWidth="130.0" style="-fx-background-color: #123478;" text="SEMENTES" textFill="WHITE">
+            <Button fx:id="btnSementes" mnemonicParsing="false" onAction="#switchToSementes" prefHeight="64.0" prefWidth="130.0" styleClass="botoes-menu-acima" stylesheets="@estilocss.css" text="SEMENTES" textFill="WHITE">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin>
@@ -35,34 +42,38 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="btnRecipientes" mnemonicParsing="false" onAction="#switchToRecipientes" prefHeight="64.0" prefWidth="130.0" style="-fx-background-color: #123456;" text="RECIPIENTES" textFill="WHITE">
+            <Button fx:id="btnRecipientes" mnemonicParsing="false" onAction="#switchToRecipientes" prefHeight="64.0" prefWidth="130.0" styleClass="botoes-menu-acima" stylesheets="@estilocss.css" text="RECIPIENTES" textFill="WHITE">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="btnSubstratos" mnemonicParsing="false" onAction="#switchToSubstratos" prefHeight="64.0" prefWidth="130.0" style="-fx-background-color: #123456;" text="SUBSTRATOS" textFill="WHITE">
+            <Button fx:id="btnSubstratos" mnemonicParsing="false" onAction="#switchToSubstratos" prefHeight="64.0" prefWidth="141.0" styleClass="botoes-menu-acima" stylesheets="@estilocss.css" text="SUBSTRATOS" textFill="WHITE">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="btnServicos" mnemonicParsing="false" onAction="#switchToServicos" prefHeight="64.0" prefWidth="130.0" style="-fx-background-color: #123456;" text="SERVIÇOS" textFill="WHITE">
+            <Button fx:id="btnServicos" mnemonicParsing="false" onAction="#switchToServicos" prefHeight="64.0" prefWidth="130.0" styleClass="botoes-menu-acima" stylesheets="@estilocss.css" text="SERVIÇOS" textFill="WHITE">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="btnPlantio" mnemonicParsing="false" onAction="#switchToPlantio" prefHeight="64.0" prefWidth="130.0" style="-fx-background-color: #123456;" text="PLANTIO" textFill="WHITE">
+            <Button fx:id="btnPlantio" mnemonicParsing="false" onAction="#switchToPlantio" prefHeight="64.0" prefWidth="130.0" styleClass="botoes-menu-acima" stylesheets="@estilocss.css" text="PLANTIO" textFill="WHITE">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
          </children>
       </HBox>
-      <StackPane fx:id="stackPane" layoutY="65.0" prefHeight="495.0" prefWidth="960.0" style="-fx-background-color: #556;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="67.0" >
+      <StackPane fx:id="stackPane" layoutY="65.0" prefHeight="495.0" prefWidth="960.0" style="-fx-background-color: #556;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="67.0">
+        
         <fx:include  source="/gui/panes/sementes.fxml"/>
         <fx:include  source="/gui/panes/recipientes.fxml"/>
         <fx:include  source="/gui/panes/substratos.fxml"/>
         <fx:include  source="/gui/panes/servicos.fxml"/>
         <fx:include  source="/gui/panes/plantios.fxml"/>
+        
+        
+        
       </StackPane>
    </children>
 </AnchorPane>

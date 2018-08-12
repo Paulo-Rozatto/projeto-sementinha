@@ -1,0 +1,52 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 08/08/2018, 12:29:02
+    Author     : Xavier
+*/
+
+.botoes-menu-acima {
+    -fx-background-color: 
+        #000000,
+        linear-gradient(#7ebcea, #2f4b8f),
+        linear-gradient(#426ab7, #263e75),
+        linear-gradient(#395cab, #223768);
+    -fx-background-insets: 0,1,2,3;
+    -fx-background-radius: 3,2,2,2;
+    -fx-padding: 12 30 12 30;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+}
+.botoes-acima-texto {
+    -fx-effect: dropshadow( one-pass-box , rgba(0,0,0,0.8) , 0, 0.0 , 0 , 1);
+}
+.botoes-menu-esquerdo {
+    -fx-background-color: linear-gradient(#98a8bd 0%, #8195af 25%, #6d86a4 100%);
+}
+.estilo-do-iphone{
+    -fx-background-color: 
+        #a6b5c9,
+        linear-gradient(#303842 0%, #3e5577 20%, #375074 100%),
+        linear-gradient(#768aa5 0%, #849cbb 5%, #5877a2 50%, #486a9a 51%, #4a6c9b 100%);
+    -fx-background-insets: 0 0 -1 0,0,1;
+    -fx-background-radius: 5,5,4;
+    -fx-padding: 7 30 7 30;
+    -fx-text-fill: #242d35;
+    -fx-font-family: "Helvetica";
+    -fx-font-size: 12px;
+    -fx-text-fill: white;
+}
+.iphone-escrita {
+    -fx-effect: dropshadow( one-pass-box , rgba(0,0,0,0.8) , 0, 0.0 , 0 , -1 );
+}
+.button:pressed {
+        -fx-scale-y: 0.9;
+        -fx-scale-x: 0.9;
+}
+.button2:hover {
+        -fx-background-color: #1E90FF;
+        -fx-scale-y: 1.1;
+}
