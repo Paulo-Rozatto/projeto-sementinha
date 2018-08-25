@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package beans;
 
 import javafx.beans.property.DoubleProperty;
@@ -22,19 +17,23 @@ public class Recipiente {
     private final StringProperty nome;
     private final DoubleProperty volume;
     private final DoubleProperty preco;
-
+    
+    public Recipiente(){
+        this.id = new SimpleIntegerProperty();
+        this.nome = new SimpleStringProperty();
+        this.volume = new SimpleDoubleProperty();
+        this.preco = new SimpleDoubleProperty();
+    }
+    
     public Recipiente(int id, String nome, double volume, double preco) {
         this.id = new SimpleIntegerProperty(id);
         this.nome = new SimpleStringProperty(nome);
         this.volume = new SimpleDoubleProperty(volume);
         this.preco = new SimpleDoubleProperty(preco);
     }
-
-    public Recipiente(String nome, double volume, double preco) {
-        this.id = new SimpleIntegerProperty();
-        this.nome = new SimpleStringProperty(nome);
-        this.volume = new SimpleDoubleProperty(volume);
-        this.preco = new SimpleDoubleProperty(preco);
+    
+    public double precificar(double quant){
+        return preco.get() * quant;
     }
 
     public void setId(int id){

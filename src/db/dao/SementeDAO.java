@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package db.dao;
 
 import beans.Semente;
@@ -41,10 +36,10 @@ public class SementeDAO {
             stmt.setString(6, s.getDormencia());
 
             stmt.executeUpdate();
-            
+
             rs = stmt.getGeneratedKeys();
-            
-            if(rs.next()){
+
+            if (rs.next()) {
                 s.setId(rs.getInt(1));
             }
 
@@ -52,7 +47,7 @@ public class SementeDAO {
             return true;
 
         } catch (SQLException ex) {
-            AlertBox.exception("Falha na criação de registro: ", ex);
+            AlertBox.exception("Falha na criação de registro de Semente: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);
@@ -83,11 +78,42 @@ public class SementeDAO {
             }
 
         } catch (SQLException ex) {
-            AlertBox.exception("Não foi possível ler o banco de dados: ", ex);
+            AlertBox.exception("Não foi possível ler as Sementes no banco de dados: ", ex);
         } finally {
             ConnectionFactory.closeConection(con, stmt, rs);
         }
         return sementes;
+    }
+
+    public Semente read(int id) {
+        Connection con = ConnectionFactory.getConnection();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        Semente s = null;
+
+        try {
+            stmt = con.prepareStatement("SELECT * FROM Sementes WHERE sem_id = ?");
+            stmt.setInt(1, id);
+
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                s = new Semente(
+                        rs.getInt("sem_id"),
+                        rs.getString("nome"),
+                        rs.getString("especie"),
+                        rs.getDouble("preco"),
+                        rs.getBoolean("preco_em_gramas"),
+                        rs.getString("tipoPlantio"),
+                        rs.getString("dormencia"));
+            }
+
+        } catch (SQLException ex) {
+            AlertBox.exception("Não foi possível ler a Semente no banco de dados: ", ex);
+        } finally {
+            ConnectionFactory.closeConection(con, stmt, rs);
+        }
+
+        return s;
     }
 
     public boolean update(Semente s) {
@@ -110,7 +136,7 @@ public class SementeDAO {
             return true;
 
         } catch (SQLException ex) {
-            AlertBox.exception("Falha na atualização de registro: ", ex);
+            AlertBox.exception("Falha na atualização de registro da Semente: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);
@@ -131,7 +157,7 @@ public class SementeDAO {
             return true;
 
         } catch (SQLException ex) {
-            AlertBox.exception("Não foi possível apagar o registro: ", ex);
+            AlertBox.exception("Não foi possível apagar o registro da Semente: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);

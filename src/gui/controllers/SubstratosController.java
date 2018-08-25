@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui.controllers;
 
 import beans.Substrato;
@@ -11,7 +6,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -19,7 +13,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import util.AlertBox;
 import util.Validate;
 
@@ -50,6 +43,9 @@ public class SubstratosController implements Initializable {
 
     @FXML
     private Button btnExcluir;
+    
+    @FXML
+    private Button btnCancelar;
 
     @FXML
     private TableView<Substrato> tbl;
@@ -82,7 +78,7 @@ public class SubstratosController implements Initializable {
     }
 
     @FXML
-    void novo(ActionEvent event) {
+    void novo() {
         clean();
 
         changeDisable(false);
@@ -90,9 +86,9 @@ public class SubstratosController implements Initializable {
     }
 
     @FXML
-    void editar(ActionEvent event) {
+    void editar() {
         try {
-            if (getSelectionedObject() != null) {
+            if (selectionedObject() != null) {
                 changeDisable(false);
                 novoItem = false;
             }
@@ -102,7 +98,7 @@ public class SubstratosController implements Initializable {
     }
 
     @FXML
-    void salvar(ActionEvent event) {
+    void salvar() {
         SubstratoDAO dao = new SubstratoDAO();
         Substrato s;
 
@@ -112,17 +108,18 @@ public class SubstratosController implements Initializable {
 
         if (Validate.substrato(nome, precoString, descricao)) {
             double preco = Double.parseDouble(precoString);
+            s = new Substrato();
+            s.setNome(nome);
+            s.setPreco(preco);
+            s.setDescricao(descricao);
+
             if (novoItem) {
-                s = new Substrato(nome, preco, descricao);
                 if (dao.create(s)) {
                     lista.add(s);
                     clean();
                 }
             } else {
-                s = getSelectionedObject();
-                s.setNome(nome);
-                s.setPreco(preco);
-                s.setDescricao(descricao);
+                lista.set(selectionedIndex(), s);
                 dao.update(s);
             }
             changeDisable(true);
@@ -130,11 +127,11 @@ public class SubstratosController implements Initializable {
     }
 
     @FXML
-    void excluir(ActionEvent event) {
+    void excluir() {
         SubstratoDAO dao = new SubstratoDAO();
 
         try {
-            Substrato s = getSelectionedObject();
+            Substrato s = selectionedObject();
 
             if (AlertBox.confirmDelete()) {
                 if (dao.delete(s.getId())) {
@@ -147,11 +144,22 @@ public class SubstratosController implements Initializable {
         }
 
     }
+    
+    @FXML
+    private void cancelar(){
+        if(novoItem){
+            clean();
+        }
+        else{
+            selecionar();
+        }
+        changeDisable(true);
+    }
 
     @FXML
-    void selecionar(MouseEvent event) {
+    void selecionar() {
         try {
-            Substrato s = getSelectionedObject();
+            Substrato s = selectionedObject();
 
             tfNome.setText(s.getNome());
             tfPreco.setText(String.valueOf(s.getPreco()));
@@ -160,13 +168,13 @@ public class SubstratosController implements Initializable {
         }
     }
 
-    private int getSelectionedIndex() {
+    private int selectionedIndex() {
         int selectedIndex = tbl.getSelectionModel().getSelectedIndex();
         return selectedIndex;
     }
 
-    private Substrato getSelectionedObject() {
-        Substrato s = tbl.getItems().get(getSelectionedIndex());
+    private Substrato selectionedObject() {
+        Substrato s = tbl.getItems().get(selectionedIndex());
         return s;
     }
 
@@ -175,14 +183,15 @@ public class SubstratosController implements Initializable {
         tfPreco.setDisable(opt);
         taDescricao.setDisable(opt);
         btnSalvar.setDisable(opt);
+        btnCancelar.setDisable(opt);
 
         btnNovo.setDisable(!opt);
         btnEditar.setDisable(!opt);
         btnExcluir.setDisable(!opt);
         tbl.setDisable(!opt);
     }
-    
-    private void clean(){
+
+    private void clean() {
         tfNome.setText("");
         tfPreco.setText("");
         taDescricao.setText("");

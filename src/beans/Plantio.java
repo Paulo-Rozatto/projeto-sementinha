@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package beans;
 
 import java.util.List;
@@ -18,20 +13,18 @@ import javafx.beans.property.StringProperty;
  * @author paulo
  */
 public class Plantio {
+
     private final IntegerProperty id;
     private final StringProperty data;
     private final DoubleProperty quantSem;
     private final IntegerProperty quantRec;
     private final DoubleProperty quantSub;
     private final DoubleProperty total;
-    private final StringProperty semente;
-    private final StringProperty recipiente;
-    private final StringProperty substrato;
-    private int sementeId;
-    private int recipienteId;
-    private int substratoId;
-    private List<ServicoPrestado> servicos;
-    
+    private Semente semente;
+    private Recipiente recipiente;
+    private Substrato substrato;
+    private  List<ServicoPrestado> servicosPrestados;
+
     public Plantio() {
         this.id = new SimpleIntegerProperty();
         this.data = new SimpleStringProperty();
@@ -39,57 +32,36 @@ public class Plantio {
         this.quantRec = new SimpleIntegerProperty();
         this.quantSub = new SimpleDoubleProperty();
         this.total = new SimpleDoubleProperty();
-        this.semente = new SimpleStringProperty();
-        this.recipiente = new SimpleStringProperty();
-        this.substrato = new SimpleStringProperty();
-    }
-    
-    public Plantio(int id,String data, int semente, double quantSem, int recipiente, int quantRec, int substrato, double quantSub, List<ServicoPrestado> servicos, double total){
-        this.id = new SimpleIntegerProperty(id);
-        this.data = new SimpleStringProperty(data);
-        this.quantSem = new SimpleDoubleProperty(quantSem);
-        this.quantRec = new SimpleIntegerProperty(quantRec);
-        this.quantSub = new SimpleDoubleProperty(quantSub);
-        this.sementeId =  semente;
-        this.recipienteId = recipiente;
-        this.substratoId = substrato;
-        this.servicos = servicos;
-        this.total = new SimpleDoubleProperty(total);
-        this.semente = new SimpleStringProperty();
-        this.recipiente = new SimpleStringProperty();
-        this.substrato = new SimpleStringProperty();
-    }
-    
-    public Plantio(String data, int semente, double quantSem, int recipiente, int quantRec, int substrato, double quantSub, List<ServicoPrestado> servicos, double total){
-        this.id = new SimpleIntegerProperty();
-        this.data = new SimpleStringProperty(data);
-        this.quantSem = new SimpleDoubleProperty(quantSem);
-        this.quantRec = new SimpleIntegerProperty(quantRec);
-        this.quantSub = new SimpleDoubleProperty(quantSub);
-        this.sementeId =  semente;
-        this.recipienteId = recipiente;
-        this.substratoId = substrato;
-        this.servicos = servicos;
-        this.total = new SimpleDoubleProperty(total);
-        this.semente = new SimpleStringProperty();
-        this.recipiente = new SimpleStringProperty();
-        this.substrato = new SimpleStringProperty();
     }
 
-    
-    public void setId(int id){
-        if(this.id.get() == 0){
+    public double precificar() {
+        double valorTotal = 0.0;
+        valorTotal += semente.precificar(quantSem.get());
+        valorTotal += recipiente.precificar(quantRec.get());
+        valorTotal += substrato.precificar(quantSub.get());
+
+        for (ServicoPrestado s : servicosPrestados) {
+            valorTotal += s.precificar();
+        }
+
+        total.set(valorTotal);
+        return valorTotal;
+    }
+
+    public void setId(int id) {
+        if (this.id.get() == 0) {
             this.id.set(id);
         }
     }
-    
-    public int getId(){
+
+    public int getId() {
         return id.get();
     }
+
     public IntegerProperty idProperty() {
         return id;
     }
-    
+
     public void setData(String data) {
         this.data.set(data);
     }
@@ -101,43 +73,31 @@ public class Plantio {
     public StringProperty dataProperty() {
         return data;
     }
-    
-    public void setSemente(String semente){
-        this.semente.set(semente);
-    }
-    
-    public String getSemente(){
-        return semente.get();
-    }
-    
-    public StringProperty sementeProperty(){
+
+    public Semente getSemente() {
         return semente;
     }
-    
-    public void setRecipiente(String recipiente){
-        this.recipiente.set(recipiente);
+
+    public void setSemente(Semente semente) {
+        this.semente = semente;
     }
-    
-    public String getRecipiente(){
-        return recipiente.get();
-    }
-    
-    public StringProperty recipienteProperty(){
+
+    public Recipiente getRecipiente() {
         return recipiente;
     }
-    
-    public void setSubstrato(String substrato){
-        this.substrato.set(substrato);
+
+    public void setRecipiente(Recipiente recipiente) {
+        this.recipiente = recipiente;
     }
-    
-    public String getSubstrato(){
-        return substrato.get();
-    }
-    
-    public StringProperty substratoProperty(){
+
+    public Substrato getSubstrato() {
         return substrato;
     }
-    
+
+    public void setSubstrato(Substrato substrato) {
+        this.substrato = substrato;
+    }
+
     public void setQuantSem(double quantSem) {
         this.quantSem.set(quantSem);
     }
@@ -149,7 +109,7 @@ public class Plantio {
     public DoubleProperty quantSemProperty() {
         return quantSem;
     }
-    
+
     public void setQuantRec(int quantRec) {
         this.quantRec.set(quantRec);
     }
@@ -161,7 +121,7 @@ public class Plantio {
     public IntegerProperty quantRecProperty() {
         return quantRec;
     }
-    
+
     public void setQuantSub(double quantSub) {
         this.quantSub.set(quantSub);
     }
@@ -173,48 +133,25 @@ public class Plantio {
     public DoubleProperty quantSubProperty() {
         return quantSub;
     }
-    
-    public void setTotal(double total){
-         this.total.set(total);
+
+    public void setTotal(double total) {
+        this.total.set(total);
     }
-    
-    public double getTotal(){
+
+    public double getTotal() {
         return total.get();
     }
-    
-    public DoubleProperty totalProperty(){
+
+    public DoubleProperty totalProperty() {
         return total;
     }
 
-    public int getSementeId() {
-        return sementeId;
+    public List<ServicoPrestado> getServicosPrestados() {
+        return servicosPrestados;
     }
 
-    public void setSementeId(int sementeId) {
-        this.sementeId = sementeId;
+    public void setServicosPrestados(List<ServicoPrestado> servicosPrestados) {
+        this.servicosPrestados = servicosPrestados;
     }
-
-    public int getRecipienteId() {
-        return recipienteId;
-    }
-
-    public void setRecipienteId(int recipienteId) {
-        this.recipienteId = recipienteId;
-    }
-
-    public int getSubstratoId() {
-        return substratoId;
-    }
-
-    public void setSubstratoId(int substratoId) {
-        this.substratoId = substratoId;
-    }
-
-    public List<ServicoPrestado> getServicos() {
-        return servicos;
-    }
-
-    public void setServicos(List<ServicoPrestado> servicos) {
-        this.servicos = servicos;
-    }
+        
 }

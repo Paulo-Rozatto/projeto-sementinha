@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package beans;
 
 import javafx.beans.property.BooleanProperty;
@@ -19,7 +14,11 @@ import javafx.beans.property.StringProperty;
  * @author paulo
  */
 public class Semente {
-
+    private static final double ESTRATIFICACAO = 2.0;
+    private static final double QUIMICO = 2.5;
+    private static final double FISICO = 3.0;
+    private static final double PLANT_INDIRETO = 3.0;
+    
     private final IntegerProperty id;
     private final StringProperty nome;
     private final StringProperty especie;
@@ -27,6 +26,16 @@ public class Semente {
     private final BooleanProperty precoEmGramas;
     private final StringProperty tipoPlantio;
     private final StringProperty dormencia;
+    
+    public Semente(){
+        this.id = new SimpleIntegerProperty();
+        this.nome = new SimpleStringProperty();
+        this.especie = new SimpleStringProperty();
+        this.preco = new SimpleDoubleProperty();
+        this.precoEmGramas = new SimpleBooleanProperty();
+        this.tipoPlantio = new SimpleStringProperty();
+        this.dormencia = new SimpleStringProperty();
+    }
 
     public Semente(int id, String nome, String especie, double preco, boolean precoEmGramas, String tipoPlantio, String dormencia){
         this.id = new SimpleIntegerProperty(id);
@@ -47,6 +56,31 @@ public class Semente {
         this.tipoPlantio = new SimpleStringProperty(tipoPlantio);
         this.dormencia = new SimpleStringProperty(dormencia);
     }
+    
+    public double precificar(double quant){
+        double total = 0.0;
+        
+        total = preco.get() * quant;
+        
+        if(tipoPlantio.equals("Indireto")){
+            total *= PLANT_INDIRETO;
+        }
+        switch(dormencia.get()){
+            //"Quebra Química", "Quebra Física", "Estratificação"
+            case "Quebra Química":
+                total *= QUIMICO;
+                break;
+            case "Quebra Física":
+                total *= FISICO;
+                break;
+            case "Estratificação":
+                total *= ESTRATIFICACAO;
+        }
+        
+        return total;
+    }
+    
+    
 
     public void setId(int id){
         if(this.id.get() == 0){

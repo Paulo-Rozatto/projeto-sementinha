@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Propertier.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package db.dao;
 
 import beans.Recipiente;
@@ -38,10 +33,10 @@ public class RecipienteDAO {
             stmt.setDouble(3, r.getPreco());
 
             stmt.executeUpdate();
-            
+
             rs = stmt.getGeneratedKeys();
-            
-            if(rs.next()){
+
+            if (rs.next()) {
                 r.setId(rs.getInt(1));
             }
 
@@ -49,7 +44,7 @@ public class RecipienteDAO {
             return true;
 
         } catch (SQLException ex) {
-            AlertBox.exception("Falha na criação de registro: ", ex);
+            AlertBox.exception("Falha na criação de registro de Recipiente: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);
@@ -77,11 +72,40 @@ public class RecipienteDAO {
             }
 
         } catch (SQLException ex) {
-            AlertBox.exception("Não foi possível ler o banco de dados: ", ex);
+            AlertBox.exception("Não foi possível ler Recipientes no banco de dados: ", ex);
         } finally {
-           ConnectionFactory.closeConection(con, stmt, rs);
+            ConnectionFactory.closeConection(con, stmt, rs);
         }
         return recipientes;
+    }
+
+    public Recipiente read(int id) {
+        Connection con = ConnectionFactory.getConnection();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        Recipiente r = null;
+
+        try {
+            stmt = con.prepareStatement("SELECT * FROM Recipientes WHERE rec_id = ?");
+            stmt.setInt(1, id);
+
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                r = new Recipiente(
+                        id,
+                        rs.getString("nome"),
+                        rs.getDouble("volume"),
+                        rs.getDouble("preco"));
+            }
+
+        } catch (SQLException ex) {
+            AlertBox.exception("Não foi possível ler o Recipiente no banco de dados: ", ex);
+        } finally {
+            ConnectionFactory.closeConection(con, stmt, rs);
+        }
+
+        return r;
     }
 
     public boolean update(Recipiente r) {
@@ -101,7 +125,7 @@ public class RecipienteDAO {
             return true;
 
         } catch (SQLException ex) {
-            AlertBox.exception("Falha na atualização de registro: ", ex);
+            AlertBox.exception("Falha na atualização de registro do Recipiente: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);
@@ -122,7 +146,7 @@ public class RecipienteDAO {
             return true;
 
         } catch (SQLException ex) {
-            AlertBox.exception("Não foi possível apagar o registro: ", ex);
+            AlertBox.exception("Não foi possível apagar o registro do Recipiente: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);

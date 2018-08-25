@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Propertier.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package db.dao;
 
 import beans.Substrato;
@@ -49,7 +44,7 @@ public class SubstratoDAO {
             return true;
 
         } catch (SQLException ex) {
-            AlertBox.exception("Falha na criação de registro: ", ex);
+            AlertBox.exception("Falha na criação de registro do Substrato: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);
@@ -77,11 +72,40 @@ public class SubstratoDAO {
             }
 
         } catch (SQLException ex) {
-            AlertBox.exception("Não foi possível ler o banco de dados: ", ex);
+            AlertBox.exception("Não foi possível ler os Substratos no banco de dados: ", ex);
         } finally {
            ConnectionFactory.closeConection(con, stmt, rs);
         }
         return substratos;
+    }
+    
+    public Substrato read(int id){
+        Connection con = ConnectionFactory.getConnection();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        Substrato s = null;
+        
+        try {
+            stmt = con.prepareStatement("SELECT * FROM Substratos WHERE sub_id = ?");
+            stmt.setInt(1, id);
+            
+            rs = stmt.executeQuery();
+            
+            if(rs.next()){
+                s = new Substrato(
+                        rs.getInt("sub_id"),
+                        rs.getString("nome"),
+                        rs.getDouble("preco"),
+                        rs.getString("descricao"));
+            }
+
+        } catch (SQLException ex) {
+            AlertBox.exception("Não foi possível ler o Substrato no banco de dados: ", ex);
+        } finally {
+            ConnectionFactory.closeConection(con, stmt, rs);
+        }
+        
+        return s;
     }
 
     public boolean update(Substrato s) {
@@ -101,7 +125,7 @@ public class SubstratoDAO {
             return true;
 
         } catch (SQLException ex) {
-            AlertBox.exception("Falha na atualização de registro: ", ex);
+            AlertBox.exception("Falha na atualização de registro do Substrato: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);
@@ -122,7 +146,7 @@ public class SubstratoDAO {
             return true;
 
         } catch (SQLException ex) {
-            AlertBox.exception("Não foi possível apagar o registro: ", ex);
+            AlertBox.exception("Não foi possível apagar o registro do Substrato: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);

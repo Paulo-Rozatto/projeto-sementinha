@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui.controllers;
 
 import beans.Servico;
@@ -11,14 +6,12 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import util.AlertBox;
 import util.Validate;
 
@@ -31,6 +24,7 @@ public class ServicosController implements Initializable {
 
     @FXML
     private TextField tfTipo;
+    
     @FXML
     private TextField tfPreco;
 
@@ -45,6 +39,8 @@ public class ServicosController implements Initializable {
 
     @FXML
     private Button btnExcluir;
+    
+    @FXML Button btnCancelar;
 
     @FXML
     private TableView<Servico> tbl;
@@ -73,7 +69,7 @@ public class ServicosController implements Initializable {
     }
 
     @FXML
-    private void novo(ActionEvent event) {
+    private void novo() {
         clean();
 
         changeDisable(false);
@@ -81,9 +77,9 @@ public class ServicosController implements Initializable {
     }
 
     @FXML
-    private void editar(ActionEvent event) {
+    private void editar() {
         try {
-            if (getSelectionedObject() != null) {
+            if (selectionedObject() != null) {
                 changeDisable(false);
                 novoItem = false;
             }
@@ -93,7 +89,7 @@ public class ServicosController implements Initializable {
     }
 
     @FXML
-    private void salvar(ActionEvent event) {
+    private void salvar() {
         ServicoDAO dao = new ServicoDAO();
         Servico s;
 
@@ -102,16 +98,17 @@ public class ServicosController implements Initializable {
 
         if (Validate.servico(tipo, precoString)) {
             double preco = Double.parseDouble(precoString);
+            s = new Servico();
+            s.setTipo(tipo);
+            s.setPreco(preco);
+            
             if (novoItem) {
-                s = new Servico(tipo, preco);
                 if (dao.create(s)) {
                     lista.add(s);
                     clean();
                 }
             } else {
-                s = getSelectionedObject();
-                s.setTipo(tipo);
-                s.setPreco(preco);
+                lista.set(selectionedIndex(), s);
                 dao.update(s);
             }
             changeDisable(true);
@@ -120,11 +117,11 @@ public class ServicosController implements Initializable {
     }
 
     @FXML
-    private void excluir(ActionEvent event) {
+    private void excluir() {
         ServicoDAO dao = new ServicoDAO();
 
         try {
-            Servico s = getSelectionedObject();
+            Servico s = selectionedObject();
 
             if (AlertBox.confirmDelete()) {
                 if (dao.delete(s.getId())) {
@@ -138,23 +135,34 @@ public class ServicosController implements Initializable {
     }
 
     @FXML
-    void selecionar(MouseEvent event) {
+    void selecionar() {
         try {
-            Servico s = getSelectionedObject();
+            Servico s = selectionedObject();
 
             tfTipo.setText(s.getTipo());
             tfPreco.setText(String.valueOf(s.getPreco()));
         } catch (RuntimeException ex) {
         }
     }
+    
+    @FXML
+    private void cancelar(){
+        if(novoItem){
+            clean();
+        }
+        else{
+            selecionar();
+        }
+        changeDisable(true);
+    }
 
-    private int getSelectionedIndex() {
+    private int selectionedIndex() {
         int selectedIndex = tbl.getSelectionModel().getSelectedIndex();
         return selectedIndex;
     }
 
-    private Servico getSelectionedObject() {
-        Servico s = tbl.getItems().get(getSelectionedIndex());
+    private Servico selectionedObject() {
+        Servico s = tbl.getItems().get(selectionedIndex());
         return s;
     }
 
@@ -162,6 +170,7 @@ public class ServicosController implements Initializable {
         tfTipo.setDisable(opt);
         tfPreco.setDisable(opt);
         btnSalvar.setDisable(opt);
+        btnCancelar.setDisable(opt);
 
         btnNovo.setDisable(!opt);
         btnEditar.setDisable(!opt);

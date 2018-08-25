@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui.controllers;
 
 import beans.Plantio;
@@ -19,22 +14,20 @@ import db.dao.SubstratoDAO;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.input.MouseEvent;
 import util.AlertBox;
 import util.Validate;
 
@@ -50,6 +43,9 @@ public class PlantiosController implements Initializable {
 
     @FXML
     private Button btnAtualizar;
+    
+    @FXML
+    private TextField tfTotal;
 
     //<editor-fold defaultstate="collapsed" desc="Elementos Semente.">
     @FXML
@@ -102,13 +98,6 @@ public class PlantiosController implements Initializable {
     //</editor-fold>
 
     //</editor-fold>
-    //<editor-fold defaultstate="collapsed" desc="Elementos Total">
-    @FXML
-    private Label lblTotal;
-
-    @FXML
-    private Button btnCalcularTotal;
-    //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Tabela Principal">
     @FXML
@@ -145,6 +134,9 @@ public class PlantiosController implements Initializable {
 
     @FXML
     private Button btnExcluir;
+    
+     @FXML
+    private Button btnCancelar;
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Listas">
@@ -160,11 +152,12 @@ public class PlantiosController implements Initializable {
     int recInd = -1;
     //</editor-fold>
 
-    private final ObservableList<ServicoPrestado> listaServico = FXCollections.observableArrayList();
+    private final ObservableList<ServicoPrestado> listaServicoPrestado = FXCollections.observableArrayList();
     private final ObservableList<Plantio> lista = FXCollections.observableArrayList();
+    private final List<ServicoPrestado> spBackUp = new ArrayList();
 
     private boolean novoItem;
-    private double total = 0.0;
+    private Plantio plantio = null;
     private final DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     //date.setValue(LocalDate.parse(data, format));
 
@@ -179,18 +172,22 @@ public class PlantiosController implements Initializable {
         readServicos();
 
         //tabela serviços
-        colServicos.setCellValueFactory(cellData -> cellData.getValue().servicoProperty());
+        colServicos.setCellValueFactory(cellData -> cellData.getValue().getServico().tipoProperty());
         colHoras.setCellValueFactory(cellData -> cellData.getValue().horasProperty());
         colHoras.setCellFactory(TextFieldTableCell.forTableColumn());
         colHoras.setEditable(true);
         tblServicos.setEditable(true);
-        tblServicos.setItems(listaServico);
+        tblServicos.setItems(listaServicoPrestado);
+
+        colHoras.setOnEditCommit(commit -> {
+            backUpHoras(commit.getTablePosition().getRow(), commit.getOldValue());
+        });
 
         //tabela pricipal
         colId.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
-        colSemente.setCellValueFactory(cellData -> cellData.getValue().sementeProperty());
-        colRecipiente.setCellValueFactory(cellData -> cellData.getValue().recipienteProperty());
-        colSubstrato.setCellValueFactory(cellData -> cellData.getValue().substratoProperty());
+        colSemente.setCellValueFactory(cellData -> cellData.getValue().getSemente().nomeProperty());
+        colRecipiente.setCellValueFactory(cellData -> cellData.getValue().getRecipiente().nomeProperty());
+        colSubstrato.setCellValueFactory(cellData -> cellData.getValue().getSubstrato().nomeProperty());
         colData.setCellValueFactory(cellData -> cellData.getValue().dataProperty());
         colTotal.setCellValueFactory(cellData -> cellData.getValue().totalProperty().asObject());
 
@@ -200,7 +197,7 @@ public class PlantiosController implements Initializable {
     }
 
     @FXML
-    void atualizar(ActionEvent event) {
+    void atualizar() {
         readSementes();
         readSubstratos();
         readRecipientes();
@@ -208,36 +205,16 @@ public class PlantiosController implements Initializable {
     }
 
     @FXML
-    private void descreverSubstrato(ActionEvent event) {
-        if (subInd > -1) {
+    private void descreverSubstrato() {
+        if (subInd != -1) {
             Substrato s = substratos.get(subInd);
             AlertBox.describe(s.getDescricao());
         }
     }
 
-    @FXML
-    private void calcularTotal(ActionEvent event) {
-        double qtdSem = Double.parseDouble(tfSemente.getText()),
-                qtdRec = Double.parseDouble(tfRecipiente.getText());
-
-        total += sementes.get(semInd).getPreco() * qtdSem;
-        total += recipientes.get(recInd).getPreco() * qtdRec;
-
-        for (ServicoPrestado sp : listaServico) {
-            double horas = Double.parseDouble(sp.getHoras());
-
-            for (Servico servico : servicos) {
-                if (servico.getId() == sp.getSerId()) {
-                    total += servico.getPreco() * horas;
-                }
-            }
-        }
-        lblTotal.setText("Total: R$" + total);
-    }
-
     //<editor-fold defaultstate="collapsed" desc="Métdos que atualizam os Index">
     @FXML
-    private void selectedSemente(ActionEvent event) {
+    private void selectedSemente() {
         semInd = cbSemente.getSelectionModel().getSelectedIndex();
 
         if (semInd > -1) {
@@ -250,55 +227,84 @@ public class PlantiosController implements Initializable {
     }
 
     @FXML
-    private void selectedSubstrato(ActionEvent event) {
+    private void selectedSubstrato() {
         subInd = cbSubstrato.getSelectionModel().getSelectedIndex();
 
     }
 
     @FXML
-    private void selectedRecipiente(ActionEvent event) {
+    private void selectedRecipiente() {
         recInd = cbRecipiente.getSelectionModel().getSelectedIndex();
 
     }
-
     //</editor-fold>
-    //<editor-fold defaultstate="collapsed" desc="Métodos dos btn Servico">
+
+    //<editor-fold defaultstate="collapsed" desc="Métodos do Servico Prestado">
     @FXML
-    private void addServico(ActionEvent event) {
-        ServicoPrestado sp;
+    private void addServico() {
+        try {
+            ServicoPrestado sp;
+            boolean isServicoAdcionado = false;
 
-        int i = cbServico.getSelectionModel().getSelectedIndex();
-        Servico s = servicos.get(i);
+            int i = cbServico.getSelectionModel().getSelectedIndex();
+            Servico s = servicos.get(i);
 
-        sp = new ServicoPrestado(s.getId(), s.getTipo(), "0.0");
+            for (ServicoPrestado lsp : listaServicoPrestado) {
+                if (lsp.getServico().getTipo().equals(s.getTipo())) {
+                    isServicoAdcionado = true;
+                }
+            }
 
-        listaServico.add(sp);
+            if (!isServicoAdcionado) {
+                sp = new ServicoPrestado();
+                sp.setServico(s);
+                sp.setHoras("0.0");
 
+                listaServicoPrestado.add(sp);
+            } else {
+                AlertBox.warning("Serviço já adiciondo");
+            }
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            AlertBox.warning("Nehum serviço selecionado");
+        }
+        
         cbServico.getSelectionModel().select(null);
     }
 
     @FXML
-    private void rmServico(ActionEvent event) {
-        int i = tblServicos.getSelectionModel().getSelectedIndex();
+    private void rmServico() {
+        try {
+            ServicoPrestado sp = tblServicos.getSelectionModel().getSelectedItem();
 
-        listaServico.remove(i);
+            listaServicoPrestado.remove(sp);
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            AlertBox.warning("Nehum serviço selecionado");
+        }
+    }
+    
+    private void backUpHoras(int pos, String oldHoras){
+        spBackUp.get(pos).setHoras(oldHoras);
     }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Métodos btn CRUD">
     @FXML
-    private void novo(ActionEvent event) {
+    private void novo() {
         clean();
         changeDisable(false);
         novoItem = true;
+        plantio = new Plantio();
     }
 
     @FXML
-    private void editar(ActionEvent event) {
+    private void editar() {
         try {
             if (selectionedObject() != null) {
-                changeDisable(false);
+                spBackUp.clear();
+                spBackUp.addAll(listaServicoPrestado);
+                plantio = selectionedObject();
                 novoItem = false;
+                changeDisable(false);
             }
         } catch (RuntimeException ex) {
             AlertBox.warning("Nenhuma coluna selecionada.");
@@ -306,67 +312,53 @@ public class PlantiosController implements Initializable {
     }
 
     @FXML
-    private void salvar(ActionEvent event) {
+    private void salvar() {
         PlantioDAO dao = new PlantioDAO();
-        Plantio p;
         LocalDate data = date.getValue();
-
         String sQuantSem = tfSemente.getText();
-
         String sQuantRec = tfRecipiente.getText();
-
         String sQuantSub = tfSubstrato.getText();
 
-        if (novoItem) {
-            p = new Plantio();
-        } else {
-            p = selectionedObject();
-        }
-        if (Validate.plantio(data, semInd, sQuantSem, recInd, sQuantRec, subInd, sQuantSub, listaServico)) {
-            int semId = sementes.get(semInd).getId();
+        if (Validate.plantio(data, semInd, sQuantSem, recInd, sQuantRec, subInd, sQuantSub, listaServicoPrestado)) {
+            Semente semente = sementes.get(semInd);
             double quantSem = Double.parseDouble(sQuantSem);
-            String semente = sementes.get(semInd).getNome();
-            
-            int recId = recipientes.get(recInd).getId();
+            Recipiente recipiente = recipientes.get(recInd);
             int quantRec = Integer.parseInt(sQuantRec);
-            String recipiente = recipientes.get(recInd).getNome();
-            
-            int subId = substratos.get(subInd).getId();
+            Substrato substrato = substratos.get(subInd);
             double quantSub = Double.parseDouble(sQuantSub);
-            String substrato = substratos.get(subInd).getNome();
+
+            plantio.setData(data.format(format));
+            plantio.setSemente(semente);
+            plantio.setQuantSem(quantSem);
+            plantio.setRecipiente(recipiente);
+            plantio.setQuantRec(quantRec);
+            plantio.setSubstrato(substrato);
+            plantio.setQuantSub(quantSub);
             
-            p.setData(data.format(format));
-
-            p.setSemente(semente);
-            p.setSementeId(semId);
-            p.setQuantSem(quantSem);
-
-            p.setRecipiente(recipiente);
-            p.setRecipienteId(recId);
-            p.setQuantRec(quantRec);
-
-            p.setSubstrato(substrato);
-            p.setSubstratoId(subId);
-            p.setQuantSub(quantSub);
-
-            p.setServicos(listaServico);
-            p.setTotal(total);
+            plantio.getServicosPrestados().clear();
+            plantio.getServicosPrestados().addAll(listaServicoPrestado);
+            
+            
 
             if (novoItem) {
-                dao.create(p);
-                lista.add(p);
-                clean();
-            } else {
-                dao.update(p);
+                if (dao.create(plantio)) {
+                    lista.add(plantio);
+                } else {
+                    System.out.println("Registro não foi criado");
+                }
+            }//novo item
+            else {
+                dao.update(plantio);
             }
+            
+            tfTotal.setText("R$ " + plantio.precificar());
             changeDisable(true);
-
         }// fim if validadte
 
     }
 
     @FXML
-    private void excluir(ActionEvent event) {
+    private void excluir() {
         PlantioDAO dao = new PlantioDAO();
         try {
             Plantio p = selectionedObject();
@@ -380,6 +372,19 @@ public class PlantiosController implements Initializable {
         } catch (RuntimeException ex) {
             AlertBox.warning("Nenhuma coluna selecionada.");
         }
+    }
+    
+    @FXML
+    private void cancelar(){
+        if(novoItem){
+            clean();
+        }
+        else{
+            selecionar();
+            selectionedObject().getServicosPrestados().clear();
+            selectionedObject().getServicosPrestados().addAll(spBackUp);
+        }
+        changeDisable(true);
     }
     //</editor-fold>
 
@@ -428,99 +433,34 @@ public class PlantiosController implements Initializable {
     private void readPlantios() {
         PlantioDAO dao = new PlantioDAO();
         lista.addAll(dao.read());
-
-        lista.forEach((p) -> {
-            int id = p.getSementeId();
-            p.setSemente(searchSemente(id).getNome());
-            id = p.getRecipienteId();
-            p.setRecipiente(searchRecipiente(id).getNome());
-            id = p.getSubstratoId();
-            p.setSubstrato(searchSubstrato(id).getNome());
-
-            p.getServicos().forEach((s) -> {
-                s.setServico(searchServico(s.getSerId()));
-            });
-        });
-    }
-    //</editor-fold>
-
-    //<editor-fold defaultstate="collapsed" desc="Métodos Search">
-    private Semente searchSemente(int id) {
-        Semente semente = null;
-
-        for (Semente s : sementes) {
-            if (s.getId() == id) {
-                semente = s;
-                break;
-            }
-        }
-
-        return semente;
-    }
-
-    private Recipiente searchRecipiente(int id) {
-        Recipiente recipiente = null;
-
-        for (Recipiente r : recipientes) {
-            if (r.getId() == id) {
-                recipiente = r;
-                break;
-            }
-        }
-
-        return recipiente;
-    }
-
-    private Substrato searchSubstrato(int id) {
-        Substrato substrato = null;
-
-        for (Substrato s : substratos) {
-            if (s.getId() == id) {
-                substrato = s;
-                break;
-            }
-        }
-
-        return substrato;
-    }
-
-    private String searchServico(int id) {
-        String servico = null;
-        for (Servico s : servicos) {
-            if (s.getId() == id) {
-                servico = s.getTipo();
-                break;
-            }
-        }
-        return servico;
     }
     //</editor-fold>
 
     @FXML
-    void selecionar(MouseEvent event) {
+    void selecionar() {
         try {
             Plantio p = selectionedObject();
 
             date.setValue(LocalDate.parse(p.getData(), format));
-            cbSemente.getSelectionModel().select(p.getSemente());
+            cbSemente.getSelectionModel().select(p.getSemente().getNome());
             tfSemente.setText(String.valueOf(p.getQuantSem()));
-            cbRecipiente.getSelectionModel().select(p.getRecipiente());
+            cbRecipiente.getSelectionModel().select(p.getRecipiente().getNome());
             tfRecipiente.setText(String.valueOf(p.getQuantRec()));
-            cbSubstrato.getSelectionModel().select(p.getSubstrato());
+            cbSubstrato.getSelectionModel().select(p.getSubstrato().getNome());
             tfSubstrato.setText(String.valueOf(p.getQuantSub()));
 
             semInd = cbSemente.getSelectionModel().getSelectedIndex();
             subInd = cbSubstrato.getSelectionModel().getSelectedIndex();
             recInd = cbRecipiente.getSelectionModel().getSelectedIndex();
+            
+            listaServicoPrestado.clear();
+            listaServicoPrestado.addAll(p.getServicosPrestados());
 
-            tblServicos.getItems().clear();
-            tblServicos.getItems().addAll(p.getServicos());
-
-            lblTotal.setText("Total: R$" + p.getTotal());
+            tfTotal.setText("R$" + p.getTotal());
         } catch (RuntimeException ex) {
         }
     }
-
+    
     private int selectionedIndex() {
         int selectedIndex = tbl.getSelectionModel().getSelectedIndex();
         return selectedIndex;
@@ -542,8 +482,8 @@ public class PlantiosController implements Initializable {
         btnAddServico.setDisable(opt);
         btnRmServico.setDisable(opt);
         tblServicos.setDisable(opt);
-        btnCalcularTotal.setDisable(opt);
         btnSalvar.setDisable(opt);
+        btnCancelar.setDisable(opt);
         tfSemente.setDisable(opt);
         tfRecipiente.setDisable(opt);
         tfSubstrato.setDisable(opt);
@@ -563,7 +503,6 @@ public class PlantiosController implements Initializable {
         tfSemente.setText(null);
         tfRecipiente.setText(null);
         tfSubstrato.setText(null);
-        tblServicos.getItems().clear();
-        lblTotal.setText("Total: R$___,__");
+        listaServicoPrestado.clear();
     }
 }

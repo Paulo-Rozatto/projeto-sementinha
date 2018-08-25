@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui.controllers;
 
 import beans.Semente;
@@ -11,9 +6,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -22,7 +15,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
 import util.AlertBox;
 import util.Validate;
 
@@ -65,6 +57,9 @@ public class SementesController implements Initializable {
 
     @FXML
     private Button btnExcluir;
+    
+    @FXML
+    private Button btnCancelar;
 
     @FXML
     private ComboBox<String> cbDormencia;
@@ -112,17 +107,17 @@ public class SementesController implements Initializable {
     }
 
     @FXML
-    void novo(ActionEvent event) {
+    private void novo() {
         clean();
-        
+
         changeDisable(false);
         novoItem = true;
     }
 
     @FXML
-    void editar(ActionEvent event) {
+    private void editar() {
         try {
-            if (getSelectionedObject() != null) {
+            if (selectionedObject() != null) {
                 changeDisable(false);
                 novoItem = false;
             }
@@ -132,7 +127,7 @@ public class SementesController implements Initializable {
     }
 
     @FXML
-    void salvar(ActionEvent event) {
+    void salvar() {
         SementeDAO dao = new SementeDAO();
         Semente s;
         String nome, especie, plantio, dormencia, precoString;
@@ -147,20 +142,21 @@ public class SementesController implements Initializable {
 
         if (Validate.semente(nome, especie, precoString, plantio, dormencia)) {
             double preco = Double.parseDouble(precoString);
+            s = new Semente();
+            s.setNome(nome);
+            s.setEspecie(especie);
+            s.setTipoPlantio(plantio);
+            s.setDomercia(dormencia);
+            s.setPreco(preco);
+            s.setPrecoEmGramas(precoEmGramas);
+
             if (novoItem) {
-                s = new Semente(nome, especie, preco, precoEmGramas, plantio, dormencia);
                 if (dao.create(s)) {
                     lista.add(s);
-                     clean();
+                    clean();
                 }
             } else {
-                s = getSelectionedObject();
-                s.setNome(nome);
-                s.setEspecie(especie);
-                s.setTipoPlantio(plantio);
-                s.setDomercia(dormencia);
-                s.setPreco(preco);
-                s.setPrecoEmGramas(precoEmGramas);
+                lista.set(selectionedIndex(), s);
                 dao.update(s);
             }
             changeDisable(true);
@@ -168,11 +164,11 @@ public class SementesController implements Initializable {
     }
 
     @FXML
-    void excluir(ActionEvent event) {
+    private void excluir() {
         SementeDAO dao = new SementeDAO();
-        
+
         try {
-            Semente s = getSelectionedObject();
+            Semente s = selectionedObject();
 
             if (AlertBox.confirmDelete()) {
                 if (dao.delete(s.getId())) {
@@ -186,9 +182,9 @@ public class SementesController implements Initializable {
     }
 
     @FXML
-    void selecionar(MouseEvent event) {
+    private void selecionar() {
         try {
-            Semente s = getSelectionedObject();
+            Semente s = selectionedObject();
 
             tfNome.setText(s.getNome());
             tfEspecie.setText(s.getEspecie());
@@ -198,16 +194,28 @@ public class SementesController implements Initializable {
             cbPlantio.setValue(s.getTipoPlantio());
             cbDormencia.setValue(s.getDormencia());
 
-        } catch (RuntimeException ex) {}
+        } catch (RuntimeException ex) {
+        }
+    }
+    
+    @FXML
+    private void cancelar(){
+        if(novoItem){
+            clean();
+        }
+        else{
+            selecionar();
+        }
+        changeDisable(true);
     }
 
-    private int getSelectionedIndex() {
+    private int selectionedIndex() {
         int selectedIndex = tbl.getSelectionModel().getSelectedIndex();
         return selectedIndex;
     }
 
-    private Semente getSelectionedObject() {
-        Semente s = tbl.getItems().get(getSelectionedIndex());
+    private Semente selectionedObject() {
+        Semente s = tbl.getItems().get(selectionedIndex());
         return s;
     }
 
@@ -220,6 +228,7 @@ public class SementesController implements Initializable {
         cbPlantio.setDisable(opt);
         cbDormencia.setDisable(opt);
         btnSalvar.setDisable(opt);
+        btnCancelar.setDisable(opt);
 
         btnNovo.setDisable(!opt);
         btnEditar.setDisable(!opt);

@@ -1,12 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package beans;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -15,12 +8,18 @@ import javafx.beans.property.StringProperty;
  * @author paulo
  */
 public class ServicoPrestado {
-    private final IntegerProperty plaId;
-    private final IntegerProperty serId;
-    private final StringProperty servico;
+//    private final IntegerProperty plaId;
+//    private final IntegerProperty serId;
+    private Plantio plantio;
+    private Servico servico;
+//    private final StringProperty servico;
     private final StringProperty horas;
+    
+    public ServicoPrestado(){
+        this.horas = new SimpleStringProperty();
+    }
 
-    public ServicoPrestado(int plaId, int serId, String horas) {
+    /*public ServicoPrestado(int plaId, int serId, String horas) {
         this.plaId = new SimpleIntegerProperty(plaId);
         this.serId = new SimpleIntegerProperty(serId);
         this.servico = new SimpleStringProperty();
@@ -32,9 +31,32 @@ public class ServicoPrestado {
         this.serId = new SimpleIntegerProperty(serId);
         this.servico = new SimpleStringProperty(servico);
         this.horas = new SimpleStringProperty(horas);
+    }*/
+    
+    public double precificar(){
+        double quant = Double.parseDouble(horas.get());
+        return servico.precficar(quant);
+    }
+
+    public Plantio getPlantio() {
+        return plantio;
+    }
+
+    public void setPlantio(Plantio plantio) {
+        this.plantio = plantio;
+    }
+
+    public Servico getServico() {
+        return servico;
+    }
+
+    public void setServico(Servico servico) {
+        this.servico = servico;
     }
     
-    public int getPlaId() {
+    
+    
+    /*public int getPlaId() {
         return plaId.get();
     }
 
@@ -49,6 +71,7 @@ public class ServicoPrestado {
     public IntegerProperty serIdProperty() {
         return serId;
     }
+    */
     
     public void setHoras(String horas) {
         this.horas.set(horas);
@@ -62,6 +85,7 @@ public class ServicoPrestado {
         return horas;
     }
     
+    /*
     public String getServico(){
         return servico.get();
     }
@@ -73,4 +97,5 @@ public class ServicoPrestado {
     public StringProperty servicoProperty(){
         return servico;
     }
+    */
 }

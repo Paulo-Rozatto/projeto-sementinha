@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" prefHeight="495.0" prefWidth="960.0" style="-fx-background-color: #FFFAFA;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.RecipientesController">
+<AnchorPane id="AnchorPane" prefHeight="495.0" prefWidth="960.0" style="-fx-background-color: #FFFAFA;" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.RecipientesController">
    <children>
       <Pane prefHeight="495.0" prefWidth="250.0" style="-fx-background-color: #8B8989;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -68,15 +68,25 @@
                            </styleClass></Button>
                      </children>
                   </HBox>
-                  <Button fx:id="btnExcluir" mnemonicParsing="false" onAction="#excluir" prefHeight="26.0" prefWidth="65.0" stylesheets="@estilocss.css" text="Excluir">
-                     <VBox.margin>
-                        <Insets left="70.0" />
-                     </VBox.margin>
-                     <styleClass>
-                        <String fx:value="botoes-menu-esquerdo" />
-                        <String fx:value="button2" />
-                     </styleClass>
-                  </Button>
+                  <HBox>
+                     <children>
+                        <Button fx:id="btnExcluir" mnemonicParsing="false" onAction="#excluir" prefHeight="26.0" prefWidth="65.0" stylesheets="@estilocss.css" text="Excluir">
+                           <styleClass>
+                              <String fx:value="botoes-menu-esquerdo" />
+                              <String fx:value="button2" />
+                           </styleClass>
+                           <HBox.margin>
+                              <Insets left="35.0" right="5.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="btnCancelar" disable="true" mnemonicParsing="false" onAction="#cancelar" stylesheets="@estilocss.css" text="Cancelar">
+                           <styleClass>
+                              <String fx:value="botoes-menu-esquerdo" />
+                              <String fx:value="button2" />
+                           </styleClass>
+                        </Button>
+                     </children>
+                  </HBox>
                </children>
             </VBox>
          </children>

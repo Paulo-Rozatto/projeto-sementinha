@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui.controllers;
 
 import beans.Recipiente;
@@ -11,14 +6,12 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import util.AlertBox;
 import util.Validate;
 
@@ -31,8 +24,10 @@ public class RecipientesController implements Initializable {
 
     @FXML
     private TextField tfNome;
+    
     @FXML
     private TextField tfVolume;
+    
     @FXML
     private TextField tfPreco;
 
@@ -47,6 +42,9 @@ public class RecipientesController implements Initializable {
 
     @FXML
     private Button btnExcluir;
+    
+    @FXML
+    private Button btnCancelar;
 
     @FXML
     private TableView<Recipiente> tbl;
@@ -83,7 +81,7 @@ public class RecipientesController implements Initializable {
     }
 
     @FXML
-    private void novo(ActionEvent event) {
+    private void novo() {
         clean();
 
         changeDisable(false);
@@ -91,7 +89,7 @@ public class RecipientesController implements Initializable {
     }
 
     @FXML
-    private void editar(ActionEvent event) {
+    private void editar() {
         try {
             if (selectionedObject() != null) {
                 changeDisable(false);
@@ -103,7 +101,7 @@ public class RecipientesController implements Initializable {
     }
 
     @FXML
-    private void salvar(ActionEvent event) {
+    private void salvar() {
         RecipienteDAO dao = new RecipienteDAO();
         Recipiente r;
 
@@ -114,18 +112,18 @@ public class RecipientesController implements Initializable {
         if (Validate.recipiente(nome, volumeString, precoString)) {
             double volume = Double.parseDouble(volumeString);
             double preco = Double.parseDouble(precoString);
+            r = new Recipiente();
+            r.setNome(nome);
+            r.setVolume(volume);
+            r.setPreco(preco);
             
             if (novoItem) {
-                r = new Recipiente(nome, volume, preco);
                 if (dao.create(r)) {
                     lista.add(r);
                     clean();
                 }
             } else {
-                r = selectionedObject();
-                r.setNome(nome);
-                r.setVolume(volume);
-                r.setPreco(preco);
+                lista.set(selectionedIndex(), r);
                 dao.update(r);
             }
             changeDisable(true);
@@ -133,7 +131,7 @@ public class RecipientesController implements Initializable {
     }
 
     @FXML
-    private void excluir(ActionEvent event) {
+    private void excluir() {
         RecipienteDAO dao = new RecipienteDAO();
 
         try {
@@ -151,7 +149,7 @@ public class RecipientesController implements Initializable {
     }
 
     @FXML
-    void selecionar(MouseEvent event) {
+    private void selecionar() {
         try {
             Recipiente r = selectionedObject();
 
@@ -160,6 +158,17 @@ public class RecipientesController implements Initializable {
             tfPreco.setText(String.valueOf(r.getPreco()));
         } catch (RuntimeException ex) {
         }
+    }
+    
+    @FXML
+    private void cancelar(){
+        if(novoItem){
+            clean();
+        }
+        else{
+            selecionar();
+        }
+        changeDisable(true);
     }
 
     private int selectionedIndex() {
@@ -177,6 +186,7 @@ public class RecipientesController implements Initializable {
         tfVolume.setDisable(opt);
         tfPreco.setDisable(opt);
         btnSalvar.setDisable(opt);
+        btnCancelar.setDisable(opt);
 
         btnNovo.setDisable(!opt);
         btnEditar.setDisable(!opt);

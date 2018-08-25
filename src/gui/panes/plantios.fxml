@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="495.0" prefWidth="960.0" style="-fx-background-color: #fff;" stylesheets="@estilocss.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.PlantiosController">
+<AnchorPane id="AnchorPane" prefHeight="495.0" prefWidth="960.0" style="-fx-background-color: #fff;" stylesheets="@estilocss.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.PlantiosController">
    <children>
       <Pane prefHeight="495.0" prefWidth="280.0" style="-fx-background-color: #8B8989;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -130,7 +130,7 @@
                   </TableView>
                   <HBox alignment="CENTER" centerShape="false" nodeOrientation="LEFT_TO_RIGHT">
                      <children>
-                        <Label fx:id="lblTotal" text="Total: R$___,__ " textFill="WHITE">
+                        <Label text="Total:" textFill="WHITE">
                            <font>
                               <Font size="17.0" />
                            </font>
@@ -138,14 +138,7 @@
                               <Insets />
                            </HBox.margin>
                         </Label>
-                        <Button fx:id="btnCalcularTotal" alignment="TOP_RIGHT" contentDisplay="CENTER" disable="true" mnemonicParsing="false" onAction="#calcularTotal" stylesheets="@estilocss.css" text="Calcular">
-                           <HBox.margin>
-                              <Insets left="10.0" />
-                           </HBox.margin>
-                           <styleClass>
-                              <String fx:value="botoes-menu-esquerdo" />
-                              <String fx:value="button2" />
-                           </styleClass></Button>
+                        <TextField fx:id="tfTotal" editable="false" prefHeight="26.0" prefWidth="117.0" />
                      </children>
                   </HBox>
                </children>
@@ -179,15 +172,25 @@
                            </styleClass></Button>
                      </children>
                   </HBox>
-                  <Button fx:id="btnExcluir" mnemonicParsing="false" onAction="#excluir" prefHeight="26.0" prefWidth="65.0" stylesheets="@estilocss.css" text="Excluir">
-                     <VBox.margin>
-                        <Insets left="70.0" />
-                     </VBox.margin>
-                     <styleClass>
-                        <String fx:value="botoes-menu-esquerdo" />
-                        <String fx:value="button2" />
-                     </styleClass>
-                  </Button>
+                  <HBox>
+                     <children>
+                        <Button fx:id="btnExcluir" mnemonicParsing="false" onAction="#excluir" prefHeight="26.0" prefWidth="65.0" stylesheets="@estilocss.css" text="Excluir">
+                           <styleClass>
+                              <String fx:value="botoes-menu-esquerdo" />
+                              <String fx:value="button2" />
+                           </styleClass>
+                           <HBox.margin>
+                              <Insets left="35.0" right="5.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="btnCancelar" disable="true" mnemonicParsing="false" onAction="#cancelar" stylesheets="@estilocss.css" text="Cancelar">
+                           <styleClass>
+                              <String fx:value="botoes-menu-esquerdo" />
+                              <String fx:value="button2" />
+                           </styleClass>
+                        </Button>
+                     </children>
+                  </HBox>
                </children>
             </VBox>
          </children>
