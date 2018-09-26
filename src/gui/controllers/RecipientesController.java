@@ -198,6 +198,7 @@ public class RecipientesController implements Initializable {
         tfNome.setText("");
         tfVolume.setText("");
         tfPreco.setText("");
+        tbl.getSelectionModel().select(null);
     }
 
 }

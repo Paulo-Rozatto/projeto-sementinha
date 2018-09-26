@@ -45,7 +45,7 @@ public class PlantioDAO {
 
             if (rs.next()) {
                 p.setId(rs.getInt(1));
-                spd.create(p);
+                spd.create(p.getServicosPrestados());
             }
 
             System.out.println("Criação de registro executada com sucesso.");

@@ -181,6 +181,7 @@ public class ServicosController implements Initializable {
     private void clean() {
         tfTipo.setText("");
         tfPreco.setText("");
+        tbl.getSelectionModel().select(null);
     }
 
 }

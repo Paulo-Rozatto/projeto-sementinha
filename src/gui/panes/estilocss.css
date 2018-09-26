@@ -16,7 +16,7 @@ and open the template in the editor.
         linear-gradient(#395cab, #223768);
     -fx-background-insets: 0,1,2,3;
     -fx-background-radius: 3,2,2,2;
-    -fx-padding: 12 30 12 30;
+    -fx-padding: 12 20 12 20;
     -fx-text-fill: white;
     -fx-font-size: 12px;
 }

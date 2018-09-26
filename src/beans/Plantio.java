@@ -1,5 +1,6 @@
 package beans;
 
+import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
@@ -32,6 +33,7 @@ public class Plantio {
         this.quantRec = new SimpleIntegerProperty();
         this.quantSub = new SimpleDoubleProperty();
         this.total = new SimpleDoubleProperty();
+        servicosPrestados = new ArrayList();
     }
 
     public double precificar() {

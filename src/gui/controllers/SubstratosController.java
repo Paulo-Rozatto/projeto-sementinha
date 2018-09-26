@@ -195,5 +195,6 @@ public class SubstratosController implements Initializable {
         tfNome.setText("");
         tfPreco.setText("");
         taDescricao.setText("");
+        tbl.getSelectionModel().select(null);
     }
 }

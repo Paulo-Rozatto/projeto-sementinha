@@ -243,5 +243,6 @@ public class SementesController implements Initializable {
         rbGramas.setSelected(true);
         cbPlantio.setValue(null);
         cbDormencia.setValue(null);
+        tbl.getSelectionModel().select(null);
     }
 }

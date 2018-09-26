@@ -20,7 +20,8 @@ public class ServicoPrestadoDAO {
     public ServicoPrestadoDAO() {
     }
 
-    public boolean create(Plantio p) {
+    
+    public boolean create(List<ServicoPrestado> spList){
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -29,8 +30,7 @@ public class ServicoPrestadoDAO {
             con.setAutoCommit(false);
 
             stmt = con.prepareStatement("INSERT INTO ServicoPrestado(pla_id,ser_id,horas) values(?,?,?)");
-            for (ServicoPrestado sp : p.getServicosPrestados()) {
-                sp.setPlantio(p);
+            for (ServicoPrestado sp : spList) {
                 stmt.setInt(1, sp.getPlantio().getId());
                 stmt.setInt(2, sp.getServico().getId());
                 stmt.setDouble(3, Double.parseDouble(sp.getHoras()));
@@ -38,27 +38,6 @@ public class ServicoPrestadoDAO {
             }
             stmt.executeBatch();
             con.commit();
-
-            return true;
-        } catch (SQLException ex) {
-            AlertBox.exception("Falha na criação de registro de Serviços Prestados: ", ex);
-            return false;
-        } finally {
-            ConnectionFactory.closeConnection(con, stmt);
-        }
-    }
-
-    public boolean create(int pla_id, int ser_id, double horas) {
-        Connection con = ConnectionFactory.getConnection();
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        try {
-            stmt = con.prepareStatement("INSERT INTO ServicoPrestado(pla_id,ser_id,horas) values(?,?,?)");
-            stmt.setInt(1, pla_id);
-            stmt.setInt(2, ser_id);
-            stmt.setDouble(3, horas);
-            stmt.executeUpdate();
 
             return true;
         } catch (SQLException ex) {
@@ -97,45 +76,51 @@ public class ServicoPrestadoDAO {
         return servicosPrestados;
     }
     
-    public boolean update(int pla_id, int ser_id, double horas) {
+    public boolean update(List<ServicoPrestado> spList){
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
 
         try {
+            con.setAutoCommit(false);
+
             stmt = con.prepareStatement("UPDATE ServicoPrestado SET horas = ? WHERE pla_id = ? AND ser_id = ?");
-            stmt.setDouble(1, horas);
-            stmt.setInt(2, pla_id);
-            stmt.setInt(3, ser_id);
+            for (ServicoPrestado sp : spList) {
+                stmt.setDouble(1, Double.parseDouble(sp.getHoras()));
+                stmt.setInt(2, sp.getPlantio().getId());
+                stmt.setInt(3, sp.getServico().getId());
+                stmt.addBatch();
+            }
+            stmt.executeBatch();
+            con.commit();
 
-            stmt.executeUpdate();
-
-            System.out.println("Atualização de registro executada com sucesso.");
             return true;
-
         } catch (SQLException ex) {
-            AlertBox.exception("Falha na atualização de registro de Plantios: ", ex);
+            AlertBox.exception("Falha na atualização de registro de Serviços Prestados: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);
         }
     }
 
-    public boolean delete(ServicoPrestado sp) {
+    public boolean delete(List<ServicoPrestado> spList){
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
 
         try {
+            con.setAutoCommit(false);
+
             stmt = con.prepareStatement("DELETE FROM ServicoPrestado WHERE  pla_id = ? AND ser_id = ?");
-            stmt.setInt(1, sp.getPlantio().getId());
-            stmt.setInt(2, sp.getServico().getId());
+            for (ServicoPrestado sp : spList) {
+                stmt.setInt(1, sp.getPlantio().getId());
+                stmt.setInt(2, sp.getServico().getId());
+                stmt.addBatch();
+            }
+            stmt.executeBatch();
+            con.commit();
 
-            stmt.executeUpdate();
-
-            System.out.println("Registro apagado com sucesso.");
             return true;
-
         } catch (SQLException ex) {
-            AlertBox.exception("Não foi possível apagar o registro do Plantio: ", ex);
+            AlertBox.exception("Falha na atualização de registro de Serviços Prestados: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);
