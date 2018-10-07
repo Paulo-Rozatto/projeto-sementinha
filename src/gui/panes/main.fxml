@@ -61,12 +61,6 @@
             </Button>
          </children>
       </HBox>
-      <StackPane fx:id="stackPane" layoutY="65.0" prefHeight="495.0" prefWidth="960.0" style="-fx-background-color: #556;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="67.0">
-        <fx:include  source="/gui/panes/sementes.fxml"/>
-        <fx:include  source="/gui/panes/recipientes.fxml"/>
-        <fx:include  source="/gui/panes/substratos.fxml"/>
-        <fx:include  source="/gui/panes/servicos.fxml"/>
-        <fx:include  source="/gui/panes/plantios.fxml"/>
-      </StackPane>
+      <StackPane fx:id="stackPane" layoutY="65.0" prefHeight="495.0" prefWidth="960.0" style="-fx-background-color: #556;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="67.0"></StackPane>
    </children>
 </AnchorPane>

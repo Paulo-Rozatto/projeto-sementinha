@@ -2,8 +2,16 @@ package gui.controllers;
 
 import beans.Recipiente;
 import db.dao.RecipienteDAO;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -20,14 +28,14 @@ import util.Validate;
  *
  * @author paulo
  */
-public class RecipientesController implements Initializable {
+public class RecipientesController extends Controller<Recipiente> implements Initializable {
 
     @FXML
     private TextField tfNome;
-    
+
     @FXML
     private TextField tfVolume;
-    
+
     @FXML
     private TextField tfPreco;
 
@@ -42,7 +50,7 @@ public class RecipientesController implements Initializable {
 
     @FXML
     private Button btnExcluir;
-    
+
     @FXML
     private Button btnCancelar;
 
@@ -57,7 +65,11 @@ public class RecipientesController implements Initializable {
     @FXML
     private TableColumn<Recipiente, Double> colPreco;
 
-    private ObservableList<Recipiente> lista = FXCollections.observableArrayList();
+    @FXML
+    private TextField tfPesquisar;
+
+    private ObservableList<Recipiente> lista;
+
     private boolean novoItem;
 
     /**
@@ -68,40 +80,37 @@ public class RecipientesController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        //inicializa a lista
+        lista = FXCollections.observableArrayList();
+        RecipienteDAO dao = new RecipienteDAO();
+        lista.addAll(dao.read());
+
         //Atribuição dos atributos da classe Recipiente para cada coluna da  tabela
         colId.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
         colNome.setCellValueFactory(cellData -> cellData.getValue().nomeProperty());
         colVolume.setCellValueFactory(cellData -> cellData.getValue().volumeProperty().asObject());
         colPreco.setCellValueFactory(cellData -> cellData.getValue().precoProperty().asObject());
 
-        RecipienteDAO dao = new RecipienteDAO();
-        lista.addAll(dao.read());
+        //coloca itens na lista
         tbl.setItems(lista);
-        
     }
 
     @FXML
-    private void novo() {
-        clean();
-
-        changeDisable(false);
+    @Override
+    protected void novo() {
+        super.novo();
         novoItem = true;
     }
 
     @FXML
     private void editar() {
-        try {
-            if (selectionedObject() != null) {
-                changeDisable(false);
-                novoItem = false;
-            }
-        } catch (RuntimeException ex) {
-            AlertBox.warning("Nenhuma coluna selecionada.");
-        }
+        super.editar(tbl, novoItem);
+        novoItem = false;
     }
 
     @FXML
-    private void salvar() {
+    @Override
+    protected void salvar() {
         RecipienteDAO dao = new RecipienteDAO();
         Recipiente r;
 
@@ -116,14 +125,15 @@ public class RecipientesController implements Initializable {
             r.setNome(nome);
             r.setVolume(volume);
             r.setPreco(preco);
-            
+
             if (novoItem) {
                 if (dao.create(r)) {
                     lista.add(r);
                     clean();
                 }
             } else {
-                lista.set(selectionedIndex(), r);
+                r.setId(selectedObject(tbl).getId());
+                lista.set(selectedIndex(tbl), r);
                 dao.update(r);
             }
             changeDisable(true);
@@ -131,11 +141,12 @@ public class RecipientesController implements Initializable {
     }
 
     @FXML
-    private void excluir() {
+    @Override
+    protected void excluir() {
         RecipienteDAO dao = new RecipienteDAO();
 
         try {
-            Recipiente r = selectionedObject();
+            Recipiente r = selectedObject(tbl);
 
             if (AlertBox.confirmDelete()) {
                 if (dao.delete(r.getId())) {
@@ -151,37 +162,73 @@ public class RecipientesController implements Initializable {
     @FXML
     private void selecionar() {
         try {
-            Recipiente r = selectionedObject();
-
+            Recipiente r = selectedObject(tbl);
             tfNome.setText(r.getNome());
             tfVolume.setText(String.valueOf(r.getVolume()));
             tfPreco.setText(String.valueOf(r.getPreco()));
         } catch (RuntimeException ex) {
         }
     }
-    
+
     @FXML
-    private void cancelar(){
-        if(novoItem){
+    private void cancelar() {
+        if (novoItem) {
             clean();
-        }
-        else{
+        } else {
             selecionar();
         }
         changeDisable(true);
     }
 
-    private int selectionedIndex() {
-        int selectedIndex = tbl.getSelectionModel().getSelectedIndex();
-        return selectedIndex;
+    @FXML
+    @Override
+    protected void exportar() {
+        Writer writer = null;
+        String path = super.saveDialog("recipiente");
+        try {
+            File file = new File(path);
+            writer = new BufferedWriter(new FileWriter(file));
+            String text;
+
+            text = "ID" + "," + "Nome" + "," + "Volume" + "," + "Preço" + "\n";
+            writer.write(text);
+
+            for (Recipiente r : lista) {
+
+                text = r.getId() + "," + r.getNome() + "," + r.getVolume() + "," + r.getPreco() + "\n";
+
+                writer.write(text);
+            }
+        } catch (IOException ex) {
+        } finally {
+            try {
+                writer.flush();
+                writer.close();
+            } catch (IOException ex1) {
+                Logger.getLogger(RecipientesController.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+        }
     }
 
-    private Recipiente selectionedObject() {
-        Recipiente r = tbl.getItems().get(selectionedIndex());
-        return r;
+    @FXML
+    @Override
+    protected void pesquisar() {
+        try {
+            ObservableList<Recipiente> filtLista = FXCollections.observableArrayList();
+            filtLista.setAll(lista.stream().filter(arg -> arg.getNome().toLowerCase().contains(tfPesquisar.getText().toLowerCase())).collect(Collectors.toList()));
+            tbl.setItems(filtLista);
+        } catch (RuntimeException ex) {
+            System.out.println(ex);
+        }
     }
 
-    private void changeDisable(boolean opt) {
+    @FXML
+    protected void limparPesquisa() {
+        super.limparPesquisa(tfPesquisar, tbl, lista);
+    }
+
+    @Override
+    protected void changeDisable(boolean opt) {
         tfNome.setDisable(opt);
         tfVolume.setDisable(opt);
         tfPreco.setDisable(opt);
@@ -194,7 +241,8 @@ public class RecipientesController implements Initializable {
         tbl.setDisable(!opt);
     }
 
-    private void clean() {
+    @Override
+    protected void clean() {
         tfNome.setText("");
         tfVolume.setText("");
         tfPreco.setText("");

@@ -2,8 +2,16 @@ package gui.controllers;
 
 import beans.Semente;
 import db.dao.SementeDAO;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
@@ -23,7 +31,7 @@ import util.Validate;
  *
  * @author paulo
  */
-public class SementesController implements Initializable {
+public class SementesController extends Controller<Semente> implements Initializable {
 
     @FXML
     private TextField tfNome;
@@ -81,6 +89,9 @@ public class SementesController implements Initializable {
 
     @FXML
     private TableColumn<Semente, String> colDormencia;
+    
+    @FXML
+    private TextField tfPesquisar;
 
     private ObservableList<Semente> lista = FXCollections.observableArrayList();
     private boolean novoItem;
@@ -107,27 +118,21 @@ public class SementesController implements Initializable {
     }
 
     @FXML
-    private void novo() {
-        clean();
-
-        changeDisable(false);
+    @Override
+    protected void novo() {
+        super.novo();
         novoItem = true;
     }
 
     @FXML
     private void editar() {
-        try {
-            if (selectionedObject() != null) {
-                changeDisable(false);
-                novoItem = false;
-            }
-        } catch (RuntimeException ex) {
-            AlertBox.warning("Nenhuma coluna selecionada.");
-        }
+        super.editar(tbl, novoItem);
+        novoItem = false;
     }
 
     @FXML
-    void salvar() {
+    @Override
+    protected void salvar() {
         SementeDAO dao = new SementeDAO();
         Semente s;
         String nome, especie, plantio, dormencia, precoString;
@@ -156,7 +161,7 @@ public class SementesController implements Initializable {
                     clean();
                 }
             } else {
-                lista.set(selectionedIndex(), s);
+                lista.set(selectedIndex(tbl), s);
                 dao.update(s);
             }
             changeDisable(true);
@@ -164,11 +169,12 @@ public class SementesController implements Initializable {
     }
 
     @FXML
-    private void excluir() {
+    @Override
+    protected void excluir() {
         SementeDAO dao = new SementeDAO();
 
         try {
-            Semente s = selectionedObject();
+            Semente s = selectedObject(tbl);
 
             if (AlertBox.confirmDelete()) {
                 if (dao.delete(s.getId())) {
@@ -184,7 +190,7 @@ public class SementesController implements Initializable {
     @FXML
     private void selecionar() {
         try {
-            Semente s = selectionedObject();
+            Semente s = selectedObject(tbl);
 
             tfNome.setText(s.getNome());
             tfEspecie.setText(s.getEspecie());
@@ -209,17 +215,56 @@ public class SementesController implements Initializable {
         changeDisable(true);
     }
 
-    private int selectionedIndex() {
-        int selectedIndex = tbl.getSelectionModel().getSelectedIndex();
-        return selectedIndex;
+    @FXML
+    @Override
+    protected void exportar() {
+        Writer writer = null;
+        String path = super.saveDialog("Semente");
+        try {
+            File file = new File(path);
+            writer = new BufferedWriter(new FileWriter(file));
+            String text;
+
+            text = "ID" + "," + "Nome" + "," + "Espécie" + "," +"Preço" + ","+ "Medida"+ ","+ "Tipo de plantio" + ","+ "Quebra de dormência" + "\n";
+            writer.write(text);
+            
+            for (Semente s : lista) {
+                String medida = s.isPrecoEmGramas() ? "gramas":"unidade";
+                
+                text = s.getId() + "," + s.getNome()+ "," + s.getEspecie() + "," + s.getPreco() + "," + medida + "," + s.getTipoPlantio() + "," + s.getDormencia() + "\n";
+
+                writer.write(text);
+            }
+        } catch (IOException | NullPointerException ex) {
+        }finally {
+            try {
+                writer.flush();
+                writer.close();
+            } catch (IOException ex1) {
+                Logger.getLogger(RecipientesController.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+        }
+    }
+    
+    @FXML
+    @Override
+    protected void pesquisar() {
+        try {
+            ObservableList<Semente> filtLista = FXCollections.observableArrayList();
+            filtLista.setAll(lista.stream().filter(arg -> arg.getNome().toLowerCase().contains(tfPesquisar.getText().toLowerCase())).collect(Collectors.toList()));
+            tbl.setItems(filtLista);
+        } catch (RuntimeException ex) {
+            System.out.println(ex);
+        }
+    }
+    
+    @FXML
+    private void limparPesquisa(){
+        super.limparPesquisa(tfPesquisar, tbl, lista);
     }
 
-    private Semente selectionedObject() {
-        Semente s = tbl.getItems().get(selectionedIndex());
-        return s;
-    }
-
-    private void changeDisable(boolean opt) {
+    @Override
+    protected void changeDisable(boolean opt) {
         tfNome.setDisable(opt);
         tfEspecie.setDisable(opt);
         tfPreco.setDisable(opt);
@@ -236,7 +281,8 @@ public class SementesController implements Initializable {
         tbl.setDisable(!opt);
     }
 
-    private void clean() {
+    @Override
+    protected void clean() {
         tfNome.setText("");
         tfEspecie.setText("");
         tfPreco.setText("");

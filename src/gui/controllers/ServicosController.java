@@ -2,8 +2,16 @@ package gui.controllers;
 
 import beans.Servico;
 import db.dao.ServicoDAO;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -20,7 +28,7 @@ import util.Validate;
  *
  * @author paulo
  */
-public class ServicosController implements Initializable {
+public class ServicosController extends Controller<Servico> implements Initializable {
 
     @FXML
     private TextField tfTipo;
@@ -44,12 +52,18 @@ public class ServicosController implements Initializable {
 
     @FXML
     private TableView<Servico> tbl;
+    
     @FXML
     private TableColumn<Servico, Integer> colId;
+    
     @FXML
     private TableColumn<Servico, String> colTipo;
+    
     @FXML
     private TableColumn<Servico, Double> colPreco;
+    
+    @FXML
+    private TextField tfPesquisar;
 
     private ObservableList<Servico> lista = FXCollections.observableArrayList();
     private boolean novoItem;
@@ -69,27 +83,21 @@ public class ServicosController implements Initializable {
     }
 
     @FXML
-    private void novo() {
-        clean();
-
-        changeDisable(false);
+    @Override
+    protected void novo() {
+        super.novo();
         novoItem = true;
     }
 
     @FXML
     private void editar() {
-        try {
-            if (selectionedObject() != null) {
-                changeDisable(false);
-                novoItem = false;
-            }
-        } catch (RuntimeException ex) {
-            AlertBox.warning("Nenhuma coluna selecionada.");
-        }
+        super.editar(tbl, novoItem);
+        novoItem = false;
     }
 
     @FXML
-    private void salvar() {
+    @Override
+    protected void salvar() {
         ServicoDAO dao = new ServicoDAO();
         Servico s;
 
@@ -108,7 +116,7 @@ public class ServicosController implements Initializable {
                     clean();
                 }
             } else {
-                lista.set(selectionedIndex(), s);
+                lista.set(selectedIndex(tbl), s);
                 dao.update(s);
             }
             changeDisable(true);
@@ -117,11 +125,12 @@ public class ServicosController implements Initializable {
     }
 
     @FXML
-    private void excluir() {
+    @Override
+    protected void excluir() {
         ServicoDAO dao = new ServicoDAO();
 
         try {
-            Servico s = selectionedObject();
+            Servico s = selectedObject(tbl);
 
             if (AlertBox.confirmDelete()) {
                 if (dao.delete(s.getId())) {
@@ -137,7 +146,7 @@ public class ServicosController implements Initializable {
     @FXML
     void selecionar() {
         try {
-            Servico s = selectionedObject();
+            Servico s = selectedObject(tbl);
 
             tfTipo.setText(s.getTipo());
             tfPreco.setText(String.valueOf(s.getPreco()));
@@ -155,18 +164,56 @@ public class ServicosController implements Initializable {
         }
         changeDisable(true);
     }
+    
+    @FXML
+    @Override
+    protected void exportar() {
+        Writer writer = null;
+        String path = super.saveDialog("servico");
+        try {
+            File file = new File(path);
+            writer = new BufferedWriter(new FileWriter(file));
+            String text;
 
-    private int selectionedIndex() {
-        int selectedIndex = tbl.getSelectionModel().getSelectedIndex();
-        return selectedIndex;
+            text = "ID" + "," + "Tipo" + "," + "Preço/hora" + "\n";
+            writer.write(text);
+
+            for (Servico s : lista) {
+                
+                text = s.getId() + "," + s.getTipo() + "," + s.getPreco() + "\n";
+
+                writer.write(text);
+            }
+        } catch (IOException ex) {
+        } finally {
+            try {
+                writer.flush();
+                writer.close();
+            } catch (IOException ex1) {
+                Logger.getLogger(RecipientesController.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+        }
     }
-
-    private Servico selectionedObject() {
-        Servico s = tbl.getItems().get(selectionedIndex());
-        return s;
+    
+    @FXML
+    @Override
+    protected void pesquisar() {
+        try {
+            ObservableList<Servico> filtLista = FXCollections.observableArrayList();
+            filtLista.setAll(lista.stream().filter(arg -> arg.getTipo().toLowerCase().contains(tfPesquisar.getText().toLowerCase())).collect(Collectors.toList()));
+            tbl.setItems(filtLista);
+        } catch (RuntimeException ex) {
+        }
     }
+    
+    @FXML
+    private void limparPesquisa(){
+        super.limparPesquisa(tfPesquisar, tbl, lista);
+    }
+    
 
-    private void changeDisable(boolean opt) {
+    @Override
+    protected void changeDisable(boolean opt) {
         tfTipo.setDisable(opt);
         tfPreco.setDisable(opt);
         btnSalvar.setDisable(opt);
@@ -178,7 +225,8 @@ public class ServicosController implements Initializable {
         tbl.setDisable(!opt);
     }
 
-    private void clean() {
+    @Override
+    protected void clean() {
         tfTipo.setText("");
         tfPreco.setText("");
         tbl.getSelectionModel().select(null);

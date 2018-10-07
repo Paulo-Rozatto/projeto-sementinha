@@ -1,13 +1,10 @@
-/*
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
-*/
 /* 
     Created on : 08/08/2018, 12:29:02
     Author     : Xavier
 */
-
+.menu-lateral{
+    -fx-background-color:  #233456;
+}
 .botoes-menu-acima {
     -fx-background-color: 
         #000000,
@@ -24,8 +21,13 @@ and open the template in the editor.
     -fx-effect: dropshadow( one-pass-box , rgba(0,0,0,0.8) , 0, 0.0 , 0 , 1);
 }
 .botoes-menu-esquerdo {
-    -fx-background-color: linear-gradient(#98a8bd 0%, #8195af 25%, #6d86a4 100%);
+    -fx-background-color: linear-gradient(#BBFFFF 10%, #AEEEEE 50%, #BBFFFF 100%);
 }
+
+.opacidade:disabled{
+    -fx-opacity: 0.7;
+}
+
 .estilo-do-iphone{
     -fx-background-color: 
         #a6b5c9,
@@ -47,6 +49,9 @@ and open the template in the editor.
         -fx-scale-x: 0.9;
 }
 .button2:hover {
-        -fx-background-color: #1E90FF;
+        -fx-background-color: #96CDCD;
         -fx-scale-y: 1.1;
+}
+.font{
+    -fx-font-family: "Verdana";
 }

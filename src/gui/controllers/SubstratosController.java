@@ -2,8 +2,16 @@ package gui.controllers;
 
 import beans.Substrato;
 import db.dao.SubstratoDAO;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -21,7 +29,7 @@ import util.Validate;
  *
  * @author paulo
  */
-public class SubstratosController implements Initializable {
+public class SubstratosController extends Controller<Substrato> implements Initializable {
 
     @FXML
     private TextField tfNome;
@@ -58,6 +66,10 @@ public class SubstratosController implements Initializable {
 
     @FXML
     private TableColumn<Substrato, Double> colPreco;
+    
+    @FXML
+    private TextField tfPesquisar;
+
 
     private ObservableList<Substrato> lista = FXCollections.observableArrayList();
     private boolean novoItem;
@@ -78,27 +90,21 @@ public class SubstratosController implements Initializable {
     }
 
     @FXML
-    void novo() {
-        clean();
-
-        changeDisable(false);
+    @Override
+    protected void novo() {
+        super.novo();
         novoItem = true;
     }
 
     @FXML
     void editar() {
-        try {
-            if (selectionedObject() != null) {
-                changeDisable(false);
-                novoItem = false;
-            }
-        } catch (RuntimeException ex) {
-            AlertBox.warning("Nenhuma coluna selecionada.");
-        }
+        super.editar(tbl, novoItem);
+        novoItem = false;
     }
 
     @FXML
-    void salvar() {
+    @Override
+    protected void salvar() {
         SubstratoDAO dao = new SubstratoDAO();
         Substrato s;
 
@@ -119,7 +125,7 @@ public class SubstratosController implements Initializable {
                     clean();
                 }
             } else {
-                lista.set(selectionedIndex(), s);
+                lista.set(selectedIndex(tbl), s);
                 dao.update(s);
             }
             changeDisable(true);
@@ -127,11 +133,12 @@ public class SubstratosController implements Initializable {
     }
 
     @FXML
-    void excluir() {
+    @Override
+    protected void excluir() {
         SubstratoDAO dao = new SubstratoDAO();
 
         try {
-            Substrato s = selectionedObject();
+            Substrato s = selectedObject(tbl);
 
             if (AlertBox.confirmDelete()) {
                 if (dao.delete(s.getId())) {
@@ -159,7 +166,7 @@ public class SubstratosController implements Initializable {
     @FXML
     void selecionar() {
         try {
-            Substrato s = selectionedObject();
+            Substrato s = selectedObject(tbl);
 
             tfNome.setText(s.getNome());
             tfPreco.setText(String.valueOf(s.getPreco()));
@@ -167,18 +174,55 @@ public class SubstratosController implements Initializable {
         } catch (RuntimeException ex) {
         }
     }
+    
+    @FXML
+    @Override
+    protected void exportar() {
+        Writer writer = null;
+        String path = super.saveDialog("substrato");
+        try {
+            File file = new File(path);
+            writer = new BufferedWriter(new FileWriter(file));
+            String text;
 
-    private int selectionedIndex() {
-        int selectedIndex = tbl.getSelectionModel().getSelectedIndex();
-        return selectedIndex;
+            text = "ID" + "," + "Nome" + "," + "Preço/hora" + "," + "Descrição" + "\n";
+            writer.write(text);
+
+            for (Substrato s : lista) {
+                
+                text = s.getId() + "," + s.getNome()+ "," + s.getPreco() + "," + s.getDescricao().replaceAll("\n", " ") + "\n";
+
+                writer.write(text);
+            }
+        } catch (IOException ex) {
+        } finally {
+            try {
+                writer.flush();
+                writer.close();
+            } catch (IOException ex1) {
+                Logger.getLogger(RecipientesController.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+        }
     }
-
-    private Substrato selectionedObject() {
-        Substrato s = tbl.getItems().get(selectionedIndex());
-        return s;
+    
+    @FXML
+    @Override
+    protected void pesquisar() {
+        try {
+            ObservableList<Substrato> filtLista = FXCollections.observableArrayList();
+            filtLista.setAll(lista.stream().filter(arg -> arg.getNome().toLowerCase().contains(tfPesquisar.getText().toLowerCase())).collect(Collectors.toList()));
+            tbl.setItems(filtLista);
+        } catch (RuntimeException ex) {
+        }
     }
-
-    private void changeDisable(boolean opt) {
+    
+    @FXML
+    private void limparPesquisa(){
+        super.limparPesquisa(tfPesquisar, tbl, lista);
+    }
+    
+    @Override
+    protected void changeDisable(boolean opt) {
         tfNome.setDisable(opt);
         tfPreco.setDisable(opt);
         taDescricao.setDisable(opt);
@@ -191,7 +235,8 @@ public class SubstratosController implements Initializable {
         tbl.setDisable(!opt);
     }
 
-    private void clean() {
+    @Override
+    protected void clean() {
         tfNome.setText("");
         tfPreco.setText("");
         taDescricao.setText("");

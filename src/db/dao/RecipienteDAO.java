@@ -120,8 +120,8 @@ public class RecipienteDAO {
             stmt.setInt(4, r.getId());
 
             stmt.executeUpdate();
-
-            System.out.println("Atualização de registro executada com sucesso.");
+            
+            System.out.println("Atualização de registro de recipiente executada com sucesso.");
             return true;
 
         } catch (SQLException ex) {

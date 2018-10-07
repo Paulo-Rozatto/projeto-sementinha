@@ -12,12 +12,20 @@ import db.dao.SementeDAO;
 import db.dao.ServicoDAO;
 import db.dao.ServicoPrestadoDAO;
 import db.dao.SubstratoDAO;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -37,7 +45,7 @@ import util.Validate;
  *
  * @author paulo
  */
-public class PlantiosController implements Initializable {
+public class PlantiosController extends Controller<Plantio> implements Initializable {
 
     @FXML
     private DatePicker date;
@@ -47,6 +55,9 @@ public class PlantiosController implements Initializable {
 
     @FXML
     private TextField tfTotal;
+
+    @FXML
+    private TextField tfPesquisar;
 
     //<editor-fold defaultstate="collapsed" desc="Elementos Semente.">
     @FXML
@@ -247,28 +258,17 @@ public class PlantiosController implements Initializable {
     private void addServico() {
         try {
             ServicoPrestado sp;
-            boolean isServicoAdcionado = false;
 
             int i = cbServico.getSelectionModel().getSelectedIndex();
             Servico s = servicos.get(i);
 
-            for (ServicoPrestado lsp : listaServicoPrestado) {
-                if (lsp.getServico().getTipo().equals(s.getTipo())) {
-                    isServicoAdcionado = true;
-                }
-            }
+            sp = new ServicoPrestado();
+            sp.setServico(s);
+            sp.setHoras("0.0");
+            sp.setPlantio(plantio);
 
-            if (!isServicoAdcionado) {
-                sp = new ServicoPrestado();
-                sp.setServico(s);
-                sp.setHoras("0.0");
-                sp.setPlantio(plantio);
-
-                spAddList.add(sp);
-                listaServicoPrestado.add(sp);
-            } else {
-                AlertBox.warning("Serviço já adiciondo");
-            }
+            spAddList.add(sp);
+            listaServicoPrestado.add(sp);
         } catch (ArrayIndexOutOfBoundsException ex) {
             AlertBox.warning("Nehum serviço selecionado");
         }
@@ -301,20 +301,18 @@ public class PlantiosController implements Initializable {
 
     //<editor-fold defaultstate="collapsed" desc="Métodos btn CRUD">
     @FXML
-    private void novo() {
-        clean();
-        changeDisable(false);
+    @Override
+    protected void novo() {
+        super.novo();
         novoItem = true;
-        plantio = new Plantio();
     }
 
     @FXML
     private void editar() {
         try {
-            if (selectionedObject() != null) {
-//                spBackUp.clear();
+            if (selectedObject(tbl) != null) {
                 spBackUp.addAll(listaServicoPrestado);
-                plantio = selectionedObject();
+                plantio = selectedObject(tbl);
                 novoItem = false;
                 changeDisable(false);
             }
@@ -324,7 +322,8 @@ public class PlantiosController implements Initializable {
     }
 
     @FXML
-    private void salvar() {
+    @Override
+    protected void salvar() {
         PlantioDAO dao = new PlantioDAO();
         ServicoPrestadoDAO spDao = new ServicoPrestadoDAO();
         LocalDate data = date.getValue();
@@ -348,10 +347,9 @@ public class PlantiosController implements Initializable {
             plantio.setQuantRec(quantRec);
             plantio.setSubstrato(substrato);
             plantio.setQuantSub(quantSub);
-            
+
             plantio.getServicosPrestados().clear();
             plantio.getServicosPrestados().addAll(listaServicoPrestado);
-            
 
             if (novoItem) {
                 total = plantio.precificar();
@@ -380,10 +378,11 @@ public class PlantiosController implements Initializable {
     }
 
     @FXML
-    private void excluir() {
+    @Override
+    protected void excluir() {
         PlantioDAO dao = new PlantioDAO();
         try {
-            Plantio p = selectionedObject();
+            Plantio p = selectedObject(tbl);
 
             if (AlertBox.confirmDelete()) {
                 if (dao.delete(p.getId())) {
@@ -402,8 +401,8 @@ public class PlantiosController implements Initializable {
             clean();
         } else {
             selecionar();
-            selectionedObject().getServicosPrestados().clear();
-            selectionedObject().getServicosPrestados().addAll(spBackUp);
+            selectedObject(tbl).getServicosPrestados().clear();
+            selectedObject(tbl).getServicosPrestados().addAll(spBackUp);
             spRmList.clear();
         }
         changeDisable(true);
@@ -461,7 +460,7 @@ public class PlantiosController implements Initializable {
     @FXML
     private void selecionar() {
         try {
-            Plantio p = selectionedObject();
+            Plantio p = selectedObject(tbl);
 
             date.setValue(LocalDate.parse(p.getData(), format));
             cbSemente.getSelectionModel().select(p.getSemente().getNome());
@@ -483,17 +482,65 @@ public class PlantiosController implements Initializable {
         }
     }
 
-    private int selectionedIndex() {
-        int selectedIndex = tbl.getSelectionModel().getSelectedIndex();
-        return selectedIndex;
+    @FXML
+    @Override
+    protected void exportar() {
+        Writer writer = null;
+        String path = super.saveDialog("plantio");
+        try {
+            File file = new File(path);
+            writer = new BufferedWriter(new FileWriter(file));
+            String text;
+
+            text = "ID" + "," + "Data" + "," + "Semente" + "," + "Quantidade/Medida" + "," + "Recipiente" + ","
+                    + "Quantidade" + "," + "Substrato" + "," + "Quantidade" + "," + "Serviços/horas" + "," + "Total" + "\n";
+            writer.write(text);
+
+            for (Plantio p : lista) {
+                String srvcs = "";
+                String quantMedida;
+
+                for (ServicoPrestado sp : p.getServicosPrestados()) {
+                    srvcs += sp.getServico().getTipo() + " " + sp.getHoras() + "h/ ";
+                }
+                quantMedida = p.getQuantSem() + "/" + (p.getSemente().isPrecoEmGramas() ? "grama" : "unidade");
+
+                text = p.getId() + "," + p.getData() + "," + p.getSemente().getNome() + "," + quantMedida
+                        + "," + p.getRecipiente().getNome() + "," + p.getQuantRec() + "," + p.getSubstrato().getNome()
+                        + "," + p.getQuantSub() + "/cm³" + "," + srvcs + "," + p.getTotal() + "\n";
+
+                writer.write(text);
+            }
+        } catch (IOException | NullPointerException ex) {
+        } finally {
+            try {
+                writer.flush();
+                writer.close();
+            } catch (IOException ex1) {
+                Logger.getLogger(RecipientesController.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+        }
     }
 
-    private Plantio selectionedObject() {
-        Plantio p = tbl.getItems().get(selectionedIndex());
-        return p;
+    @FXML
+    @Override
+    protected void pesquisar() {
+        try {
+            ObservableList<Plantio> filtLista = FXCollections.observableArrayList();
+            filtLista.setAll(lista.stream().filter(arg -> arg.getData().toLowerCase().contains(tfPesquisar.getText().toLowerCase())).collect(Collectors.toList()));
+            tbl.setItems(filtLista);
+        } catch (RuntimeException ex) {
+            System.out.println(ex);
+        }
     }
 
-    private void changeDisable(boolean opt) {
+    @FXML
+    private void limparPesquisa() {
+        super.limparPesquisa(tfPesquisar, tbl, lista);
+    }
+
+    @Override
+    protected void changeDisable(boolean opt) {
         date.setDisable(opt);
         btnAtualizar.setDisable(opt);
         cbSemente.setDisable(opt);
@@ -516,7 +563,8 @@ public class PlantiosController implements Initializable {
         tbl.setDisable(!opt);
     }
 
-    private void clean() {
+    @Override
+    protected void clean() {
         date.setValue(null);
         cbSemente.getSelectionModel().select(null);
         cbRecipiente.getSelectionModel().select(null);

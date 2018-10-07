@@ -13,7 +13,7 @@ import javafx.stage.StageStyle;
  *
  * @author paulo
  */
-public  class AlertBox {
+public class AlertBox {
     
     private AlertBox(){};
 
