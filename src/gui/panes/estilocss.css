@@ -17,6 +17,11 @@
     -fx-text-fill: white;
     -fx-font-size: 12px;
 }
+
+.botoes-menu-acima:focused{
+     -fx-background-color: #007BCC;
+}
+
 .botoes-acima-texto {
     -fx-effect: dropshadow( one-pass-box , rgba(0,0,0,0.8) , 0, 0.0 , 0 , 1);
 }
