@@ -28,8 +28,8 @@ public class PlantioDAO {
         ServicoPrestadoDAO spd = new ServicoPrestadoDAO();
 
         try {
-            stmt = con.prepareStatement("INSERT INTO Plantios(data,sem_id,quant_sem,rec_id,quant_rec,sub_id,quant_sub,total) "
-                    + "values(?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+            stmt = con.prepareStatement("INSERT INTO Plantios(data,sem_id,quant_sem,rec_id,quant_rec,sub_id,quant_sub,status,total) "
+                    + "values(?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, p.getData());
             stmt.setInt(2, p.getSemente().getId());
             stmt.setDouble(3, p.getQuantSem());
@@ -37,7 +37,8 @@ public class PlantioDAO {
             stmt.setDouble(5, p.getQuantRec());
             stmt.setInt(6, p.getSubstrato().getId());
             stmt.setDouble(7, p.getQuantSub());
-            stmt.setDouble(8, p.getTotal());
+            stmt.setString(8, p.getStatus());
+            stmt.setDouble(9, p.getTotal());
 
             stmt.executeUpdate();
 
@@ -83,6 +84,7 @@ public class PlantioDAO {
                 p.setQuantRec(rs.getInt("quant_rec"));
                 p.setSubstrato(sub.read(rs.getInt("sub_id")));
                 p.setQuantSub(rs.getDouble("quant_sub"));
+                p.setStatus(rs.getString("status"));
                 p.setTotal(rs.getDouble("total"));
                 p.setServicosPrestados(spd.read(p));
 
@@ -103,7 +105,7 @@ public class PlantioDAO {
 
         try {
             stmt = con.prepareStatement("UPDATE Plantios SET data = ?, sem_id = ?,quant_sem =?,"
-                    + "rec_id = ?, quant_rec = ?, sub_id = ?, quant_sub = ?,total = ? WHERE pla_id = ?");
+                    + "rec_id = ?, quant_rec = ?, sub_id = ?, quant_sub = ?, status = ?, total = ? WHERE pla_id = ?");
             stmt.setString(1, p.getData());
             stmt.setInt(2, p.getSemente().getId());
             stmt.setDouble(3, p.getQuantSem());
@@ -111,8 +113,9 @@ public class PlantioDAO {
             stmt.setInt(5, p.getQuantRec());
             stmt.setInt(6, p.getSubstrato().getId());
             stmt.setDouble(7, p.getQuantSub());
-            stmt.setDouble(8, p.getTotal());
-            stmt.setInt(9, p.getId());
+            stmt.setString(8, p.getStatus());
+            stmt.setDouble(9, p.getTotal());
+            stmt.setInt(10, p.getId());
 
             stmt.executeUpdate();
 

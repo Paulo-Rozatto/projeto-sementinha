@@ -1,5 +1,6 @@
 package beans;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.DoubleProperty;
@@ -17,34 +18,35 @@ public class Plantio {
 
     private final IntegerProperty id;
     private final StringProperty data;
-    private final DoubleProperty quantSem;
-    private final IntegerProperty quantRec;
-    private final DoubleProperty quantSub;
+    private final StringProperty status;
     private final DoubleProperty total;
+    private double quantSem;
+    private int quantRec;
+    private double quantSub;
     private Semente semente;
     private Recipiente recipiente;
     private Substrato substrato;
-    private  List<ServicoPrestado> servicosPrestados;
+    private List<ServicoPrestado> servicosPrestados;
 
     public Plantio() {
         this.id = new SimpleIntegerProperty();
         this.data = new SimpleStringProperty();
-        this.quantSem = new SimpleDoubleProperty();
-        this.quantRec = new SimpleIntegerProperty();
-        this.quantSub = new SimpleDoubleProperty();
+        this.status = new SimpleStringProperty();
+        this.servicosPrestados = new ArrayList();
         this.total = new SimpleDoubleProperty();
-        servicosPrestados = new ArrayList();
     }
 
     public double precificar() {
         double valorTotal = 0.0;
-        valorTotal += semente.precificar(quantSem.get());
-        valorTotal += recipiente.precificar(quantRec.get());
-        valorTotal += substrato.precificar(quantSub.get());
+        valorTotal += semente.precificar(quantSem);
+        valorTotal += recipiente.precificar(quantRec);
+        valorTotal += substrato.precificar(quantSub);
 
         for (ServicoPrestado s : servicosPrestados) {
             valorTotal += s.precificar();
         }
+
+        valorTotal /= quantSem;
 
         total.set(valorTotal);
         return valorTotal;
@@ -76,6 +78,30 @@ public class Plantio {
         return data;
     }
 
+    public String getStatus() {
+        return status.get();
+    }
+
+    public void setStatus(String value) {
+        status.set(value);
+    }
+
+    public StringProperty statusProperty() {
+        return status;
+    }
+
+    public double getTotal() {
+        return total.get();
+    }
+
+    public void setTotal(double value) {
+        total.set(value);
+    }
+
+    public DoubleProperty totalProperty() {
+        return total;
+    }
+
     public Semente getSemente() {
         return semente;
     }
@@ -101,51 +127,27 @@ public class Plantio {
     }
 
     public void setQuantSem(double quantSem) {
-        this.quantSem.set(quantSem);
+        this.quantSem = quantSem;
     }
 
     public double getQuantSem() {
-        return quantSem.get();
-    }
-
-    public DoubleProperty quantSemProperty() {
         return quantSem;
     }
 
     public void setQuantRec(int quantRec) {
-        this.quantRec.set(quantRec);
+        this.quantRec = quantRec;
     }
 
     public int getQuantRec() {
-        return quantRec.get();
-    }
-
-    public IntegerProperty quantRecProperty() {
         return quantRec;
     }
 
     public void setQuantSub(double quantSub) {
-        this.quantSub.set(quantSub);
+        this.quantSub = quantSub;
     }
 
     public double getQuantSub() {
-        return quantSub.get();
-    }
-
-    public DoubleProperty quantSubProperty() {
         return quantSub;
-    }
-
-    public void setTotal(double total) {
-        this.total.set(total);
-    }
-
-    public double getTotal() {
-        return total.get();
-    }
-
-    public DoubleProperty totalProperty() {
-        return total;
     }
 
     public List<ServicoPrestado> getServicosPrestados() {
@@ -155,5 +157,5 @@ public class Plantio {
     public void setServicosPrestados(List<ServicoPrestado> servicosPrestados) {
         this.servicosPrestados = servicosPrestados;
     }
-        
+
 }

@@ -39,9 +39,14 @@
                         <Insets bottom="5.0" />
                      </VBox.margin>
                   </HBox>
+                  <ComboBox fx:id="cbStatus" disable="true" prefHeight="26.0" prefWidth="140.0" promptText="Status" styleClass="opacidade">
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
+                  </ComboBox>
                   <HBox>
                      <children>
-                        <ComboBox fx:id="cbSemente" disable="true" onAction="#selectedSemente" prefHeight="26.0" prefWidth="140.0" promptText="Semente" styleClass="opacidade" stylesheets="@estilocss.css">
+                        <ComboBox fx:id="cbSemente" disable="true" prefHeight="26.0" prefWidth="140.0" promptText="Semente" styleClass="opacidade" stylesheets="@estilocss.css">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
@@ -55,7 +60,7 @@
                   </HBox>
                   <HBox layoutX="10.0" layoutY="10.0">
                      <children>
-                        <ComboBox fx:id="cbRecipiente" disable="true" onAction="#selectedRecipiente" prefHeight="26.0" prefWidth="140.0" promptText="Recipiente" styleClass="opacidade" stylesheets="@estilocss.css">
+                        <ComboBox fx:id="cbRecipiente" disable="true" prefHeight="26.0" prefWidth="140.0" promptText="Recipiente" styleClass="opacidade" stylesheets="@estilocss.css">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
@@ -69,7 +74,7 @@
                   </HBox>
                   <HBox prefHeight="29.0" prefWidth="242.0">
                      <children>
-                        <ComboBox fx:id="cbSubstrato" disable="true" onAction="#selectedSubstrato" prefWidth="140.0" promptText="Substrato" styleClass="opacidade" stylesheets="@estilocss.css">
+                        <ComboBox fx:id="cbSubstrato" disable="true" prefWidth="140.0" promptText="Substrato" styleClass="opacidade" stylesheets="@estilocss.css">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
@@ -134,7 +139,7 @@
                   </TableView>
                   <HBox alignment="CENTER" centerShape="false" nodeOrientation="LEFT_TO_RIGHT">
                      <children>
-                        <Label text="Total:" textFill="WHITE">
+                        <Label text="Total/muda:" textFill="WHITE">
                            <font>
                               <Font size="17.0" />
                            </font>
@@ -211,7 +216,8 @@
           <TableColumn fx:id="colSemente" prefWidth="285.0" text="Semente" />
             <TableColumn fx:id="colRecipiente" prefWidth="75.0" text="Recipiente" />
             <TableColumn fx:id="colSubstrato" prefWidth="75.0" text="Substrato" />
-            <TableColumn fx:id="colTotal" prefWidth="75.0" text="Total" />
+            <TableColumn fx:id="colStatus" prefWidth="75.0" text="Status" />
+            <TableColumn fx:id="colTotal" prefWidth="75.0" text="Total/muda" />
         </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
