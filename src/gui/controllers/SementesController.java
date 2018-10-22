@@ -1,16 +1,10 @@
 package gui.controllers;
 
 import beans.Semente;
+import db.dao.IDAO;
 import db.dao.SementeDAO;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -65,7 +59,7 @@ public class SementesController extends Controller<Semente> implements Initializ
 
     @FXML
     private Button btnExcluir;
-    
+
     @FXML
     private Button btnCancelar;
 
@@ -89,7 +83,7 @@ public class SementesController extends Controller<Semente> implements Initializ
 
     @FXML
     private TableColumn<Semente, String> colDormencia;
-    
+
     @FXML
     private TextField tfPesquisar;
 
@@ -112,7 +106,7 @@ public class SementesController extends Controller<Semente> implements Initializ
         colPreco.setCellValueFactory(cellData -> cellData.getValue().precoProperty().asObject());
         colDormencia.setCellValueFactory(cellData -> cellData.getValue().dormenciaProperty());
 
-        SementeDAO dao = new SementeDAO();
+        IDAO dao = new SementeDAO();
         lista.addAll(dao.read());
         tbl.setItems(lista);
     }
@@ -133,7 +127,7 @@ public class SementesController extends Controller<Semente> implements Initializ
     @FXML
     @Override
     protected void salvar() {
-        SementeDAO dao = new SementeDAO();
+        IDAO dao = new SementeDAO();
         Semente s;
         String nome, especie, plantio, dormencia, precoString;
         boolean precoEmGramas;
@@ -161,6 +155,7 @@ public class SementesController extends Controller<Semente> implements Initializ
                     clean();
                 }
             } else {
+                s.setId(selectedObject(tbl).getId());
                 lista.set(selectedIndex(tbl), s);
                 dao.update(s);
             }
@@ -171,7 +166,7 @@ public class SementesController extends Controller<Semente> implements Initializ
     @FXML
     @Override
     protected void excluir() {
-        SementeDAO dao = new SementeDAO();
+        IDAO dao = new SementeDAO();
 
         try {
             Semente s = selectedObject(tbl);
@@ -203,49 +198,29 @@ public class SementesController extends Controller<Semente> implements Initializ
         } catch (RuntimeException ex) {
         }
     }
-    
+
     @FXML
-    private void cancelar(){
-        if(novoItem){
+    private void cancelar() {
+        if (novoItem) {
             clean();
-        }
-        else{
+        } else {
             selecionar();
         }
         changeDisable(true);
     }
 
     @FXML
-    @Override
     protected void exportar() {
-        Writer writer = null;
-        String path = super.saveDialog("Semente");
-        try {
-            File file = new File(path);
-            writer = new BufferedWriter(new FileWriter(file));
-            String text;
+        String text;
 
-            text = "ID" + "," + "Nome" + "," + "Espécie" + "," +"Preço" + ","+ "Medida"+ ","+ "Tipo de plantio" + ","+ "Quebra de dormência" + "\n";
-            writer.write(text);
-            
-            for (Semente s : lista) {
-                String medida = s.isPrecoEmGramas() ? "gramas":"unidade";
-                
-                text = s.getId() + "," + s.getNome()+ "," + s.getEspecie() + "," + s.getPreco() + "," + medida + "," + s.getTipoPlantio() + "," + s.getDormencia() + "\n";
-
-                writer.write(text);
-            }
-        } catch (IOException | NullPointerException ex) {
-        }finally {
-            try {
-                writer.flush();
-                writer.close();
-            } catch (IOException ex1) {
-                Logger.getLogger(RecipientesController.class.getName()).log(Level.SEVERE, null, ex1);
-            }
+        text = "ID" + "," + "Nome" + "," + "Espécie" + "," + "Preço" + "," + "Medida" + "," + "Tipo de plantio" + "," + "Quebra de dormência" + "\n";
+        for (Semente s : lista) {
+            String medida = s.isPrecoEmGramas() ? "gramas" : "unidade";
+            text += s.getId() + "," + s.getNome() + "," + s.getEspecie() + "," + s.getPreco() + "," + medida + "," + s.getTipoPlantio() + "," + s.getDormencia() + "\n";
         }
+        super.exportar("sementes", text);
     }
-    
+
     @FXML
     @Override
     protected void pesquisar() {
@@ -257,9 +232,9 @@ public class SementesController extends Controller<Semente> implements Initializ
             System.out.println(ex);
         }
     }
-    
+
     @FXML
-    private void limparPesquisa(){
+    private void limparPesquisa() {
         super.limparPesquisa(tfPesquisar, tbl, lista);
     }
 

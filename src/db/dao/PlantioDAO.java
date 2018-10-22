@@ -15,12 +15,13 @@ import util.AlertBox;
  *
  * @author paulo
  */
-public class PlantioDAO {
+public class PlantioDAO implements IDAO<Plantio>{
 
     public PlantioDAO() {
 
     }
 
+    @Override
     public boolean create(Plantio p) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
@@ -60,6 +61,7 @@ public class PlantioDAO {
         }
     }
 
+    @Override
     public List<Plantio> read() {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
@@ -99,6 +101,45 @@ public class PlantioDAO {
         return plantios;
     }
     
+    @Override
+    public Plantio read(int id){
+        Connection con = ConnectionFactory.getConnection();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        Plantio p = null;
+        SementeDAO sem = new SementeDAO();
+        RecipienteDAO rec = new RecipienteDAO(); 
+        SubstratoDAO sub = new SubstratoDAO();
+        ServicoPrestadoDAO spd = new ServicoPrestadoDAO();
+
+        try {
+            stmt = con.prepareStatement("SELECT * FROM Plantios WHERE pla_id = ?");
+            stmt.setInt(1, id);
+            
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                p.setId(rs.getInt("pla_id"));
+                p.setData(rs.getString("data"));
+                p.setSemente(sem.read(rs.getInt("sem_id")));
+                p.setQuantSem(rs.getDouble("quant_sem"));
+                p.setRecipiente(rec.read(rs.getInt("rec_id")));
+                p.setQuantRec(rs.getInt("quant_rec"));
+                p.setSubstrato(sub.read(rs.getInt("sub_id")));
+                p.setQuantSub(rs.getDouble("quant_sub"));
+                p.setStatus(rs.getString("status"));
+                p.setTotal(rs.getDouble("total"));
+                p.setServicosPrestados(spd.read(p));
+            }
+
+        } catch (SQLException ex) {
+            AlertBox.exception("Não foi possível ler Plantios no banco de dados: ", ex);
+        } finally {
+            ConnectionFactory.closeConection(con, stmt, rs);
+        }
+        return p;
+    }
+    
+    @Override
     public boolean update(Plantio p) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
@@ -130,6 +171,7 @@ public class PlantioDAO {
         }
     }
 
+    @Override
     public boolean delete(int i) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;

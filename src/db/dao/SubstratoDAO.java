@@ -15,12 +15,13 @@ import util.AlertBox;
  *
  * @author paulo
  */
-public class SubstratoDAO {
+public class SubstratoDAO implements IDAO<Substrato> {
 
     public SubstratoDAO() {
 
     }
 
+    @Override
     public boolean create(Substrato s) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
@@ -33,10 +34,10 @@ public class SubstratoDAO {
             stmt.setString(3, s.getDescricao());
 
             stmt.executeUpdate();
-            
+
             rs = stmt.getGeneratedKeys();
-            
-            if(rs.next()){
+
+            if (rs.next()) {
                 s.setId(rs.getInt(1));
             }
 
@@ -51,6 +52,7 @@ public class SubstratoDAO {
         }
     }
 
+    @Override
     public List<Substrato> read() {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
@@ -61,42 +63,41 @@ public class SubstratoDAO {
             stmt = con.prepareStatement("SELECT * FROM Substratos");
             rs = stmt.executeQuery();
             while (rs.next()) {
-                Substrato s = new Substrato(
-                        rs.getInt("sub_id"),
-                        rs.getString("nome"),
-                        rs.getDouble("preco"),
-                        rs.getString("descricao"));
+                Substrato s = new Substrato();
+                s.setId(rs.getInt("sub_id"));
+                s.setNome(rs.getString("nome"));
+                s.setPreco(rs.getDouble("preco"));
+                s.setDescricao(rs.getString("descricao"));
 
                 substratos.add(s);
-
             }
 
         } catch (SQLException ex) {
             AlertBox.exception("Não foi possível ler os Substratos no banco de dados: ", ex);
         } finally {
-           ConnectionFactory.closeConection(con, stmt, rs);
+            ConnectionFactory.closeConection(con, stmt, rs);
         }
         return substratos;
     }
-    
-    public Substrato read(int id){
+
+    public Substrato read(int id) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
         ResultSet rs = null;
         Substrato s = null;
-        
+
         try {
             stmt = con.prepareStatement("SELECT * FROM Substratos WHERE sub_id = ?");
             stmt.setInt(1, id);
-            
+
             rs = stmt.executeQuery();
-            
-            if(rs.next()){
-                s = new Substrato(
-                        rs.getInt("sub_id"),
-                        rs.getString("nome"),
-                        rs.getDouble("preco"),
-                        rs.getString("descricao"));
+
+            if (rs.next()) {
+                s = new Substrato();
+                s.setId(rs.getInt("sub_id"));
+                s.setNome(rs.getString("nome"));
+                s.setPreco(rs.getDouble("preco"));
+                s.setDescricao(rs.getString("descricao"));
             }
 
         } catch (SQLException ex) {
@@ -104,10 +105,11 @@ public class SubstratoDAO {
         } finally {
             ConnectionFactory.closeConection(con, stmt, rs);
         }
-        
+
         return s;
     }
 
+    @Override
     public boolean update(Substrato s) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
@@ -132,6 +134,7 @@ public class SubstratoDAO {
         }
     }
 
+    @Override
     public boolean delete(int i) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;

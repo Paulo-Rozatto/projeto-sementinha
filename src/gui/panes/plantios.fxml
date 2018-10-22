@@ -127,6 +127,7 @@
                   </HBox>
                   <TableView fx:id="tblServicos" disable="true" prefHeight="150.0" prefWidth="242.0">
                     <columns>
+                        <TableColumn fx:id="colServicosId" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" text="ID" />
                       <TableColumn fx:id="colServicos" prefWidth="118.0" text="Serviços" />
                         <TableColumn fx:id="colHoras" prefWidth="75.0" sortable="false" text="Horas" />
                     </columns>

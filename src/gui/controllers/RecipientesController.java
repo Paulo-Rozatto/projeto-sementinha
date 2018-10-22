@@ -1,16 +1,10 @@
 package gui.controllers;
 
 import beans.Recipiente;
+import db.dao.IDAO;
 import db.dao.RecipienteDAO;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -82,7 +76,7 @@ public class RecipientesController extends Controller<Recipiente> implements Ini
     public void initialize(URL url, ResourceBundle rb) {
         //inicializa a lista
         lista = FXCollections.observableArrayList();
-        RecipienteDAO dao = new RecipienteDAO();
+        IDAO dao = new RecipienteDAO();
         lista.addAll(dao.read());
 
         //Atribuição dos atributos da classe Recipiente para cada coluna da  tabela
@@ -111,7 +105,7 @@ public class RecipientesController extends Controller<Recipiente> implements Ini
     @FXML
     @Override
     protected void salvar() {
-        RecipienteDAO dao = new RecipienteDAO();
+        IDAO dao = new RecipienteDAO();
         Recipiente r;
 
         String nome = tfNome.getText();
@@ -143,7 +137,7 @@ public class RecipientesController extends Controller<Recipiente> implements Ini
     @FXML
     @Override
     protected void excluir() {
-        RecipienteDAO dao = new RecipienteDAO();
+        IDAO dao = new RecipienteDAO();
 
         try {
             Recipiente r = selectedObject(tbl);
@@ -181,33 +175,15 @@ public class RecipientesController extends Controller<Recipiente> implements Ini
     }
 
     @FXML
-    @Override
     protected void exportar() {
-        Writer writer = null;
-        String path = super.saveDialog("recipiente");
-        try {
-            File file = new File(path);
-            writer = new BufferedWriter(new FileWriter(file));
-            String text;
+        String text;
 
-            text = "ID" + "," + "Nome" + "," + "Volume" + "," + "Preço" + "\n";
-            writer.write(text);
+        text = "ID" + "," + "Nome" + "," + "Volume" + "," + "Preço" + "\n";
 
-            for (Recipiente r : lista) {
-
-                text = r.getId() + "," + r.getNome() + "," + r.getVolume() + "," + r.getPreco() + "\n";
-
-                writer.write(text);
-            }
-        } catch (IOException ex) {
-        } finally {
-            try {
-                writer.flush();
-                writer.close();
-            } catch (IOException ex1) {
-                Logger.getLogger(RecipientesController.class.getName()).log(Level.SEVERE, null, ex1);
-            }
+        for (Recipiente r : lista) {
+            text += r.getId() + "," + r.getNome() + "," + r.getVolume() + "," + r.getPreco() + "\n";
         }
+        super.exportar("recipientes", text);
     }
 
     @FXML

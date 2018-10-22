@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
@@ -34,10 +35,14 @@
                   <Font name="Arial Black" size="11.0" />
                </font>
             </Label>
-            <Button fx:id="btnSementes" mnemonicParsing="false" onAction="#switchToSementes" prefHeight="64.0" prefWidth="130.0" styleClass="botoes-menu-acima" stylesheets="@estilocss.css" text="SEMENTES" textFill="WHITE" HBox.hgrow="ALWAYS">
+            <Button fx:id="btnSementes" mnemonicParsing="false" onAction="#switchToSementes" prefHeight="64.0" prefWidth="130.0" stylesheets="@estilocss.css" text="SEMENTES" textFill="WHITE" HBox.hgrow="ALWAYS">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
+               <styleClass>
+                  <String fx:value="botoes-menu-acima" />
+                  <String fx:value="botao-tela-atual" />
+               </styleClass>
             </Button>
             <Button fx:id="btnRecipientes" mnemonicParsing="false" onAction="#switchToRecipientes" prefHeight="64.0" prefWidth="130.0" styleClass="botoes-menu-acima" stylesheets="@estilocss.css" text="RECIPIENTES" textFill="WHITE" HBox.hgrow="ALWAYS">
                <cursor>
@@ -61,6 +66,6 @@
             </Button>
          </children>
       </HBox>
-      <StackPane fx:id="stackPane" layoutY="65.0" prefHeight="495.0" prefWidth="960.0" style="-fx-background-color: #556;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="67.0"></StackPane>
+      <StackPane fx:id="stackPane" layoutY="65.0" prefHeight="495.0" prefWidth="960.0" style="-fx-background-color: #556;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="67.0" />
    </children>
 </AnchorPane>

@@ -1,16 +1,10 @@
 package gui.controllers;
 
 import beans.Servico;
+import db.dao.IDAO;
 import db.dao.ServicoDAO;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -77,7 +71,7 @@ public class ServicosController extends Controller<Servico> implements Initializ
         colTipo.setCellValueFactory(cellData -> cellData.getValue().tipoProperty());
         colPreco.setCellValueFactory(cellData -> cellData.getValue().precoProperty().asObject());
         
-        ServicoDAO dao = new ServicoDAO();
+        IDAO dao = new ServicoDAO();
         lista.addAll(dao.read());
         tbl.setItems(lista);
     }
@@ -98,7 +92,7 @@ public class ServicosController extends Controller<Servico> implements Initializ
     @FXML
     @Override
     protected void salvar() {
-        ServicoDAO dao = new ServicoDAO();
+        IDAO dao = new ServicoDAO();
         Servico s;
 
         String tipo = tfTipo.getText();
@@ -127,7 +121,7 @@ public class ServicosController extends Controller<Servico> implements Initializ
     @FXML
     @Override
     protected void excluir() {
-        ServicoDAO dao = new ServicoDAO();
+        IDAO dao = new ServicoDAO();
 
         try {
             Servico s = selectedObject(tbl);
@@ -166,33 +160,13 @@ public class ServicosController extends Controller<Servico> implements Initializ
     }
     
     @FXML
-    @Override
     protected void exportar() {
-        Writer writer = null;
-        String path = super.saveDialog("servico");
-        try {
-            File file = new File(path);
-            writer = new BufferedWriter(new FileWriter(file));
-            String text;
-
+        String text;
             text = "ID" + "," + "Tipo" + "," + "Preço/hora" + "\n";
-            writer.write(text);
-
             for (Servico s : lista) {
-                
-                text = s.getId() + "," + s.getTipo() + "," + s.getPreco() + "\n";
-
-                writer.write(text);
+                text += s.getId() + "," + s.getTipo() + "," + s.getPreco() + "\n";
             }
-        } catch (IOException ex) {
-        } finally {
-            try {
-                writer.flush();
-                writer.close();
-            } catch (IOException ex1) {
-                Logger.getLogger(RecipientesController.class.getName()).log(Level.SEVERE, null, ex1);
-            }
-        }
+        super.exportar("servicos", text);
     }
     
     @FXML

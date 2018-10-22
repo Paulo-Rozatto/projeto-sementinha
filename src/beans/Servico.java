@@ -23,12 +23,6 @@ public class Servico {
         this.preco = new SimpleDoubleProperty();
     }
 
-    public Servico(int id, String tipo, double preco) {
-        this.id = new SimpleIntegerProperty(id);
-        this.tipo = new SimpleStringProperty(tipo);
-        this.preco = new SimpleDoubleProperty(preco);
-    }
-    
     public double precficar(double quant){
         return preco.get() * quant;
     }

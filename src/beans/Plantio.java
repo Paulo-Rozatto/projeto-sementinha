@@ -1,6 +1,5 @@
 package beans;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.DoubleProperty;

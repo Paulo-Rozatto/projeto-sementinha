@@ -36,26 +36,6 @@ public class Semente {
         this.tipoPlantio = new SimpleStringProperty();
         this.dormencia = new SimpleStringProperty();
     }
-
-    public Semente(int id, String nome, String especie, double preco, boolean precoEmGramas, String tipoPlantio, String dormencia){
-        this.id = new SimpleIntegerProperty(id);
-        this.nome = new SimpleStringProperty(nome);
-        this.especie = new SimpleStringProperty(especie);
-        this.preco = new SimpleDoubleProperty(preco);
-        this.precoEmGramas = new SimpleBooleanProperty(precoEmGramas);
-        this.tipoPlantio = new SimpleStringProperty(tipoPlantio);
-        this.dormencia = new SimpleStringProperty(dormencia);
-    }
-
-    public Semente(String nome, String especie, double preco, boolean precoEmGramas, String tipoPlantio, String dormencia) {
-        this.id = new SimpleIntegerProperty();
-        this.nome = new SimpleStringProperty(nome);
-        this.especie = new SimpleStringProperty(especie);
-        this.preco = new SimpleDoubleProperty(preco);
-        this.precoEmGramas = new SimpleBooleanProperty(precoEmGramas);
-        this.tipoPlantio = new SimpleStringProperty(tipoPlantio);
-        this.dormencia = new SimpleStringProperty(dormencia);
-    }
     
     public double precificar(double quant){
         double total = 0.0;

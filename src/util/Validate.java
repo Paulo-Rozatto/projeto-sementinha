@@ -10,20 +10,14 @@ import java.util.List;
  */
 public class Validate {
 
-    private Validate() {
-    }
-
-    ;
+    private Validate() {}
 
     private static boolean string(String stg) {
-        boolean valid = false;
         try {
             int size = stg.length();
-            valid = !(size == 0 || size > 255);
+            return !(size == 0 || size > 255);
         } catch (NullPointerException ex) {
-            valid = false;
-        } finally {
-            return valid;
+            return false;
         }
     }
 

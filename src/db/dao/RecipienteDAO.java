@@ -15,12 +15,13 @@ import util.AlertBox;
  *
  * @author paulo
  */
-public class RecipienteDAO {
+public class RecipienteDAO implements IDAO<Recipiente> {
 
     public RecipienteDAO() {
 
     }
 
+    @Override
     public boolean create(Recipiente r) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
@@ -51,6 +52,7 @@ public class RecipienteDAO {
         }
     }
 
+    @Override
     public List<Recipiente> read() {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
@@ -61,14 +63,13 @@ public class RecipienteDAO {
             stmt = con.prepareStatement("SELECT * FROM Recipientes");
             rs = stmt.executeQuery();
             while (rs.next()) {
-                Recipiente r = new Recipiente(
-                        rs.getInt("rec_id"),
-                        rs.getString("nome"),
-                        rs.getDouble("volume"),
-                        rs.getDouble("preco"));
+                Recipiente r = new Recipiente();
+                r.setId(rs.getInt("rec_id"));
+                r.setNome(rs.getString("nome"));
+                r.setVolume(rs.getDouble("volume"));
+                r.setPreco(rs.getDouble("preco"));
 
                 recipientes.add(r);
-
             }
 
         } catch (SQLException ex) {
@@ -92,11 +93,11 @@ public class RecipienteDAO {
             rs = stmt.executeQuery();
 
             if (rs.next()) {
-                r = new Recipiente(
-                        id,
-                        rs.getString("nome"),
-                        rs.getDouble("volume"),
-                        rs.getDouble("preco"));
+                r = new Recipiente();
+                r.setId(rs.getInt("rec_id"));
+                r.setNome(rs.getString("nome"));
+                r.setVolume(rs.getDouble("volume"));
+                r.setPreco(rs.getDouble("preco"));
             }
 
         } catch (SQLException ex) {
@@ -108,6 +109,7 @@ public class RecipienteDAO {
         return r;
     }
 
+    @Override
     public boolean update(Recipiente r) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
@@ -120,7 +122,7 @@ public class RecipienteDAO {
             stmt.setInt(4, r.getId());
 
             stmt.executeUpdate();
-            
+
             System.out.println("Atualização de registro de recipiente executada com sucesso.");
             return true;
 
@@ -132,6 +134,7 @@ public class RecipienteDAO {
         }
     }
 
+    @Override
     public boolean delete(int i) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;

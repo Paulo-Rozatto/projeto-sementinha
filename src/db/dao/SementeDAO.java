@@ -15,12 +15,13 @@ import util.AlertBox;
  *
  * @author paulo
  */
-public class SementeDAO {
+public class SementeDAO implements IDAO<Semente> {
 
     public SementeDAO() {
 
     }
 
+    @Override
     public boolean create(Semente s) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
@@ -54,6 +55,7 @@ public class SementeDAO {
         }
     }
 
+    @Override
     public List<Semente> read() {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
@@ -64,14 +66,14 @@ public class SementeDAO {
             stmt = con.prepareStatement("SELECT * FROM Sementes");
             rs = stmt.executeQuery();
             while (rs.next()) {
-                Semente s = new Semente(
-                        rs.getInt("sem_id"),
-                        rs.getString("nome"),
-                        rs.getString("especie"),
-                        rs.getDouble("preco"),
-                        rs.getBoolean("preco_em_gramas"),
-                        rs.getString("tipoPlantio"),
-                        rs.getString("dormencia"));
+                Semente s = new Semente();
+                s.setId(rs.getInt("sem_id"));
+                s.setNome(rs.getString("nome"));
+                s.setEspecie(rs.getString("especie"));
+                s.setPreco(rs.getDouble("preco"));
+                s.setPrecoEmGramas(rs.getBoolean("preco_em_gramas"));
+                s.setTipoPlantio(rs.getString("tipoPlantio"));
+                s.setDomercia(rs.getString("dormencia"));
 
                 sementes.add(s);
 
@@ -97,14 +99,14 @@ public class SementeDAO {
 
             rs = stmt.executeQuery();
             if (rs.next()) {
-                s = new Semente(
-                        rs.getInt("sem_id"),
-                        rs.getString("nome"),
-                        rs.getString("especie"),
-                        rs.getDouble("preco"),
-                        rs.getBoolean("preco_em_gramas"),
-                        rs.getString("tipoPlantio"),
-                        rs.getString("dormencia"));
+                s = new Semente();
+                s.setId(rs.getInt("sem_id"));
+                s.setNome(rs.getString("nome"));
+                s.setEspecie(rs.getString("especie"));
+                s.setPreco(rs.getDouble("preco"));
+                s.setPrecoEmGramas(rs.getBoolean("preco_em_gramas"));
+                s.setTipoPlantio(rs.getString("tipoPlantio"));
+                s.setDomercia(rs.getString("dormencia"));
             }
 
         } catch (SQLException ex) {
@@ -116,6 +118,7 @@ public class SementeDAO {
         return s;
     }
 
+    @Override
     public boolean update(Semente s) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
@@ -143,6 +146,7 @@ public class SementeDAO {
         }
     }
 
+    @Override
     public boolean delete(int i) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;

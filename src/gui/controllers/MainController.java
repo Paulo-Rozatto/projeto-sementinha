@@ -40,26 +40,31 @@ public class MainController implements Initializable {
     @FXML
     void switchToSementes(ActionEvent event) {
         switchToChild(0);
+        switchStyles(btnSementes);
     }
 
     @FXML
     void switchToRecipientes(ActionEvent event) {
         switchToChild(1);
+        switchStyles(btnRecipientes);
     }
 
     @FXML
     void switchToSubstratos(ActionEvent event) {
         switchToChild(2);
+        switchStyles(btnSubstratos);
     }
 
     @FXML
     void switchToServicos(ActionEvent event) {
         switchToChild(3);
+        switchStyles(btnServicos);
     }
 
     @FXML
     void switchToPlantio(ActionEvent event) {
         switchToChild(4);
+        switchStyles(btnPlantio);
     }
 
     /**
@@ -100,24 +105,15 @@ public class MainController implements Initializable {
         stackPane.getChildren().get(4).setVisible(false);
 
         stackPane.getChildren().get(index).setVisible(true);
-
-        /*
-        try {
-            
-            String[] paths = {
-                "/gui/panes/sementes.fxml",
-                "/gui/panes/recipientes.fxml",
-                "/gui/panes/substratos.fxml",
-                "/gui/panes/servicos.fxml",
-                "/gui/panes/plantios.fxml"
-            };
-
-            stackPane.getChildren().clear();
-            Node n = FXMLLoader.load(getClass().getResource(path));
-            stackPane.getChildren().add(n);
-        } catch (IOException ex) {
-            AlertBox.error("Não foi possível carregar o progama");
-        }
-         */
+    }
+    
+    private void switchStyles(Button btn){
+        btnSementes.getStyleClass().remove("botao-tela-atual");
+        btnRecipientes.getStyleClass().remove("botao-tela-atual");
+        btnSubstratos.getStyleClass().remove("botao-tela-atual");
+        btnServicos.getStyleClass().remove("botao-tela-atual");
+        btnPlantio.getStyleClass().remove("botao-tela-atual");
+        
+        btn.getStyleClass().add("botao-tela-atual");
     }
 }

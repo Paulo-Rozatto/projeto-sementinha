@@ -17,26 +17,19 @@ public class Substrato {
     private final StringProperty nome;
     private final DoubleProperty preco;
     private String descricao;
-    
-    public Substrato(){
+
+    public Substrato() {
         this.id = new SimpleIntegerProperty();
         this.nome = new SimpleStringProperty();
         this.preco = new SimpleDoubleProperty();
     }
 
-    public Substrato(int id, String nome, double preco, String descricao) {
-        this.id = new SimpleIntegerProperty(id);
-        this.nome = new SimpleStringProperty(nome);
-        this.preco = new SimpleDoubleProperty(preco);
-        this.descricao = descricao;
-    }
-
-    public double precificar(double quant){
+    public double precificar(double quant) {
         return preco.get() * quant;
     }
-    
-    public void setId(int id){
-        if(this.id.get() == 0){
+
+    public void setId(int id) {
+        if (this.id.get() == 0) {
             this.id.set(id);
         }
     }
@@ -60,7 +53,7 @@ public class Substrato {
     public void setPreco(double preco) {
         this.preco.set(preco);
     }
-    
+
     public StringProperty nomeProperty() {
         return nome;
     }

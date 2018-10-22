@@ -15,12 +15,13 @@ import util.AlertBox;
  *
  * @author paulo
  */
-public class ServicoDAO {
+public class ServicoDAO implements IDAO<Servico> {
 
     public ServicoDAO() {
 
     }
 
+    @Override
     public boolean create(Servico s) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
@@ -50,6 +51,7 @@ public class ServicoDAO {
         }
     }
 
+    @Override
     public List<Servico> read() {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
@@ -60,10 +62,10 @@ public class ServicoDAO {
             stmt = con.prepareStatement("SELECT * FROM Servicos");
             rs = stmt.executeQuery();
             while (rs.next()) {
-                Servico s = new Servico(
-                        rs.getInt("ser_id"),
-                        rs.getString("tipo"),
-                        rs.getDouble("preco"));
+                Servico s = new Servico();
+                s.setId(rs.getInt("ser_id"));
+                s.setTipo(rs.getString("tipo"));
+                s.setPreco(rs.getDouble("preco"));
 
                 servicos.add(s);
 
@@ -77,6 +79,7 @@ public class ServicoDAO {
         return servicos;
     }
 
+    @Override
     public Servico read(int id) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
@@ -90,10 +93,10 @@ public class ServicoDAO {
             rs = stmt.executeQuery();
 
             if (rs.next()) {
-                s = new Servico(
-                        rs.getInt("ser_id"),
-                        rs.getString("tipo"),
-                        rs.getDouble("preco"));
+                s = new Servico();
+                s.setId(rs.getInt("ser_id"));
+                s.setTipo(rs.getString("tipo"));
+                s.setPreco(rs.getDouble("preco"));
             }
 
         } catch (SQLException ex) {
@@ -101,10 +104,10 @@ public class ServicoDAO {
         } finally {
             ConnectionFactory.closeConection(con, stmt, rs);
         }
-
         return s;
     }
 
+    @Override
     public boolean update(Servico s) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
@@ -128,6 +131,7 @@ public class ServicoDAO {
         }
     }
 
+    @Override
     public boolean delete(int i) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
