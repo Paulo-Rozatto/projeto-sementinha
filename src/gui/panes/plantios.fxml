@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="495.0" prefWidth="960.0" style="-fx-background-color: #fff;" stylesheets="@estilocss.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.PlantiosController">
+<AnchorPane id="AnchorPane" prefHeight="495.0" prefWidth="960.0" style="-fx-background-color: #fff;" stylesheets="@estilocss.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.PlantiosController">
    <children>
       <Pane prefHeight="495.0" prefWidth="280.0" styleClass="menu-lateral" stylesheets="@estilocss.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -225,7 +225,6 @@
          </columnResizePolicy>
       </TableView>
       <TextField fx:id="tfPesquisar" layoutX="290.0" layoutY="455.0" onKeyTyped="#pesquisar" prefHeight="26.0" prefWidth="300.0" promptText="Pesquisar" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="290.0" />
-      <Button layoutX="589.0" layoutY="459.0" mnemonicParsing="false" onAction="#limparPesquisa" text="Limpar" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="589.0" />
       <Button layoutX="888.0" layoutY="450.0" mnemonicParsing="false" onAction="#exportar" text="Exportar" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" />
    </children>
 </AnchorPane>

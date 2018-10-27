@@ -5,16 +5,21 @@
  */
 package gui.controllers;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.Writer;
+import java.io.OutputStream;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import util.AlertBox;
 
 /**
@@ -48,11 +53,6 @@ public abstract class Controller<Object> {
         }
     }
 
-    protected void limparPesquisa(TextField tfPesquisar, TableView tbl, ObservableList<Object> lista) {
-        tfPesquisar.setText(null);
-        tbl.setItems(lista);
-    }
-
     protected String saveDialog(String nomePadrao) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Salvar");
@@ -68,22 +68,33 @@ public abstract class Controller<Object> {
     }
 
     protected void exportar(String title, String text) {
-        Writer writer = null;
-        String path = saveDialog(title);
         try {
-            if (path != null) {
-                File file = new File(path);
-                writer = new BufferedWriter(new FileWriter(file));
+            OutputStream fileOut = new FileOutputStream(saveDialog(title));
+            Workbook wb = new HSSFWorkbook();
+            Sheet sheet = wb.createSheet(title);
+            CreationHelper createHelper = wb.getCreationHelper();
+            int cellIndex = 0;
+            int rowIndex = 0;
+            Row row = sheet.createRow(rowIndex);
 
-                writer.write(text);
+            for (String data : text.split(",")) {
+                if (data.equals("-")) {
+                    cellIndex = 0;
+                    rowIndex++;
+                    row = sheet.createRow(rowIndex);
+                } else {
+                    row.createCell(cellIndex).setCellValue(
+                            createHelper.createRichTextString(data)
+                    );
+                    cellIndex++;
+                }
             }
+
+            wb.write(fileOut);
+        } catch (FileNotFoundException ex) {
+            AlertBox.exception("Não foi possível criar o arquivo", ex);
         } catch (IOException ex) {
-        } finally {
-            try {
-                writer.flush();
-                writer.close();
-            } catch (IOException | NullPointerException ex1) {
-            }
+            AlertBox.exception("Não foi possível criar o arquivo", ex);
         }
     }
 

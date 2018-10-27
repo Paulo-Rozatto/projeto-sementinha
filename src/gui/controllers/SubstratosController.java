@@ -171,10 +171,10 @@ public class SubstratosController extends Controller<Substrato> implements Initi
     protected void exportar() {
         String text;
         
-        text = "ID" + "," + "Nome" + "," + "Preço/hora" + "," + "Descrição" + "\n";
+        text = "ID" + "," + "Nome" + "," + "Preço/cm³" + "," + "Descrição" + ",-,";
         
         for (Substrato s : lista) {
-            text += s.getId() + "," + s.getNome() + "," + s.getPreco() + "," + s.getDescricao().replaceAll("\n", " ") + "\n";
+            text += s.getId() + "," + s.getNome() + "," + s.getPreco() + "," + s.getDescricao().replaceAll("\n", " ") + ",-,";
         }
         super.exportar("substratos", text);
     }
@@ -188,11 +188,6 @@ public class SubstratosController extends Controller<Substrato> implements Initi
             tbl.setItems(filtLista);
         } catch (RuntimeException ex) {
         }
-    }
-    
-    @FXML
-    private void limparPesquisa() {
-        super.limparPesquisa(tfPesquisar, tbl, lista);
     }
     
     @Override

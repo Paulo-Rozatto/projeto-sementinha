@@ -178,10 +178,10 @@ public class RecipientesController extends Controller<Recipiente> implements Ini
     protected void exportar() {
         String text;
 
-        text = "ID" + "," + "Nome" + "," + "Volume" + "," + "Preço" + "\n";
+        text = "ID" + "," + "Nome" + "," + "Volume/cm³" + "," + "Preço/cm³" + ",-,";
 
         for (Recipiente r : lista) {
-            text += r.getId() + "," + r.getNome() + "," + r.getVolume() + "," + r.getPreco() + "\n";
+            text += r.getId() + "," + r.getNome() + "," + r.getVolume() + "," + r.getPreco() + ",-,";
         }
         super.exportar("recipientes", text);
     }
@@ -196,11 +196,6 @@ public class RecipientesController extends Controller<Recipiente> implements Ini
         } catch (RuntimeException ex) {
             System.out.println(ex);
         }
-    }
-
-    @FXML
-    protected void limparPesquisa() {
-        super.limparPesquisa(tfPesquisar, tbl, lista);
     }
 
     @Override

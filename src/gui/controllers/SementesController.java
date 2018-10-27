@@ -213,10 +213,10 @@ public class SementesController extends Controller<Semente> implements Initializ
     protected void exportar() {
         String text;
 
-        text = "ID" + "," + "Nome" + "," + "Espécie" + "," + "Preço" + "," + "Medida" + "," + "Tipo de plantio" + "," + "Quebra de dormência" + "\n";
+        text = "ID" + "," + "Nome" + "," + "Espécie" + "," + "Preço" + "," + "Tipo de plantio" + "," + "Quebra de dormência" + ",-,";
         for (Semente s : lista) {
-            String medida = s.isPrecoEmGramas() ? "gramas" : "unidade";
-            text += s.getId() + "," + s.getNome() + "," + s.getEspecie() + "," + s.getPreco() + "," + medida + "," + s.getTipoPlantio() + "," + s.getDormencia() + "\n";
+            String medida = s.isPrecoEmGramas() ? "grama" : "unidade";
+            text += s.getId() + "," + s.getNome() + "," + s.getEspecie() + "," + "R$" + s.getPreco() + "/" + medida + "," + s.getTipoPlantio() + "," + s.getDormencia() + ",-,";
         }
         super.exportar("sementes", text);
     }
@@ -231,11 +231,6 @@ public class SementesController extends Controller<Semente> implements Initializ
         } catch (RuntimeException ex) {
             System.out.println(ex);
         }
-    }
-
-    @FXML
-    private void limparPesquisa() {
-        super.limparPesquisa(tfPesquisar, tbl, lista);
     }
 
     @Override

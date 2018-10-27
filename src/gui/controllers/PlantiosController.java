@@ -475,8 +475,8 @@ public class PlantiosController extends Controller<Plantio> implements Initializ
     @FXML
     protected void exportar() {
         String text;
-        text = "ID" + "," + "Data" + "," + "Semente" + "," + "Quantidade/Medida" + "," + "Recipiente" + ","
-                + "Quantidade" + "," + "Substrato" + "," + "Quantidade" + "," + "Serviços/horas" + "," + "Total" + "\n";
+        text = "ID" + "," + "Data" + "," + "Semente" + "," + "Quantidade" + "," + "Recipiente" + ","
+                + "Quantidade" + "," + "Substrato" + "," + "Quantidade" + "," + "Serviços/horas" + "," + "Total/muda" + ",-,";
 
         for (Plantio p : lista) {
             String srvcs = "";
@@ -489,7 +489,7 @@ public class PlantiosController extends Controller<Plantio> implements Initializ
 
             text += p.getId() + "," + p.getData() + "," + p.getSemente().getNome() + "," + quantMedida
                     + "," + p.getRecipiente().getNome() + "," + p.getQuantRec() + "," + p.getSubstrato().getNome()
-                    + "," + p.getQuantSub() + "/cm³" + "," + srvcs + "," + "R$ " + p.getTotal() + "\n";
+                    + "," + p.getQuantSub() + "/cm³" + "," + srvcs + "," + "R$ " + p.getTotal() + ",-,";
 
         }
         super.exportar("plantio", text);
@@ -505,11 +505,6 @@ public class PlantiosController extends Controller<Plantio> implements Initializ
         } catch (RuntimeException ex) {
             System.out.println(ex);
         }
-    }
-
-    @FXML
-    private void limparPesquisa() {
-        super.limparPesquisa(tfPesquisar, tbl, (ObservableList) lista);
     }
 
     @Override

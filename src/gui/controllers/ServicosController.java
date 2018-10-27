@@ -162,9 +162,9 @@ public class ServicosController extends Controller<Servico> implements Initializ
     @FXML
     protected void exportar() {
         String text;
-            text = "ID" + "," + "Tipo" + "," + "Preço/hora" + "\n";
+            text = "ID" + "," + "Tipo" + "," + "Preço/hora" + ",-,";
             for (Servico s : lista) {
-                text += s.getId() + "," + s.getTipo() + "," + s.getPreco() + "\n";
+                text += s.getId() + "," + s.getTipo() + "," + s.getPreco() + ",-,";
             }
         super.exportar("servicos", text);
     }
@@ -180,12 +180,6 @@ public class ServicosController extends Controller<Servico> implements Initializ
         }
     }
     
-    @FXML
-    private void limparPesquisa(){
-        super.limparPesquisa(tfPesquisar, tbl, lista);
-    }
-    
-
     @Override
     protected void changeDisable(boolean opt) {
         tfTipo.setDisable(opt);
