@@ -50,7 +50,6 @@ public class PlantioDAO implements IDAO<Plantio>{
                 spd.create(p.getServicosPrestados());
             }
 
-            System.out.println("Criação de registro executada com sucesso.");
             return true;
 
         } catch (SQLException ex) {
@@ -160,7 +159,6 @@ public class PlantioDAO implements IDAO<Plantio>{
 
             stmt.executeUpdate();
 
-            System.out.println("Atualização de registro executada com sucesso.");
             return true;
 
         } catch (SQLException ex) {
@@ -182,7 +180,6 @@ public class PlantioDAO implements IDAO<Plantio>{
 
             stmt.executeUpdate();
 
-            System.out.println("Registro apagado com sucesso.");
             return true;
 
         } catch (SQLException ex) {

@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,6 @@ public class SementeDAO implements IDAO<Semente> {
                 s.setId(rs.getInt(1));
             }
 
-            System.out.println("Criação de registro executada com sucesso.");
             return true;
 
         } catch (SQLException ex) {
@@ -135,7 +135,6 @@ public class SementeDAO implements IDAO<Semente> {
 
             stmt.executeUpdate();
 
-            System.out.println("Atualização de registro executada com sucesso.");
             return true;
 
         } catch (SQLException ex) {
@@ -157,10 +156,13 @@ public class SementeDAO implements IDAO<Semente> {
 
             stmt.executeUpdate();
 
-            System.out.println("Registro apagado com sucesso.");
             return true;
 
-        } catch (SQLException ex) {
+        }catch(SQLIntegrityConstraintViolationException ex){
+            AlertBox.error("Não é possível apagar semente, pois a mesma está sendo utilizada por plantio(s)");
+            return false;
+        } 
+        catch (SQLException ex) {
             AlertBox.exception("Não foi possível apagar o registro da Semente: ", ex);
             return false;
         } finally {

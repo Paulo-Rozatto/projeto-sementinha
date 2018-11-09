@@ -55,9 +55,9 @@ public class RecipientesController extends Controller<Recipiente> implements Ini
     @FXML
     private TableColumn<Recipiente, String> colNome;
     @FXML
-    private TableColumn<Recipiente, Double> colVolume;
+    private TableColumn<Recipiente, String> colVolume;
     @FXML
-    private TableColumn<Recipiente, Double> colPreco;
+    private TableColumn<Recipiente, String> colPreco;
 
     @FXML
     private TextField tfPesquisar;
@@ -74,19 +74,17 @@ public class RecipientesController extends Controller<Recipiente> implements Ini
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        //inicializa a lista
-        lista = FXCollections.observableArrayList();
-        IDAO dao = new RecipienteDAO();
-        lista.addAll(dao.read());
-
         //Atribuição dos atributos da classe Recipiente para cada coluna da  tabela
         colId.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
         colNome.setCellValueFactory(cellData -> cellData.getValue().nomeProperty());
-        colVolume.setCellValueFactory(cellData -> cellData.getValue().volumeProperty().asObject());
-        colPreco.setCellValueFactory(cellData -> cellData.getValue().precoProperty().asObject());
-
-        //coloca itens na lista
-        tbl.setItems(lista);
+        colVolume.setCellValueFactory(cellData -> {
+            String volume = String.valueOf(cellData.getValue().getVolume()).replace(".", ",");
+            return cellData.getValue().volumeProperty().asString(volume);
+        });
+        colPreco.setCellValueFactory(cellData -> {
+            String value = String.valueOf(cellData.getValue().getPreco()).replace(".", ",");
+            return cellData.getValue().precoProperty().asString(value);
+        });
     }
 
     @FXML
@@ -107,10 +105,9 @@ public class RecipientesController extends Controller<Recipiente> implements Ini
     protected void salvar() {
         IDAO dao = new RecipienteDAO();
         Recipiente r;
-
         String nome = tfNome.getText();
-        String volumeString = tfVolume.getText();
-        String precoString = tfPreco.getText();
+        String volumeString = tfVolume.getText().replace(",", ".");
+        String precoString = tfPreco.getText().replace(",", ".");
 
         if (Validate.recipiente(nome, volumeString, precoString)) {
             double volume = Double.parseDouble(volumeString);
@@ -131,6 +128,7 @@ public class RecipientesController extends Controller<Recipiente> implements Ini
                 dao.update(r);
             }
             changeDisable(true);
+            tbl.getSelectionModel().select(r);
         }
     }
 
@@ -158,8 +156,8 @@ public class RecipientesController extends Controller<Recipiente> implements Ini
         try {
             Recipiente r = selectedObject(tbl);
             tfNome.setText(r.getNome());
-            tfVolume.setText(String.valueOf(r.getVolume()));
-            tfPreco.setText(String.valueOf(r.getPreco()));
+            tfVolume.setText(String.valueOf(r.getVolume()).replace(".",","));
+            tfPreco.setText(String.valueOf(r.getPreco()).replace(".", ","));
         } catch (RuntimeException ex) {
         }
     }
@@ -194,7 +192,6 @@ public class RecipientesController extends Controller<Recipiente> implements Ini
             filtLista.setAll(lista.stream().filter(arg -> arg.getNome().toLowerCase().contains(tfPesquisar.getText().toLowerCase())).collect(Collectors.toList()));
             tbl.setItems(filtLista);
         } catch (RuntimeException ex) {
-            System.out.println(ex);
         }
     }
 
@@ -220,4 +217,18 @@ public class RecipientesController extends Controller<Recipiente> implements Ini
         tbl.getSelectionModel().select(null);
     }
 
+    @Override
+    protected void load() {
+        IDAO dao = new RecipienteDAO();
+        lista = FXCollections.observableArrayList();
+        lista.addAll(dao.read());
+        tbl.setItems(lista);
+    }
+
+    @Override
+    protected void free() {
+        clean();
+        lista.clear();
+        lista = null;
+    }
 }

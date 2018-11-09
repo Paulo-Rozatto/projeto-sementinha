@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,6 @@ public class RecipienteDAO implements IDAO<Recipiente> {
                 r.setId(rs.getInt(1));
             }
 
-            System.out.println("Criação de registro executada com sucesso.");
             return true;
 
         } catch (SQLException ex) {
@@ -123,7 +123,6 @@ public class RecipienteDAO implements IDAO<Recipiente> {
 
             stmt.executeUpdate();
 
-            System.out.println("Atualização de registro de recipiente executada com sucesso.");
             return true;
 
         } catch (SQLException ex) {
@@ -145,10 +144,13 @@ public class RecipienteDAO implements IDAO<Recipiente> {
 
             stmt.executeUpdate();
 
-            System.out.println("Registro apagado com sucesso.");
             return true;
 
-        } catch (SQLException ex) {
+        } catch(SQLIntegrityConstraintViolationException ex){
+            AlertBox.error("Não é possível apagar recipiente, pois o mesmo está sendo utilizado por plantio(s)");
+            return false;
+        } 
+        catch (SQLException ex) {
             AlertBox.exception("Não foi possível apagar o registro do Recipiente: ", ex);
             return false;
         } finally {

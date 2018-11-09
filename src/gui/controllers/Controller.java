@@ -10,9 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -56,8 +54,7 @@ public abstract class Controller<Object> {
     protected String saveDialog(String nomePadrao) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Salvar");
-//        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("","*.xlsx"));
-        fileChooser.setInitialFileName(nomePadrao + ".xlsx");
+        fileChooser.setInitialFileName(nomePadrao + ".xls");
         File savedFile = fileChooser.showSaveDialog(new Stage());
 
         try {
@@ -97,6 +94,8 @@ public abstract class Controller<Object> {
             AlertBox.exception("Não foi possível criar o arquivo", ex);
         }
     }
+    
+    protected abstract void load();
 
     protected abstract void salvar();
 
@@ -108,4 +107,5 @@ public abstract class Controller<Object> {
 
     protected abstract void pesquisar();
 
+    protected abstract void free();
 }

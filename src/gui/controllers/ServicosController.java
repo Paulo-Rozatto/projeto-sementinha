@@ -54,12 +54,12 @@ public class ServicosController extends Controller<Servico> implements Initializ
     private TableColumn<Servico, String> colTipo;
     
     @FXML
-    private TableColumn<Servico, Double> colPreco;
+    private TableColumn<Servico, String> colPreco;
     
     @FXML
     private TextField tfPesquisar;
 
-    private ObservableList<Servico> lista = FXCollections.observableArrayList();
+    private ObservableList<Servico> lista;
     private boolean novoItem;
 
     /**
@@ -67,13 +67,13 @@ public class ServicosController extends Controller<Servico> implements Initializ
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+//         cellData.getValue().precoProperty().asString()
         colId.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
         colTipo.setCellValueFactory(cellData -> cellData.getValue().tipoProperty());
-        colPreco.setCellValueFactory(cellData -> cellData.getValue().precoProperty().asObject());
-        
-        IDAO dao = new ServicoDAO();
-        lista.addAll(dao.read());
-        tbl.setItems(lista);
+        colPreco.setCellValueFactory(cellData ->{
+            String value = String.valueOf(cellData.getValue().getPreco()).replace(".", ",");
+            return cellData.getValue().precoProperty().asString(value);
+        });
     }
 
     @FXML
@@ -96,7 +96,7 @@ public class ServicosController extends Controller<Servico> implements Initializ
         Servico s;
 
         String tipo = tfTipo.getText();
-        String precoString = tfPreco.getText();
+        String precoString = tfPreco.getText().replace(",", ".");
 
         if (Validate.servico(tipo, precoString)) {
             double preco = Double.parseDouble(precoString);
@@ -110,6 +110,7 @@ public class ServicosController extends Controller<Servico> implements Initializ
                     clean();
                 }
             } else {
+                s.setId(selectedObject(tbl).getId());
                 lista.set(selectedIndex(tbl), s);
                 dao.update(s);
             }
@@ -143,7 +144,7 @@ public class ServicosController extends Controller<Servico> implements Initializ
             Servico s = selectedObject(tbl);
 
             tfTipo.setText(s.getTipo());
-            tfPreco.setText(String.valueOf(s.getPreco()));
+            tfPreco.setText(String.valueOf(s.getPreco()).replace(".", ","));
         } catch (RuntimeException ex) {
         }
     }
@@ -200,4 +201,18 @@ public class ServicosController extends Controller<Servico> implements Initializ
         tbl.getSelectionModel().select(null);
     }
 
+    @Override
+    protected void load() {
+        IDAO dao = new ServicoDAO();
+        lista = FXCollections.observableArrayList();
+        lista.setAll(dao.read());
+        tbl.setItems(lista);
+    }
+    
+    @Override
+    protected void free(){
+        clean();
+        lista.clear();
+        lista = null;
+    }
 }

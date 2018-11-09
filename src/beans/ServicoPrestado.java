@@ -22,7 +22,7 @@ public class ServicoPrestado {
     }
 
     public double precificar() {
-        double quant = Double.parseDouble(horas.get());
+        double quant = Double.parseDouble(horas.get().replace(",", "."));
         return servico.precficar(quant);
     }
     

@@ -28,12 +28,6 @@
                               <Insets right="33.0" />
                            </HBox.margin>
                         </DatePicker>
-                        <Button fx:id="btnAtualizar" disable="true" mnemonicParsing="false" onAction="#atualizar" stylesheets="@estilocss.css" text="Atualizar">
-                           <styleClass>
-                              <String fx:value="botoes-menu-esquerdo" />
-                              <String fx:value="button2" />
-                              <String fx:value="opacidade" />
-                           </styleClass></Button>
                      </children>
                      <VBox.margin>
                         <Insets bottom="5.0" />

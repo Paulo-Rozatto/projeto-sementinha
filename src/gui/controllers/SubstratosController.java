@@ -59,12 +59,12 @@ public class SubstratosController extends Controller<Substrato> implements Initi
     private TableColumn<Substrato, String> colNome;
     
     @FXML
-    private TableColumn<Substrato, Double> colPreco;
+    private TableColumn<Substrato, String> colPreco;
     
     @FXML
     private TextField tfPesquisar;
     
-    private ObservableList<Substrato> lista = FXCollections.observableArrayList();
+    private ObservableList<Substrato> lista;
     private boolean novoItem;
 
     /**
@@ -74,12 +74,10 @@ public class SubstratosController extends Controller<Substrato> implements Initi
     public void initialize(URL url, ResourceBundle rb) {
         colId.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
         colNome.setCellValueFactory(cellData -> cellData.getValue().nomeProperty());
-        colPreco.setCellValueFactory(cellData -> cellData.getValue().precoProperty().asObject());
-        
-        IDAO dao = new SubstratoDAO();
-        lista.addAll(dao.read());
-        
-        tbl.setItems(lista);
+        colPreco.setCellValueFactory(cellData ->{
+           String value = String.valueOf(cellData.getValue().getPreco()).replace(".", ",");
+           return cellData.getValue().precoProperty().asString(value);
+        });
     }
     
     @FXML
@@ -102,7 +100,7 @@ public class SubstratosController extends Controller<Substrato> implements Initi
         Substrato s;
         
         String nome = tfNome.getText();
-        String precoString = tfPreco.getText();
+        String precoString = tfPreco.getText().replace(",",".");
         String descricao = taDescricao.getText();
         
         if (Validate.substrato(nome, precoString, descricao)) {
@@ -118,10 +116,12 @@ public class SubstratosController extends Controller<Substrato> implements Initi
                     clean();
                 }
             } else {
+                s.setId(selectedObject(tbl).getId());
                 lista.set(selectedIndex(tbl), s);
                 dao.update(s);
             }
             changeDisable(true);
+            tbl.getSelectionModel().select(s);
         }
     }
     
@@ -161,7 +161,7 @@ public class SubstratosController extends Controller<Substrato> implements Initi
             Substrato s = selectedObject(tbl);
             
             tfNome.setText(s.getNome());
-            tfPreco.setText(String.valueOf(s.getPreco()));
+            tfPreco.setText(String.valueOf(s.getPreco()).replace(".", ","));
             taDescricao.setText(s.getDescricao());
         } catch (RuntimeException ex) {
         }
@@ -210,5 +210,20 @@ public class SubstratosController extends Controller<Substrato> implements Initi
         tfPreco.setText("");
         taDescricao.setText("");
         tbl.getSelectionModel().select(null);
+    }
+
+    @Override
+    protected void load() {
+        IDAO dao = new SubstratoDAO();
+        lista = FXCollections.observableArrayList();
+        lista.setAll(dao.read());
+        tbl.setItems(lista);
+    }
+
+    @Override
+    protected void free() {
+        clean();
+        lista.clear();
+        lista = null;
     }
 }

@@ -10,7 +10,6 @@ import java.util.List;
  */
 public class Validate {
 
-    private Validate() {}
 
     private static boolean string(String stg) {
         try {
@@ -57,7 +56,7 @@ public class Validate {
             error += "O campo \"Quebra de Dormência\" precisa ter um valor selecionado.\n";
         }
 
-        if (error.equals("")) {
+        if (error.isEmpty()) {
             valid = true;
         } else {
             AlertBox.error(error);
@@ -78,7 +77,7 @@ public class Validate {
             error += "O campo \"Preço\"  não pode ser vazio, conter letras, ou ser negativo.\n";
         }
 
-        if (error.equals("")) {
+        if (error.isEmpty()) {
             valid = true;
         } else {
             AlertBox.error(error);
@@ -99,7 +98,7 @@ public class Validate {
             error += "O campo \"Descrição\"  não ter mais de 512 caracteres.\n";
         }
 
-        if (error.equals("")) {
+        if (error.isEmpty()) {
             valid = true;
         } else {
             AlertBox.error(error);
@@ -117,7 +116,7 @@ public class Validate {
             error += "O campo \"Preço\" não pode ser vazio, conter letras, ou ser negativo.\n";
         }
 
-        if (error.equals("")) {
+        if (error.isEmpty()) {
             valid = true;
         } else {
             AlertBox.error(error);
@@ -150,13 +149,13 @@ public class Validate {
             error += "O campo \"Quantidade de substrato\" não pode ser vazio, conter letras,\n ou ser negativo.\n";
         }
         for (ServicoPrestado s : sp) {
-            if (!decimal(s.getHoras())) {
+            if (!decimal(s.getHoras().replace(",", "."))) {
                 error += "O campo \"Horas\" não pode conter letras, ou ser negativo.\n";
                 break;
             }
         }
 
-        if (error.equals("")) {
+        if (error.isEmpty()) {
             valid = true;
         } else {
             AlertBox.error(error);
@@ -164,5 +163,6 @@ public class Validate {
 
         return valid;
     }
+    private Validate() {}
 
 }

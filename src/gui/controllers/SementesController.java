@@ -8,8 +8,8 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.Initializable;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
@@ -79,7 +79,7 @@ public class SementesController extends Controller<Semente> implements Initializ
     private TableColumn<Semente, String> colPlantio;
 
     @FXML
-    private TableColumn<Semente, Double> colPreco;
+    private TableColumn<Semente, String> colPreco;
 
     @FXML
     private TableColumn<Semente, String> colDormencia;
@@ -87,7 +87,7 @@ public class SementesController extends Controller<Semente> implements Initializ
     @FXML
     private TextField tfPesquisar;
 
-    private ObservableList<Semente> lista = FXCollections.observableArrayList();
+    private  ObservableList<Semente> lista;
     private boolean novoItem;
 
     /**
@@ -103,12 +103,11 @@ public class SementesController extends Controller<Semente> implements Initializ
         colId.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
         colNome.setCellValueFactory(cellData -> cellData.getValue().nomeProperty());
         colPlantio.setCellValueFactory(cellData -> cellData.getValue().tipoPlantioProperty());
-        colPreco.setCellValueFactory(cellData -> cellData.getValue().precoProperty().asObject());
+        colPreco.setCellValueFactory(cellData -> {
+            String value = String.valueOf(cellData.getValue().getPreco()).replace(".", ",");
+            return cellData.getValue().precoProperty().asString(value);
+        });
         colDormencia.setCellValueFactory(cellData -> cellData.getValue().dormenciaProperty());
-
-        IDAO dao = new SementeDAO();
-        lista.addAll(dao.read());
-        tbl.setItems(lista);
     }
 
     @FXML
@@ -136,7 +135,7 @@ public class SementesController extends Controller<Semente> implements Initializ
         especie = tfEspecie.getText();
         plantio = cbPlantio.getValue();
         dormencia = cbDormencia.getValue();
-        precoString = tfPreco.getText();
+        precoString = tfPreco.getText().replace(",",".");
         precoEmGramas = rbGramas.isSelected();
 
         if (Validate.semente(nome, especie, precoString, plantio, dormencia)) {
@@ -160,6 +159,7 @@ public class SementesController extends Controller<Semente> implements Initializ
                 dao.update(s);
             }
             changeDisable(true);
+            tbl.getSelectionModel().select(s);
         }
     }
 
@@ -189,7 +189,7 @@ public class SementesController extends Controller<Semente> implements Initializ
 
             tfNome.setText(s.getNome());
             tfEspecie.setText(s.getEspecie());
-            tfPreco.setText(String.valueOf(s.getPreco()));
+            tfPreco.setText(String.valueOf(s.getPreco()).replace(".", ","));
             rbGramas.setSelected(s.isPrecoEmGramas());
             rbUnidades.setSelected(!s.isPrecoEmGramas());
             cbPlantio.setValue(s.getTipoPlantio());
@@ -229,7 +229,6 @@ public class SementesController extends Controller<Semente> implements Initializ
             filtLista.setAll(lista.stream().filter(arg -> arg.getNome().toLowerCase().contains(tfPesquisar.getText().toLowerCase())).collect(Collectors.toList()));
             tbl.setItems(filtLista);
         } catch (RuntimeException ex) {
-            System.out.println(ex);
         }
     }
 
@@ -260,5 +259,20 @@ public class SementesController extends Controller<Semente> implements Initializ
         cbPlantio.setValue(null);
         cbDormencia.setValue(null);
         tbl.getSelectionModel().select(null);
+    }
+
+    @Override
+    protected void load() {
+        IDAO dao = new SementeDAO();
+        lista = FXCollections.observableArrayList();
+        lista.addAll(dao.read());
+        tbl.setItems(lista);
+    }
+
+    @Override
+    protected void free() {
+        clean();
+        lista.clear();
+        lista  = null;
     }
 }

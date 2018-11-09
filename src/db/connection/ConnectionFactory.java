@@ -18,6 +18,10 @@ public class ConnectionFactory {
     private static final String URL = "jdbc:mariadb://localhost:3306/sementinha";
     private static final String USER = "root";
     private static final String PSWD = "";
+    
+    
+    private ConnectionFactory() {
+    }
 
     public static Connection getConnection() {
 

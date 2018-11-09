@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,7 @@ public class ServicoPrestadoDAO implements IDAO<ServicoPrestado> {
             for (ServicoPrestado sp : spList) {
                 stmt.setInt(1, sp.getPlantio().getId());
                 stmt.setInt(2, sp.getServico().getId());
-                stmt.setDouble(3, Double.parseDouble(sp.getHoras()));
+                stmt.setDouble(3, Double.parseDouble(sp.getHoras().replace(",", ".")));
                 stmt.addBatch();
             }
             stmt.executeBatch();
@@ -64,7 +65,6 @@ public class ServicoPrestadoDAO implements IDAO<ServicoPrestado> {
     
     @Override
     public List<ServicoPrestado> read(){
-        System.out.println("Aqui!!!");
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -204,7 +204,11 @@ public class ServicoPrestadoDAO implements IDAO<ServicoPrestado> {
             con.commit();
 
             return true;
-        } catch (SQLException ex) {
+        } catch(SQLIntegrityConstraintViolationException ex){
+            AlertBox.error("Não é possível o apagar serviço, pois o mesmo está sendo utilizada por plantio(s)");
+            return false;
+        } 
+        catch (SQLException ex) {
             AlertBox.exception("Falha na atualização de registro de Serviços Prestados: ", ex);
             return false;
         } finally {

@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="557.0" prefWidth="903.0" style="-fx-background-color: #2bf;" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.MainController">
+<AnchorPane id="AnchorPane" prefHeight="557.0" prefWidth="903.0" style="-fx-background-color: #2bf;" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.MainController">
    <children>
       <HBox prefHeight="65.0" prefWidth="910.0" style="-fx-background-color: #123456;" stylesheets="@estilocss.css" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -66,6 +66,6 @@
             </Button>
          </children>
       </HBox>
-      <StackPane fx:id="stackPane" layoutY="65.0" prefHeight="495.0" prefWidth="960.0" style="-fx-background-color: #556;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="67.0" />
+      <StackPane fx:id="stackPane" layoutX="106.0" layoutY="129.0" prefHeight="557.0" prefWidth="903.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="67.0" />
    </children>
 </AnchorPane>

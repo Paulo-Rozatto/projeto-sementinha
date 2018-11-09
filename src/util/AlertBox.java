@@ -15,7 +15,6 @@ import javafx.stage.StageStyle;
  */
 public class AlertBox {
     
-    private AlertBox(){};
 
     public static void error(String text) {
         Alert alert = new Alert(AlertType.ERROR);
@@ -93,5 +92,6 @@ public class AlertBox {
 
         alert.showAndWait();
     }
+    private AlertBox(){}
 
 }
