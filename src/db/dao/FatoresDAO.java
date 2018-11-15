@@ -40,7 +40,6 @@ public class FatoresDAO {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
         
-        System.out.println("!!");
         try {
             stmt = con.prepareStatement("INSERT INTO Fatores() VALUES()");
             stmt.executeUpdate();
