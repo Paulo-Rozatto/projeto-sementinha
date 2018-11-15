@@ -1,5 +1,7 @@
 package gui.controllers;
 
+import beans.Semente;
+import db.dao.FatoresDAO;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -9,7 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
-import util.AlertBox;
+import util.DialogBox;
 
 /**
  * FXML Controller class
@@ -78,7 +80,6 @@ public class MainController implements Initializable {
         }
     }
 
-
     /**
      * Initializes the controller class.
      *
@@ -111,9 +112,14 @@ public class MainController implements Initializable {
             stackPane.getChildren().get(3).setVisible(false);
             stackPane.getChildren().get(4).setVisible(false);
 
+            FatoresDAO fdao = new FatoresDAO();
+            double ft[] = fdao.read();
+            Semente.setFatores(ft[0], ft[1], ft[2], ft[3]);
+
             switchToChild(0);
         } catch (IOException ex) {
-            AlertBox.exception("Erro ao carregar o progama.", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Erro ao carregar o progama.", ex);
         }
     }
 
@@ -128,7 +134,8 @@ public class MainController implements Initializable {
             focus = index;
             controllers[index].load();
         } catch (NullPointerException ex) {
-            AlertBox.exception("Falha no carregamento", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Falha no carregamento", ex);
         }
     }
 

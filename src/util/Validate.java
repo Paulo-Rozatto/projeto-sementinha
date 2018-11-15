@@ -59,7 +59,8 @@ public class Validate {
         if (error.isEmpty()) {
             valid = true;
         } else {
-            AlertBox.error(error);
+            DialogBox dg = new DialogBox();
+            dg.error(error);
         }
         return valid;
     }
@@ -80,7 +81,8 @@ public class Validate {
         if (error.isEmpty()) {
             valid = true;
         } else {
-            AlertBox.error(error);
+            DialogBox dg = new DialogBox();
+            dg.error(error);
         }
         return valid;
     }
@@ -101,7 +103,8 @@ public class Validate {
         if (error.isEmpty()) {
             valid = true;
         } else {
-            AlertBox.error(error);
+            DialogBox dg = new DialogBox();
+            dg.error(error);
         }
         return valid;
     }
@@ -119,7 +122,8 @@ public class Validate {
         if (error.isEmpty()) {
             valid = true;
         } else {
-            AlertBox.error(error);
+            DialogBox dg = new DialogBox();
+            dg.error(error);
         }
         return valid;
     }
@@ -158,10 +162,35 @@ public class Validate {
         if (error.isEmpty()) {
             valid = true;
         } else {
-            AlertBox.error(error);
+            DialogBox dg = new DialogBox();
+            dg.error(error);
         }
 
         return valid;
+    }
+    
+    public static boolean fatores(String plantIndireto, String quebraQuimica, String quebraFisica,String quebraEstratificacao){
+        String error = "";
+        if(!decimal(plantIndireto)){
+            error = "O campo Plantio indireto não pode ser vazio, conter letras, ou ser negativo.";
+        }
+        if(!decimal(quebraQuimica)){
+            error += "O Quebra química não pode ser vazio, conter letras, ou ser negativo.";
+        }
+        if(!decimal(quebraFisica)){
+            error += "O Quebra física não pode ser vazio, conter letras, ou ser negativo.";
+        }
+        if(!decimal(quebraEstratificacao)){
+            error += "O Estratificação não pode ser vazio, conter letras, ou ser negativo.";
+        }
+        if(error.isEmpty()){
+            return true;
+        }
+        else{
+            DialogBox dg = new DialogBox();
+            dg.error(error);
+            return false;
+        }
     }
     private Validate() {}
 

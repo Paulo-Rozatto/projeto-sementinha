@@ -32,7 +32,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldTableCell;
-import util.AlertBox;
+import util.DialogBox;
 import util.Validate;
 
 /**
@@ -224,7 +224,8 @@ public class PlantiosController extends Controller<Plantio> implements Initializ
         int subInd = cbSubstrato.getSelectionModel().getSelectedIndex();
         if (subInd != -1) {
             Substrato s = substratos.get(subInd);
-            AlertBox.describe(s.getDescricao());
+            DialogBox dg = new DialogBox();
+            dg.describe(s.getDescricao());
         }
     }
 
@@ -245,7 +246,8 @@ public class PlantiosController extends Controller<Plantio> implements Initializ
             spCreateList.add(sp);
             listaServicoPrestado.add(sp);
         } catch (ArrayIndexOutOfBoundsException ex) {
-            AlertBox.warning("Nehum serviço selecionado");
+            DialogBox dg = new DialogBox();
+            dg.warning("Nehum serviço selecionado");
         }
 
         cbServico.getSelectionModel().select(null);
@@ -258,7 +260,8 @@ public class PlantiosController extends Controller<Plantio> implements Initializ
             spRmList.add(sp);
             listaServicoPrestado.remove(sp);
         } catch (ArrayIndexOutOfBoundsException ex) {
-            AlertBox.warning("Nehum serviço selecionado");
+            DialogBox dg = new DialogBox();
+            dg.warning("Nehum serviço selecionado");
         }
     }
 
@@ -296,7 +299,8 @@ public class PlantiosController extends Controller<Plantio> implements Initializ
                 changeDisable(false);
             }
         } catch (RuntimeException ex) {
-            AlertBox.warning("Nenhuma coluna selecionada.");
+            DialogBox dg = new DialogBox();
+            dg.warning("Nenhuma coluna selecionada.");
         }
     }
 
@@ -370,15 +374,17 @@ public class PlantiosController extends Controller<Plantio> implements Initializ
         IDAO dao = new PlantioDAO();
         try {
             Plantio p = selectedObject(tbl);
+            DialogBox dg = new DialogBox();
 
-            if (AlertBox.confirmDelete()) {
+            if (dg.confirmDelete()) {
                 if (dao.delete(p.getId())) {
                     lista.remove(p);
                     clean();
                 }
             }
         } catch (RuntimeException ex) {
-            AlertBox.warning("Nenhuma coluna selecionada.");
+            DialogBox dg = new DialogBox();
+            dg.warning("Nenhuma coluna selecionada.");
         }
     }
 

@@ -10,7 +10,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import util.AlertBox;
+import util.DialogBox;
 
 /**
  *
@@ -48,7 +48,8 @@ public class SementeDAO implements IDAO<Semente> {
             return true;
 
         } catch (SQLException ex) {
-            AlertBox.exception("Falha na criação de registro de Semente: ", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Falha na criação de registro de Semente: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);
@@ -80,7 +81,8 @@ public class SementeDAO implements IDAO<Semente> {
             }
 
         } catch (SQLException ex) {
-            AlertBox.exception("Não foi possível ler as Sementes no banco de dados: ", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Não foi possível ler as Sementes no banco de dados: ", ex);
         } finally {
             ConnectionFactory.closeConection(con, stmt, rs);
         }
@@ -110,7 +112,8 @@ public class SementeDAO implements IDAO<Semente> {
             }
 
         } catch (SQLException ex) {
-            AlertBox.exception("Não foi possível ler a Semente no banco de dados: ", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Não foi possível ler a Semente no banco de dados: ", ex);
         } finally {
             ConnectionFactory.closeConection(con, stmt, rs);
         }
@@ -138,7 +141,8 @@ public class SementeDAO implements IDAO<Semente> {
             return true;
 
         } catch (SQLException ex) {
-            AlertBox.exception("Falha na atualização de registro da Semente: ", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Falha na atualização de registro da Semente: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);
@@ -158,12 +162,13 @@ public class SementeDAO implements IDAO<Semente> {
 
             return true;
 
-        }catch(SQLIntegrityConstraintViolationException ex){
-            AlertBox.error("Não é possível apagar semente, pois a mesma está sendo utilizada por plantio(s)");
+        } catch (SQLIntegrityConstraintViolationException ex) {
+            DialogBox dg = new DialogBox();
+            dg.error("Não é possível apagar semente, pois a mesma está sendo utilizada por plantio(s)");
             return false;
-        } 
-        catch (SQLException ex) {
-            AlertBox.exception("Não foi possível apagar o registro da Semente: ", ex);
+        } catch (SQLException ex) {
+            DialogBox dg = new DialogBox();
+            dg.exception("Não foi possível apagar o registro da Semente: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);

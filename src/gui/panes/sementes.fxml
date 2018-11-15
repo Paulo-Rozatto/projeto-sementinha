@@ -63,9 +63,15 @@
                   </ComboBox>
                   <ComboBox fx:id="cbDormencia" disable="true" prefHeight="26.0" prefWidth="190.0" promptText="Quebra de dormência">
                      <VBox.margin>
-                        <Insets bottom="20.0" />
+                        <Insets bottom="5.0" />
                      </VBox.margin>
                   </ComboBox>
+                  <Button fx:id="btnFatores" mnemonicParsing="false" onAction="#changeFatores" stylesheets="@estilocss.css" text="Fatores">
+                     <styleClass>
+                        <String fx:value="button2" />
+                        <String fx:value="botoes-menu-esquerdo" />
+                     </styleClass>
+                  </Button>
                </children>
             </VBox>
             <VBox layoutX="31.0" layoutY="424.0">

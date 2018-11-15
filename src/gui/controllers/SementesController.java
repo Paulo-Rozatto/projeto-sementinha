@@ -1,6 +1,7 @@
 package gui.controllers;
 
 import beans.Semente;
+import db.dao.FatoresDAO;
 import db.dao.IDAO;
 import db.dao.SementeDAO;
 import java.net.URL;
@@ -17,7 +18,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import util.AlertBox;
+import util.DialogBox;
 import util.Validate;
 
 /**
@@ -47,6 +48,9 @@ public class SementesController extends Controller<Semente> implements Initializ
 
     @FXML
     private ComboBox<String> cbPlantio;
+
+    @FXML
+    private Button btnFatores;
 
     @FXML
     private Button btnNovo;
@@ -87,7 +91,7 @@ public class SementesController extends Controller<Semente> implements Initializ
     @FXML
     private TextField tfPesquisar;
 
-    private  ObservableList<Semente> lista;
+    private ObservableList<Semente> lista;
     private boolean novoItem;
 
     /**
@@ -135,7 +139,7 @@ public class SementesController extends Controller<Semente> implements Initializ
         especie = tfEspecie.getText();
         plantio = cbPlantio.getValue();
         dormencia = cbDormencia.getValue();
-        precoString = tfPreco.getText().replace(",",".");
+        precoString = tfPreco.getText().replace(",", ".");
         precoEmGramas = rbGramas.isSelected();
 
         if (Validate.semente(nome, especie, precoString, plantio, dormencia)) {
@@ -170,15 +174,16 @@ public class SementesController extends Controller<Semente> implements Initializ
 
         try {
             Semente s = selectedObject(tbl);
-
-            if (AlertBox.confirmDelete()) {
+            DialogBox dg = new DialogBox();
+            if (dg.confirmDelete()) {
                 if (dao.delete(s.getId())) {
                     lista.remove(s);
                     clean();
                 }
             }
         } catch (RuntimeException ex) {
-            AlertBox.warning("Nenhuma coluna selecionada.");
+            DialogBox dg = new DialogBox();
+            dg.warning("Nenhuma coluna selecionada.");
         }
     }
 
@@ -207,6 +212,12 @@ public class SementesController extends Controller<Semente> implements Initializ
             selecionar();
         }
         changeDisable(true);
+    }
+    
+    @FXML
+    void changeFatores(){
+        DialogBox dg = new DialogBox();
+        dg.fatores();
     }
 
     @FXML
@@ -273,6 +284,6 @@ public class SementesController extends Controller<Semente> implements Initializ
     protected void free() {
         clean();
         lista.clear();
-        lista  = null;
+        lista = null;
     }
 }

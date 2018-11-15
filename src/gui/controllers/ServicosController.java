@@ -14,7 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import util.AlertBox;
+import util.DialogBox;
 import util.Validate;
 
 /**
@@ -26,7 +26,7 @@ public class ServicosController extends Controller<Servico> implements Initializ
 
     @FXML
     private TextField tfTipo;
-    
+
     @FXML
     private TextField tfPreco;
 
@@ -41,21 +41,22 @@ public class ServicosController extends Controller<Servico> implements Initializ
 
     @FXML
     private Button btnExcluir;
-    
-    @FXML Button btnCancelar;
+
+    @FXML
+    Button btnCancelar;
 
     @FXML
     private TableView<Servico> tbl;
-    
+
     @FXML
     private TableColumn<Servico, Integer> colId;
-    
+
     @FXML
     private TableColumn<Servico, String> colTipo;
-    
+
     @FXML
     private TableColumn<Servico, String> colPreco;
-    
+
     @FXML
     private TextField tfPesquisar;
 
@@ -70,7 +71,7 @@ public class ServicosController extends Controller<Servico> implements Initializ
 //         cellData.getValue().precoProperty().asString()
         colId.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
         colTipo.setCellValueFactory(cellData -> cellData.getValue().tipoProperty());
-        colPreco.setCellValueFactory(cellData ->{
+        colPreco.setCellValueFactory(cellData -> {
             String value = String.valueOf(cellData.getValue().getPreco()).replace(".", ",");
             return cellData.getValue().precoProperty().asString(value);
         });
@@ -103,7 +104,7 @@ public class ServicosController extends Controller<Servico> implements Initializ
             s = new Servico();
             s.setTipo(tipo);
             s.setPreco(preco);
-            
+
             if (novoItem) {
                 if (dao.create(s)) {
                     lista.add(s);
@@ -126,15 +127,17 @@ public class ServicosController extends Controller<Servico> implements Initializ
 
         try {
             Servico s = selectedObject(tbl);
-
-            if (AlertBox.confirmDelete()) {
+            
+            DialogBox dg = new DialogBox();
+            if (dg.confirmDelete()) {
                 if (dao.delete(s.getId())) {
                     lista.remove(s);
                     clean();
                 }
             }
         } catch (RuntimeException ex) {
-            AlertBox.warning("Nenhuma coluna selecionada.");
+            DialogBox dg = new DialogBox();
+            dg.warning("Nenhuma coluna selecionada.");
         }
     }
 
@@ -148,28 +151,27 @@ public class ServicosController extends Controller<Servico> implements Initializ
         } catch (RuntimeException ex) {
         }
     }
-    
+
     @FXML
-    private void cancelar(){
-        if(novoItem){
+    private void cancelar() {
+        if (novoItem) {
             clean();
-        }
-        else{
+        } else {
             selecionar();
         }
         changeDisable(true);
     }
-    
+
     @FXML
     protected void exportar() {
         String text;
-            text = "ID" + "," + "Tipo" + "," + "Preço/hora" + ",-,";
-            for (Servico s : lista) {
-                text += s.getId() + "," + s.getTipo() + "," + s.getPreco() + ",-,";
-            }
+        text = "ID" + "," + "Tipo" + "," + "Preço/hora" + ",-,";
+        for (Servico s : lista) {
+            text += s.getId() + "," + s.getTipo() + "," + s.getPreco() + ",-,";
+        }
         super.exportar("servicos", text);
     }
-    
+
     @FXML
     @Override
     protected void pesquisar() {
@@ -180,7 +182,7 @@ public class ServicosController extends Controller<Servico> implements Initializ
         } catch (RuntimeException ex) {
         }
     }
-    
+
     @Override
     protected void changeDisable(boolean opt) {
         tfTipo.setDisable(opt);
@@ -208,9 +210,9 @@ public class ServicosController extends Controller<Servico> implements Initializ
         lista.setAll(dao.read());
         tbl.setItems(lista);
     }
-    
+
     @Override
-    protected void free(){
+    protected void free() {
         clean();
         lista.clear();
         lista = null;

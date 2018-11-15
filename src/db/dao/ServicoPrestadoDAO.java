@@ -12,7 +12,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import util.AlertBox;
+import util.DialogBox;
 
 /**
  *
@@ -22,14 +22,15 @@ public class ServicoPrestadoDAO implements IDAO<ServicoPrestado> {
 
     public ServicoPrestadoDAO() {
     }
-    
+
     @Override
-    public boolean create(ServicoPrestado sp){
+    public boolean create(ServicoPrestado sp) {
         List<ServicoPrestado> lista = new ArrayList();
         lista.add(sp);
         return create(lista);
     }
-    public boolean create(List<ServicoPrestado> spList){
+
+    public boolean create(List<ServicoPrestado> spList) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -37,7 +38,7 @@ public class ServicoPrestadoDAO implements IDAO<ServicoPrestado> {
         try {
             con.setAutoCommit(false);
 
-            stmt = con.prepareStatement("INSERT INTO ServicoPrestado(pla_id,ser_id,horas) values(?,?,?)",Statement.RETURN_GENERATED_KEYS);
+            stmt = con.prepareStatement("INSERT INTO ServicoPrestado(pla_id,ser_id,horas) values(?,?,?)", Statement.RETURN_GENERATED_KEYS);
             for (ServicoPrestado sp : spList) {
                 stmt.setInt(1, sp.getPlantio().getId());
                 stmt.setInt(2, sp.getServico().getId());
@@ -46,9 +47,9 @@ public class ServicoPrestadoDAO implements IDAO<ServicoPrestado> {
             }
             stmt.executeBatch();
             rs = stmt.getGeneratedKeys();
-            
+
             int i = 0;
-            while(rs.next()){
+            while (rs.next()) {
                 spList.get(i).setId(rs.getInt("id"));
                 i++;
             }
@@ -56,65 +57,68 @@ public class ServicoPrestadoDAO implements IDAO<ServicoPrestado> {
 
             return true;
         } catch (SQLException ex) {
-            AlertBox.exception("Falha na criação de registro de Serviços Prestados: ", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Falha na criação de registro de Serviços Prestados: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);
         }
     }
-    
+
     @Override
-    public List<ServicoPrestado> read(){
+    public List<ServicoPrestado> read() {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
         ResultSet rs = null;
         List<ServicoPrestado> servicosPrestados = new ArrayList();
         IDAO plaDAO = new PlantioDAO();
         IDAO serDAO = new ServicoDAO();
-        
-        try{
+
+        try {
             stmt = con.prepareStatement("Select * from ServicoPrestado");
             rs = stmt.executeQuery();
-            
-            while(rs.next()){
+
+            while (rs.next()) {
                 ServicoPrestado sp = new ServicoPrestado();
                 sp.setId(rs.getInt(1));
                 sp.setPlantio((Plantio) plaDAO.read(rs.getInt(3)));
                 sp.setServico((Servico) serDAO.read(rs.getInt(2)));
                 sp.setHoras(String.valueOf(rs.getDouble(4)));
             }
-        
+
         } catch (SQLException ex) {
-            AlertBox.exception("Não foi possível ler Serviços Prestados no banco de dados: ", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Não foi possível ler Serviços Prestados no banco de dados: ", ex);
         } finally {
             ConnectionFactory.closeConection(con, stmt, rs);
         }
         return servicosPrestados;
     }
-    
+
     @Override
-    public ServicoPrestado read(int id){
+    public ServicoPrestado read(int id) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
         ResultSet rs = null;
         ServicoPrestado sp = null;
         IDAO plaDAO = new PlantioDAO();
         IDAO serDAO = new ServicoDAO();
-        
-        try{
+
+        try {
             stmt = con.prepareStatement("Select * from ServicoPrestado WHERE id = ?");
             stmt.setInt(1, id);
             rs = stmt.executeQuery();
-            
-            if(rs.next()){
+
+            if (rs.next()) {
                 sp = new ServicoPrestado();
                 sp.setPlantio((Plantio) plaDAO.read(rs.getInt("pla_id")));
                 sp.setServico((Servico) serDAO.read(rs.getInt("ser_id")));
                 sp.setHoras(String.valueOf(rs.getDouble("horas")));
             }
-        
+
         } catch (SQLException ex) {
-            AlertBox.exception("Não foi possível ler Serviços Prestados no banco de dados: ", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Não foi possível ler Serviços Prestados no banco de dados: ", ex);
         } finally {
             ConnectionFactory.closeConection(con, stmt, rs);
         }
@@ -143,21 +147,22 @@ public class ServicoPrestadoDAO implements IDAO<ServicoPrestado> {
             }
 
         } catch (SQLException ex) {
-            AlertBox.exception("Não foi possível ler Serviços Prestados no banco de dados: ", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Não foi possível ler Serviços Prestados no banco de dados: ", ex);
         } finally {
             ConnectionFactory.closeConection(con, stmt, rs);
         }
         return servicosPrestados;
     }
-    
+
     @Override
-    public boolean update(ServicoPrestado sp){
+    public boolean update(ServicoPrestado sp) {
         List<ServicoPrestado> lista = new ArrayList();
         lista.add(sp);
         return update(lista);
     }
-    
-    public boolean update(List<ServicoPrestado> spList){
+
+    public boolean update(List<ServicoPrestado> spList) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
 
@@ -175,19 +180,20 @@ public class ServicoPrestadoDAO implements IDAO<ServicoPrestado> {
 
             return true;
         } catch (SQLException ex) {
-            AlertBox.exception("Falha na atualização de registro de Serviços Prestados: ", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Falha na atualização de registro de Serviços Prestados: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);
         }
     }
-    
+
     @Override
-    public boolean delete(int i){
+    public boolean delete(int i) {
         return false;
     }
 
-    public boolean delete(List<ServicoPrestado> spList){
+    public boolean delete(List<ServicoPrestado> spList) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
 
@@ -204,12 +210,13 @@ public class ServicoPrestadoDAO implements IDAO<ServicoPrestado> {
             con.commit();
 
             return true;
-        } catch(SQLIntegrityConstraintViolationException ex){
-            AlertBox.error("Não é possível o apagar serviço, pois o mesmo está sendo utilizada por plantio(s)");
+        } catch (SQLIntegrityConstraintViolationException ex) {
+            DialogBox dg = new DialogBox();
+            dg.error("Não é possível o apagar serviço, pois o mesmo está sendo utilizada por plantio(s)");
             return false;
-        } 
-        catch (SQLException ex) {
-            AlertBox.exception("Falha na atualização de registro de Serviços Prestados: ", ex);
+        } catch (SQLException ex) {
+            DialogBox dg = new DialogBox();
+            dg.exception("Falha na atualização de registro de Serviços Prestados: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);

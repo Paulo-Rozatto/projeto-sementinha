@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import util.DialogBox;
 
 /**
  *
@@ -18,8 +19,7 @@ public class ConnectionFactory {
     private static final String URL = "jdbc:mariadb://localhost:3306/sementinha";
     private static final String USER = "root";
     private static final String PSWD = "";
-    
-    
+
     private ConnectionFactory() {
     }
 
@@ -29,7 +29,9 @@ public class ConnectionFactory {
             Class.forName(DRIVER);
             return DriverManager.getConnection(URL, USER, PSWD);
         } catch (ClassNotFoundException | SQLException ex) {
-            throw new RuntimeException("Error na conexão: ", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Error na conexão com o banco de dados: \n", ex);
+            return null;
         }
     }
 
@@ -55,10 +57,10 @@ public class ConnectionFactory {
             Logger.getLogger(ConnectionFactory.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public static void closeConection(Connection con, PreparedStatement stmt, ResultSet rs) {
 
-        closeConnection(con,stmt);
+        closeConnection(con, stmt);
 
         try {
             if (rs != null) {
@@ -68,5 +70,5 @@ public class ConnectionFactory {
             Logger.getLogger(ConnectionFactory.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
 }

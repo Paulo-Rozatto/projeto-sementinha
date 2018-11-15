@@ -9,13 +9,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import util.AlertBox;
+import util.DialogBox;
 
 /**
  *
  * @author paulo
  */
-public class PlantioDAO implements IDAO<Plantio>{
+public class PlantioDAO implements IDAO<Plantio> {
 
     public PlantioDAO() {
 
@@ -53,7 +53,8 @@ public class PlantioDAO implements IDAO<Plantio>{
             return true;
 
         } catch (SQLException ex) {
-            AlertBox.exception("Falha na criação de registro de Plantio: ", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Falha na criação de registro de Plantio: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);
@@ -67,7 +68,7 @@ public class PlantioDAO implements IDAO<Plantio>{
         ResultSet rs = null;
         List<Plantio> plantios = new ArrayList();
         SementeDAO sem = new SementeDAO();
-        RecipienteDAO rec = new RecipienteDAO(); 
+        RecipienteDAO rec = new RecipienteDAO();
         SubstratoDAO sub = new SubstratoDAO();
         ServicoPrestadoDAO spd = new ServicoPrestadoDAO();
 
@@ -93,28 +94,29 @@ public class PlantioDAO implements IDAO<Plantio>{
             }
 
         } catch (SQLException ex) {
-            AlertBox.exception("Não foi possível ler Plantios no banco de dados: ", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Não foi possível ler Plantios no banco de dados: ", ex);
         } finally {
             ConnectionFactory.closeConection(con, stmt, rs);
         }
         return plantios;
     }
-    
+
     @Override
-    public Plantio read(int id){
+    public Plantio read(int id) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
         ResultSet rs = null;
         Plantio p = null;
         SementeDAO sem = new SementeDAO();
-        RecipienteDAO rec = new RecipienteDAO(); 
+        RecipienteDAO rec = new RecipienteDAO();
         SubstratoDAO sub = new SubstratoDAO();
         ServicoPrestadoDAO spd = new ServicoPrestadoDAO();
 
         try {
             stmt = con.prepareStatement("SELECT * FROM Plantios WHERE pla_id = ?");
             stmt.setInt(1, id);
-            
+
             rs = stmt.executeQuery();
             if (rs.next()) {
                 p.setId(rs.getInt("pla_id"));
@@ -131,13 +133,14 @@ public class PlantioDAO implements IDAO<Plantio>{
             }
 
         } catch (SQLException ex) {
-            AlertBox.exception("Não foi possível ler Plantios no banco de dados: ", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Não foi possível ler Plantios no banco de dados: ", ex);
         } finally {
             ConnectionFactory.closeConection(con, stmt, rs);
         }
         return p;
     }
-    
+
     @Override
     public boolean update(Plantio p) {
         Connection con = ConnectionFactory.getConnection();
@@ -162,7 +165,8 @@ public class PlantioDAO implements IDAO<Plantio>{
             return true;
 
         } catch (SQLException ex) {
-            AlertBox.exception("Falha na atualização de registro de Plantios: ", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Falha na atualização de registro de Plantios: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);
@@ -183,7 +187,8 @@ public class PlantioDAO implements IDAO<Plantio>{
             return true;
 
         } catch (SQLException ex) {
-            AlertBox.exception("Não foi possível apagar o registro do Plantio: ", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Não foi possível apagar o registro do Plantio: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);
