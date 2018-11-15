@@ -10,7 +10,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import util.AlertBox;
+import util.DialogBox;
 
 /**
  *
@@ -45,7 +45,8 @@ public class SubstratoDAO implements IDAO<Substrato> {
             return true;
 
         } catch (SQLException ex) {
-            AlertBox.exception("Falha na criação de registro do Substrato: ", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Falha na criação de registro do Substrato: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);
@@ -73,7 +74,8 @@ public class SubstratoDAO implements IDAO<Substrato> {
             }
 
         } catch (SQLException ex) {
-            AlertBox.exception("Não foi possível ler os Substratos no banco de dados: ", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Não foi possível ler os Substratos no banco de dados: ", ex);
         } finally {
             ConnectionFactory.closeConection(con, stmt, rs);
         }
@@ -101,7 +103,8 @@ public class SubstratoDAO implements IDAO<Substrato> {
             }
 
         } catch (SQLException ex) {
-            AlertBox.exception("Não foi possível ler o Substrato no banco de dados: ", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Não foi possível ler o Substrato no banco de dados: ", ex);
         } finally {
             ConnectionFactory.closeConection(con, stmt, rs);
         }
@@ -126,7 +129,8 @@ public class SubstratoDAO implements IDAO<Substrato> {
             return true;
 
         } catch (SQLException ex) {
-            AlertBox.exception("Falha na atualização de registro do Substrato: ", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Falha na atualização de registro do Substrato: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);
@@ -146,12 +150,13 @@ public class SubstratoDAO implements IDAO<Substrato> {
 
             return true;
 
-        } catch(SQLIntegrityConstraintViolationException ex){
-            AlertBox.error("Não é possível apagar substrato, pois o mesmo está sendo utilizado por plantio(s)");
+        } catch (SQLIntegrityConstraintViolationException ex) {
+            DialogBox dg = new DialogBox();
+            dg.error("Não é possível apagar substrato, pois o mesmo está sendo utilizado por plantio(s)");
             return false;
-        } 
-        catch (SQLException ex) {
-            AlertBox.exception("Não foi possível apagar o registro do Substrato: ", ex);
+        } catch (SQLException ex) {
+            DialogBox dg = new DialogBox();
+            dg.exception("Não foi possível apagar o registro do Substrato: ", ex);
             return false;
         } finally {
             ConnectionFactory.closeConnection(con, stmt);

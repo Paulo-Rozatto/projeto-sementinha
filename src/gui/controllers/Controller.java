@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui.controllers;
 
 import java.io.File;
@@ -18,7 +13,7 @@ import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import util.AlertBox;
+import util.DialogBox;
 
 /**
  *
@@ -47,7 +42,8 @@ public abstract class Controller<Object> {
                 novoItem = false;
             }
         } catch (RuntimeException ex) {
-            AlertBox.warning("Nenhuma coluna selecionada.");
+            DialogBox dg = new DialogBox();
+            dg.warning("Nenhuma coluna selecionada.");
         }
     }
 
@@ -89,12 +85,14 @@ public abstract class Controller<Object> {
 
             wb.write(fileOut);
         } catch (FileNotFoundException ex) {
-            AlertBox.exception("Não foi possível criar o arquivo", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Não foi possível criar o arquivo", ex);
         } catch (IOException ex) {
-            AlertBox.exception("Não foi possível criar o arquivo", ex);
+            DialogBox dg = new DialogBox();
+            dg.exception("Não foi possível criar o arquivo", ex);
         }
     }
-    
+
     protected abstract void load();
 
     protected abstract void salvar();

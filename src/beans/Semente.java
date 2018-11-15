@@ -14,11 +14,12 @@ import javafx.beans.property.StringProperty;
  * @author paulo
  */
 public class Semente {
-    private static final double ESTRATIFICACAO = 2.0;
-    private static final double QUIMICO = 2.5;
-    private static final double FISICO = 3.0;
-    private static final double PLANT_INDIRETO = 3.0;
-    
+
+    private static double plantIndireto;
+    private static double quebraQuimica;
+    private static double quebraFisica;
+    private static double quebraEstratificacao;
+
     private final IntegerProperty id;
     private final StringProperty nome;
     private final StringProperty especie;
@@ -26,8 +27,8 @@ public class Semente {
     private final BooleanProperty precoEmGramas;
     private final StringProperty tipoPlantio;
     private final StringProperty dormencia;
-    
-    public Semente(){
+
+    public Semente() {
         this.id = new SimpleIntegerProperty();
         this.nome = new SimpleStringProperty();
         this.especie = new SimpleStringProperty();
@@ -36,38 +37,52 @@ public class Semente {
         this.tipoPlantio = new SimpleStringProperty();
         this.dormencia = new SimpleStringProperty();
     }
-    
-    public double precificar(double quant){
-        double total = 0.0;
-        
+
+    public static void setFatores(double plantIndireto, double quebraQuimica, double quebraFisica, double quebraEstratificacao) {
+        Semente.plantIndireto = plantIndireto;
+        Semente.quebraQuimica = quebraQuimica;
+        Semente.quebraFisica = quebraFisica;
+        Semente.quebraEstratificacao = quebraEstratificacao;
+    }
+
+    public static double[] getFatores() {
+        double[] fatores = new double[4];
+        fatores[0] = plantIndireto;
+        fatores[1] = quebraQuimica;
+        fatores[2] = quebraFisica;
+        fatores[3] = quebraEstratificacao;
+        return fatores;
+    }
+
+    public double precificar(double quant) {
+        double total;
+
         total = preco.get() * quant;
-        
-        if(tipoPlantio.equals("Indireto")){
-            total *= PLANT_INDIRETO;
+
+        if (tipoPlantio.get().equals("Indireto")) {
+            total *= plantIndireto;
         }
-        switch(dormencia.get()){
+        switch (dormencia.get()) {
             //"Quebra Química", "Quebra Física", "Estratificação"
             case "Quebra Química":
-                total *= QUIMICO;
+                total *= quebraQuimica;
                 break;
             case "Quebra Física":
-                total *= FISICO;
+                total *= quebraFisica;
                 break;
             case "Estratificação":
-                total *= ESTRATIFICACAO;
+                total *= quebraEstratificacao;
         }
-        
+
         return total;
     }
-    
-    
 
-    public void setId(int id){
-        if(this.id.get() == 0){
+    public void setId(int id) {
+        if (this.id.get() == 0) {
             this.id.set(id);
         }
     }
-    
+
     public int getId() {
         return id.get();
     }

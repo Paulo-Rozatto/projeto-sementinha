@@ -14,7 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import util.AlertBox;
+import util.DialogBox;
 import util.Validate;
 
 /**
@@ -140,14 +140,16 @@ public class RecipientesController extends Controller<Recipiente> implements Ini
         try {
             Recipiente r = selectedObject(tbl);
 
-            if (AlertBox.confirmDelete()) {
+            DialogBox dg = new DialogBox();
+            if (dg.confirmDelete()) {
                 if (dao.delete(r.getId())) {
                     lista.remove(r);
                     clean();
                 }
             }
         } catch (RuntimeException ex) {
-            AlertBox.warning("Nenhuma coluna selecionada.");
+            DialogBox dg = new DialogBox();
+            dg.warning("Nenhuma coluna selecionada.");
         }
     }
 
@@ -156,7 +158,7 @@ public class RecipientesController extends Controller<Recipiente> implements Ini
         try {
             Recipiente r = selectedObject(tbl);
             tfNome.setText(r.getNome());
-            tfVolume.setText(String.valueOf(r.getVolume()).replace(".",","));
+            tfVolume.setText(String.valueOf(r.getVolume()).replace(".", ","));
             tfPreco.setText(String.valueOf(r.getPreco()).replace(".", ","));
         } catch (RuntimeException ex) {
         }
