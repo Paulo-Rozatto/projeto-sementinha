@@ -18,21 +18,21 @@
    <children>
       <Pane prefHeight="495.0" prefWidth="250.0" styleClass="menu-lateral" stylesheets="@estilocss.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <VBox layoutX="29.0" layoutY="49.0">
+            <VBox layoutX="14.0" layoutY="29.0" prefHeight="191.0" prefWidth="230.0">
                <children>
-                  <TextField fx:id="tfNome" disable="true" prefWidth="190.0" promptText="Nome">
+                  <TextField fx:id="tfNome" disable="true" prefHeight="26.0" prefWidth="230.0" promptText="Nome">
                      <VBox.margin>
-                        <Insets bottom="5.0" />
+                        <Insets bottom="5.0" right="40.0" />
                      </VBox.margin>
                   </TextField>
-                  <TextField fx:id="tfEspecie" disable="true" prefHeight="26.0" prefWidth="190.0" promptText="Espécie">
+                  <TextField fx:id="tfEspecie" disable="true" prefHeight="26.0" prefWidth="213.0" promptText="Espécie">
                      <VBox.margin>
-                        <Insets bottom="5.0" />
+                        <Insets bottom="5.0" right="40.0" />
                      </VBox.margin>
                   </TextField>
-                  <TextField fx:id="tfPreco" disable="true" prefHeight="26.0" prefWidth="190.0" promptText="Preço">
+                  <TextField fx:id="tfPreco" disable="true" prefHeight="26.0" prefWidth="229.0" promptText="Preço">
                      <VBox.margin>
-                        <Insets bottom="3.0" />
+                        <Insets bottom="3.0" right="40.0" />
                      </VBox.margin>
                   </TextField>
                   <HBox>
@@ -56,22 +56,39 @@
                         <Insets bottom="10.0" />
                      </VBox.margin>
                   </HBox>
-                  <ComboBox fx:id="cbPlantio" disable="true" prefHeight="26.0" prefWidth="190.0" promptText="Tipo de Plantio">
+                  <HBox>
                      <VBox.margin>
                         <Insets bottom="10.0" />
                      </VBox.margin>
-                  </ComboBox>
-                  <ComboBox fx:id="cbDormencia" disable="true" prefHeight="26.0" prefWidth="190.0" promptText="Quebra de dormência">
-                     <VBox.margin>
-                        <Insets bottom="5.0" />
-                     </VBox.margin>
-                  </ComboBox>
-                  <Button fx:id="btnFatores" mnemonicParsing="false" onAction="#changeFatores" stylesheets="@estilocss.css" text="Fatores">
-                     <styleClass>
-                        <String fx:value="button2" />
-                        <String fx:value="botoes-menu-esquerdo" />
-                     </styleClass>
-                  </Button>
+                     <children>
+                        <ComboBox fx:id="cbPlantio" disable="true" prefHeight="26.0" prefWidth="175.0" promptText="Tipo de Plantio">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </ComboBox>
+                        <Button fx:id="btnFatorTp" disable="true" mnemonicParsing="false" onAction="#changeFatorTP" text="fator">
+                           <styleClass>
+                              <String fx:value="button2" />
+                              <String fx:value="botoes-menu-esquerdo" />
+                           </styleClass>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <HBox>
+                     <children>
+                        <ComboBox fx:id="cbDormencia" disable="true" prefHeight="26.0" prefWidth="175.0" promptText="Quebra dormência">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </ComboBox>
+                        <Button fx:id="btnFatorQD" disable="true" mnemonicParsing="false" onAction="#changeFatorQD" text="fator">
+                           <styleClass>
+                              <String fx:value="botoes-menu-esquerdo" />
+                              <String fx:value="button2" />
+                           </styleClass>
+                        </Button>
+                     </children>
+                  </HBox>
                </children>
             </VBox>
             <VBox layoutX="31.0" layoutY="424.0">

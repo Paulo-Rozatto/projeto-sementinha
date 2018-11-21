@@ -10,8 +10,10 @@ import java.util.List;
  */
 public class Validate {
 
+    public Validate() {
+    }
 
-    private static boolean string(String stg) {
+    private boolean string(String stg) {
         try {
             int size = stg.length();
             return !(size == 0 || size > 255);
@@ -20,11 +22,11 @@ public class Validate {
         }
     }
 
-    private static boolean text(String txt) {
+    private boolean text(String txt) {
         return (txt.length() <= 512);
     }
 
-    private static boolean decimal(String stg) {
+    private boolean decimal(String stg) {
         boolean valid = false;
 
         try {
@@ -37,7 +39,7 @@ public class Validate {
         return valid;
     }
 
-    public static boolean semente(String nome, String especie, String preco, String tipoPlantio, String dormencia) {
+    public boolean semente(String nome, String especie, String preco, String tipoPlantio, String dormencia) {
         boolean valid = false;
         String error = "";
         if (!string(nome)) {
@@ -55,7 +57,23 @@ public class Validate {
         if (!string(dormencia)) {
             error += "O campo \"Quebra de Dormência\" precisa ter um valor selecionado.\n";
         }
-
+        
+        if (error.isEmpty()) {
+            valid = true;
+        } else {
+            DialogBox dg = new DialogBox();
+            dg.error(error);
+        }
+        return valid;
+    }
+    
+    public boolean fator(String fator){
+        boolean valid = false;
+        String error = "";
+        if (!decimal(fator)) {
+            error += "O fator não pode ser vazio, conter letras, ou ser negativo.\n";
+        }
+        
         if (error.isEmpty()) {
             valid = true;
         } else {
@@ -65,7 +83,7 @@ public class Validate {
         return valid;
     }
 
-    public static boolean recipiente(String nome, String volume, String preco) {
+    public boolean recipiente(String nome, String volume, String preco) {
         boolean valid = false;
         String error = "";
         if (!string(nome)) {
@@ -87,7 +105,7 @@ public class Validate {
         return valid;
     }
 
-    public static boolean substrato(String nome, String preco, String descricao) {
+    public boolean substrato(String nome, String preco, String descricao) {
         boolean valid = false;
         String error = "";
         if (!string(nome)) {
@@ -109,7 +127,7 @@ public class Validate {
         return valid;
     }
 
-    public static boolean servico(String tipo, String preco) {
+    public boolean servico(String tipo, String preco) {
         boolean valid = false;
         String error = "";
         if (!string(tipo)) {
@@ -128,7 +146,7 @@ public class Validate {
         return valid;
     }
 
-    public static boolean plantio(LocalDate data, int semId, String quantSem, int recId, String quantRec, int subId, String quantSub, List<ServicoPrestado> sp) {
+    public boolean plantio(LocalDate data, int semId, String quantSem, int recId, String quantRec, int subId, String quantSub, List<ServicoPrestado> sp) {
         boolean valid = false;
         String error = "";
         if (data == null) {
@@ -168,30 +186,6 @@ public class Validate {
 
         return valid;
     }
-    
-    public static boolean fatores(String plantIndireto, String quebraQuimica, String quebraFisica,String quebraEstratificacao){
-        String error = "";
-        if(!decimal(plantIndireto)){
-            error = "O campo Plantio indireto não pode ser vazio, conter letras, ou ser negativo.";
-        }
-        if(!decimal(quebraQuimica)){
-            error += "O Quebra química não pode ser vazio, conter letras, ou ser negativo.";
-        }
-        if(!decimal(quebraFisica)){
-            error += "O Quebra física não pode ser vazio, conter letras, ou ser negativo.";
-        }
-        if(!decimal(quebraEstratificacao)){
-            error += "O Estratificação não pode ser vazio, conter letras, ou ser negativo.";
-        }
-        if(error.isEmpty()){
-            return true;
-        }
-        else{
-            DialogBox dg = new DialogBox();
-            dg.error(error);
-            return false;
-        }
-    }
-    private Validate() {}
 
+    
 }

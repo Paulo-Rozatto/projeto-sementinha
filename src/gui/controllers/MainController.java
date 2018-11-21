@@ -1,7 +1,5 @@
 package gui.controllers;
 
-import beans.Semente;
-import db.dao.FatoresDAO;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -112,13 +110,9 @@ public class MainController implements Initializable {
             stackPane.getChildren().get(3).setVisible(false);
             stackPane.getChildren().get(4).setVisible(false);
 
-            FatoresDAO fdao = new FatoresDAO();
-            fdao.checkRegisters();
-            double ft[] = fdao.read();
-            Semente.setFatores(ft[0], ft[1], ft[2], ft[3]);
-
             switchToChild(0);
         } catch (IOException ex) {
+            ex.printStackTrace();
             DialogBox dg = new DialogBox();
             dg.exception("Erro ao carregar o progama.", ex);
         }
@@ -136,7 +130,7 @@ public class MainController implements Initializable {
             controllers[index].load();
         } catch (NullPointerException ex) {
             DialogBox dg = new DialogBox();
-            dg.exception("Falha no carregamento", ex);
+            dg.exception("Falha no carregamento, index: " + index, ex);
         }
     }
 

@@ -97,13 +97,14 @@ public class SubstratosController extends Controller<Substrato> implements Initi
     @Override
     protected void salvar() {
         IDAO dao = new SubstratoDAO();
+        Validate validar = new Validate();
         Substrato s;
 
         String nome = tfNome.getText();
         String precoString = tfPreco.getText().replace(",", ".");
         String descricao = taDescricao.getText();
 
-        if (Validate.substrato(nome, precoString, descricao)) {
+        if (validar.substrato(nome, precoString, descricao)) {
             double preco = Double.parseDouble(precoString);
             s = new Substrato();
             s.setNome(nome);

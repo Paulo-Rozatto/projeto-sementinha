@@ -94,12 +94,13 @@ public class ServicosController extends Controller<Servico> implements Initializ
     @Override
     protected void salvar() {
         IDAO dao = new ServicoDAO();
+        Validate validar = new Validate();
         Servico s;
 
         String tipo = tfTipo.getText();
         String precoString = tfPreco.getText().replace(",", ".");
 
-        if (Validate.servico(tipo, precoString)) {
+        if (validar.servico(tipo, precoString)) {
             double preco = Double.parseDouble(precoString);
             s = new Servico();
             s.setTipo(tipo);

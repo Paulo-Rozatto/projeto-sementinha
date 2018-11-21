@@ -1,10 +1,15 @@
 package gui.controllers;
 
+import beans.QuebraDormencia;
 import beans.Semente;
-import db.dao.FatoresDAO;
+import beans.TipoPlantio;
 import db.dao.IDAO;
+import db.dao.QuebraDormenciaDAO;
 import db.dao.SementeDAO;
+import db.dao.TipoPlantioDAO;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
@@ -48,9 +53,14 @@ public class SementesController extends Controller<Semente> implements Initializ
 
     @FXML
     private ComboBox<String> cbPlantio;
+    @FXML
+    private Button btnFatorTp;
 
     @FXML
-    private Button btnFatores;
+    private ComboBox<String> cbDormencia;
+
+    @FXML
+    private Button btnFatorQD;
 
     @FXML
     private Button btnNovo;
@@ -66,9 +76,6 @@ public class SementesController extends Controller<Semente> implements Initializ
 
     @FXML
     private Button btnCancelar;
-
-    @FXML
-    private ComboBox<String> cbDormencia;
 
     @FXML
     private TableView<Semente> tbl;
@@ -92,6 +99,8 @@ public class SementesController extends Controller<Semente> implements Initializ
     private TextField tfPesquisar;
 
     private ObservableList<Semente> lista;
+    private List<TipoPlantio> tpLista;
+    private List<QuebraDormencia> qdLista;
     private boolean novoItem;
 
     /**
@@ -99,19 +108,39 @@ public class SementesController extends Controller<Semente> implements Initializ
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        //adição dos componetes das combo boxes
-        cbDormencia.getItems().addAll("Nenhuma", "Quebra Química", "Quebra Física", "Estratificação");
-        cbPlantio.getItems().addAll("Direto", "Indireto");
-
         //Atribuição dos atributos da classe Semente para cada coluna da  tabela
         colId.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
         colNome.setCellValueFactory(cellData -> cellData.getValue().nomeProperty());
-        colPlantio.setCellValueFactory(cellData -> cellData.getValue().tipoPlantioProperty());
+        colPlantio.setCellValueFactory(cellData -> cellData.getValue().getTipoPlantio().nomeProperty());
         colPreco.setCellValueFactory(cellData -> {
             String value = String.valueOf(cellData.getValue().getPreco()).replace(".", ",");
             return cellData.getValue().precoProperty().asString(value);
         });
-        colDormencia.setCellValueFactory(cellData -> cellData.getValue().dormenciaProperty());
+        colDormencia.setCellValueFactory(cellData -> cellData.getValue().getQuebraDormencia().nomeProperty());
+    }
+
+    @FXML
+    private void changeFatorQD() {
+        DialogBox dg = new DialogBox();
+        int i = cbDormencia.getSelectionModel().getSelectedIndex();
+        if(i > -1){
+            dg.fator(qdLista.get(i));
+        }
+        else{
+            dg.error("Nenhuma quebra de dormencia selecionada.");
+        }
+    }
+
+    @FXML
+    private void changeFatorTP() {
+        DialogBox dg = new DialogBox();
+        int i = cbPlantio.getSelectionModel().getSelectedIndex();
+        if(i > -1){
+            dg.fator(tpLista.get(i));
+        }
+        else{
+            dg.error("Nenhum tipo de plantio selecionado.");
+        }
     }
 
     @FXML
@@ -130,9 +159,10 @@ public class SementesController extends Controller<Semente> implements Initializ
     @FXML
     @Override
     protected void salvar() {
+        Validate validar = new Validate();
         IDAO dao = new SementeDAO();
         Semente s;
-        String nome, especie, plantio, dormencia, precoString;
+        String nome, especie, plantio, dormencia, precoString, fatorTP, fatorQD;
         boolean precoEmGramas;
 
         nome = tfNome.getText();
@@ -142,15 +172,26 @@ public class SementesController extends Controller<Semente> implements Initializ
         precoString = tfPreco.getText().replace(",", ".");
         precoEmGramas = rbGramas.isSelected();
 
-        if (Validate.semente(nome, especie, precoString, plantio, dormencia)) {
+        if (validar.semente(nome, especie, precoString, plantio, dormencia)) {
             double preco = Double.parseDouble(precoString);
+            int tpIndex = cbPlantio.getSelectionModel().getSelectedIndex();
+            int qdIndex = cbDormencia.getSelectionModel().getSelectedIndex();
+            TipoPlantio tp = tpLista.get(tpIndex);
+            QuebraDormencia qd = qdLista.get(qdIndex);
+
             s = new Semente();
             s.setNome(nome);
             s.setEspecie(especie);
-            s.setTipoPlantio(plantio);
-            s.setDomercia(dormencia);
+            s.setTipoPlantio(tp);
+            s.setQuebraDormencia(qd);
             s.setPreco(preco);
             s.setPrecoEmGramas(precoEmGramas);
+
+            TipoPlantioDAO tpDAO = new TipoPlantioDAO();
+            tpDAO.update(tp.getId(), tp.getFator());
+
+            QuebraDormenciaDAO qDAO = new QuebraDormenciaDAO();
+            qDAO.update(qd.getId(), qd.getFator());
 
             if (novoItem) {
                 if (dao.create(s)) {
@@ -197,8 +238,8 @@ public class SementesController extends Controller<Semente> implements Initializ
             tfPreco.setText(String.valueOf(s.getPreco()).replace(".", ","));
             rbGramas.setSelected(s.isPrecoEmGramas());
             rbUnidades.setSelected(!s.isPrecoEmGramas());
-            cbPlantio.setValue(s.getTipoPlantio());
-            cbDormencia.setValue(s.getDormencia());
+            cbPlantio.setValue(s.getTipoPlantio().getNome());
+            cbDormencia.setValue(s.getQuebraDormencia().getNome());
 
         } catch (RuntimeException ex) {
         }
@@ -213,12 +254,6 @@ public class SementesController extends Controller<Semente> implements Initializ
         }
         changeDisable(true);
     }
-    
-    @FXML
-    void changeFatores(){
-        DialogBox dg = new DialogBox();
-        dg.fatores();
-    }
 
     @FXML
     protected void exportar() {
@@ -227,7 +262,7 @@ public class SementesController extends Controller<Semente> implements Initializ
         text = "ID" + "," + "Nome" + "," + "Espécie" + "," + "Preço" + "," + "Tipo de plantio" + "," + "Quebra de dormência" + ",-,";
         for (Semente s : lista) {
             String medida = s.isPrecoEmGramas() ? "grama" : "unidade";
-            text += s.getId() + "," + s.getNome() + "," + s.getEspecie() + "," + "R$" + s.getPreco() + "/" + medida + "," + s.getTipoPlantio() + "," + s.getDormencia() + ",-,";
+            text += s.getId() + "," + s.getNome() + "," + s.getEspecie() + "," + "R$" + s.getPreco() + "/" + medida + "," + s.getTipoPlantio().getNome() + "," + s.getQuebraDormencia().getNome() + ",-,";
         }
         super.exportar("sementes", text);
     }
@@ -251,7 +286,9 @@ public class SementesController extends Controller<Semente> implements Initializ
         rbGramas.setDisable(opt);
         rbUnidades.setDisable(opt);
         cbPlantio.setDisable(opt);
+        btnFatorTp.setDisable(opt);
         cbDormencia.setDisable(opt);
+        btnFatorQD.setDisable(opt);
         btnSalvar.setDisable(opt);
         btnCancelar.setDisable(opt);
 
@@ -274,10 +311,21 @@ public class SementesController extends Controller<Semente> implements Initializ
 
     @Override
     protected void load() {
-        IDAO dao = new SementeDAO();
+        IDAO<Semente> semDAO = new SementeDAO();
         lista = FXCollections.observableArrayList();
-        lista.addAll(dao.read());
+        lista.addAll(semDAO.read());
         tbl.setItems(lista);
+
+        IDAO<TipoPlantio> tpDAO = new TipoPlantioDAO();
+        tpLista = new ArrayList();
+        tpLista.addAll(tpDAO.read());
+
+        IDAO<QuebraDormencia> qdDAO = new QuebraDormenciaDAO();
+        qdLista = new ArrayList();
+        qdLista.addAll(qdDAO.read());
+
+        tpLista.forEach((tp) -> cbPlantio.getItems().add(tp.getNome()));
+        qdLista.forEach((qd) -> cbDormencia.getItems().add(qd.getNome()));
     }
 
     @Override

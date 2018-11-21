@@ -1,6 +1,8 @@
 package db.dao;
 
+import beans.QuebraDormencia;
 import beans.Semente;
+import beans.TipoPlantio;
 import db.connection.ConnectionFactory;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,13 +31,13 @@ public class SementeDAO implements IDAO<Semente> {
         ResultSet rs = null;
 
         try {
-            stmt = con.prepareStatement("INSERT INTO Sementes(nome,especie,preco,preco_em_gramas,tipoPlantio,dormencia) values(?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+            stmt = con.prepareStatement("INSERT INTO Sementes(nome,especie,preco,preco_em_gramas,sem_tplantio,sem_qdormencia) values(?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, s.getNome());
             stmt.setString(2, s.getEspecie());
             stmt.setDouble(3, s.getPreco());
             stmt.setBoolean(4, s.isPrecoEmGramas());
-            stmt.setString(5, s.getTipoPlantio());
-            stmt.setString(6, s.getDormencia());
+            stmt.setInt(5, s.getTipoPlantio().getId());
+            stmt.setInt(6, s.getQuebraDormencia().getId());
 
             stmt.executeUpdate();
 
@@ -62,6 +64,8 @@ public class SementeDAO implements IDAO<Semente> {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         List<Semente> sementes = new ArrayList();
+        IDAO<TipoPlantio> tpDAO = new TipoPlantioDAO();
+        IDAO<QuebraDormencia> qdDAO = new QuebraDormenciaDAO();
 
         try {
             stmt = con.prepareStatement("SELECT * FROM Sementes");
@@ -73,8 +77,8 @@ public class SementeDAO implements IDAO<Semente> {
                 s.setEspecie(rs.getString("especie"));
                 s.setPreco(rs.getDouble("preco"));
                 s.setPrecoEmGramas(rs.getBoolean("preco_em_gramas"));
-                s.setTipoPlantio(rs.getString("tipoPlantio"));
-                s.setDomercia(rs.getString("dormencia"));
+                s.setTipoPlantio(tpDAO.read(rs.getInt("sem_tplantio")));
+                s.setQuebraDormencia(qdDAO.read(rs.getInt("sem_qdormencia")));
 
                 sementes.add(s);
 
@@ -89,11 +93,14 @@ public class SementeDAO implements IDAO<Semente> {
         return sementes;
     }
 
+    @Override
     public Semente read(int id) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
         ResultSet rs = null;
         Semente s = null;
+        IDAO<TipoPlantio> tpDAO = new TipoPlantioDAO();
+        IDAO<QuebraDormencia> qdDAO = new QuebraDormenciaDAO();
 
         try {
             stmt = con.prepareStatement("SELECT * FROM Sementes WHERE sem_id = ?");
@@ -107,8 +114,8 @@ public class SementeDAO implements IDAO<Semente> {
                 s.setEspecie(rs.getString("especie"));
                 s.setPreco(rs.getDouble("preco"));
                 s.setPrecoEmGramas(rs.getBoolean("preco_em_gramas"));
-                s.setTipoPlantio(rs.getString("tipoPlantio"));
-                s.setDomercia(rs.getString("dormencia"));
+                s.setTipoPlantio(tpDAO.read(rs.getInt("sem_tplantio")));
+                s.setQuebraDormencia(qdDAO.read(rs.getInt("sem_qdormencia")));
             }
 
         } catch (SQLException ex) {
@@ -127,13 +134,13 @@ public class SementeDAO implements IDAO<Semente> {
         PreparedStatement stmt = null;
 
         try {
-            stmt = con.prepareStatement("UPDATE Sementes SET nome = ?, especie = ?, preco = ?, preco_em_gramas = ?,tipoPlantio = ?, dormencia = ? WHERE sem_id = ?");
+            stmt = con.prepareStatement("UPDATE Sementes SET nome = ?, especie = ?, preco = ?, preco_em_gramas = ?,sem_tplantio = ?, sem_qdormencia = ? WHERE sem_id = ?");
             stmt.setString(1, s.getNome());
             stmt.setString(2, s.getEspecie());
             stmt.setDouble(3, s.getPreco());
             stmt.setBoolean(4, s.isPrecoEmGramas());
-            stmt.setString(5, s.getTipoPlantio());
-            stmt.setString(6, s.getDormencia());
+            stmt.setInt(5, s.getTipoPlantio().getId());
+            stmt.setInt(6, s.getQuebraDormencia().getId());
             stmt.setInt(7, s.getId());
 
             stmt.executeUpdate();

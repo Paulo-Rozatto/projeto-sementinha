@@ -283,6 +283,7 @@ public class PlantiosController extends Controller<Plantio> implements Initializ
         super.novo();
         plantio = new Plantio();
         novoItem = true;
+        spCreateList = new ArrayList();
     }
 
     @FXML
@@ -308,6 +309,7 @@ public class PlantiosController extends Controller<Plantio> implements Initializ
     @Override
     protected void salvar() {
         IDAO dao = new PlantioDAO();
+        Validate validar = new Validate();
         ServicoPrestadoDAO spDao = new ServicoPrestadoDAO();
         LocalDate data = date.getValue();
         String status = cbStatus.getSelectionModel().isEmpty() ? "desenvolvendo"
@@ -321,7 +323,7 @@ public class PlantiosController extends Controller<Plantio> implements Initializ
         int recInd = cbRecipiente.getSelectionModel().getSelectedIndex();
         int subInd = cbSubstrato.getSelectionModel().getSelectedIndex();
 
-        if (Validate.plantio(data, semInd, sQuantSem, recInd, sQuantRec, subInd, sQuantSub, listaServicoPrestado)) {
+        if (validar.plantio(data, semInd, sQuantSem, recInd, sQuantRec, subInd, sQuantSub, listaServicoPrestado)) {
             Semente semente = sementes.get(semInd);
             double quantSem = Double.parseDouble(sQuantSem);
             Recipiente recipiente = recipientes.get(recInd);

@@ -1,7 +1,9 @@
 package util;
 
-import beans.Semente;
-import db.dao.FatoresDAO;
+import beans.QuebraDormencia;
+import beans.TipoPlantio;
+import db.dao.QuebraDormenciaDAO;
+import db.dao.TipoPlantioDAO;
 import java.util.Optional;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -80,11 +82,7 @@ public class DialogBox {
 
         Optional<ButtonType> result = alert.showAndWait();
 
-        if (result.get() == confirma) {
-            return true;
-        } else {
-            return false;
-        }
+        return result.get() == confirma;
     }
 
     public void describe(String text) {
@@ -99,58 +97,90 @@ public class DialogBox {
         alert.showAndWait();
     }
 
-    public void fatores() {
-        Alert alert = new Alert(AlertType.NONE);
+    public void fator(TipoPlantio tp) {
+        Alert alert = new Alert(AlertType.WARNING);
         GridPane gp = new GridPane();
 
-        TextField plantio = new TextField();
-        TextField quimica = new TextField();
-        TextField fisica = new TextField();
-        TextField estrati = new TextField();
+        Validate validar = new Validate();
+        TipoPlantioDAO tpDAO = new TipoPlantioDAO();
+
+        TextField tfFator = new TextField();
 
         ButtonType confirma = new ButtonType("Salvar");
         ButtonType cancela = new ButtonType("Cancelar");
 
-        double fatores[] = Semente.getFatores();
-
-        plantio.setText(String.valueOf(fatores[0]));
-        quimica.setText(String.valueOf(fatores[1]));
-        fisica.setText(String.valueOf(fatores[2]));
-        estrati.setText(String.valueOf(fatores[3]));
-
-        gp.add(new Label("Planito indireto"), 0, 0);
-        gp.add(plantio, 0, 1);
-        gp.add(new Label("Quebra química"), 0, 2);
-        gp.add(quimica, 0, 3);
-        gp.add(new Label("Quebra Física"), 0, 4);
-        gp.add(fisica, 0, 5);
-        gp.add(new Label("Estratificação"), 0, 6);
-        gp.add(estrati, 0, 7);
+        gp.add(new Label("O fator é unico para cada tipo de plantio.\n"
+                + "As alterações feitas são aplicáveis a todas sementes."), 0, 0);
+        gp.add(new Label("\n" + tp.getNome()), 0, 1);
+        gp.add(tfFator, 0, 2);
+        
+        tfFator.setText(String.valueOf(tp.getFator()).replace(".", ","));
 
         alert.getButtonTypes().setAll(confirma, cancela);
 
         alert.initStyle(StageStyle.UNDECORATED);
-        alert.getDialogPane().setStyle("-fx-pref-width: 200px; -fx-background-color: #ABCDEF;");
+        alert.getDialogPane().setStyle("-fx-pref-width: 500px; -fx-background-color: #ABCDEF;");
         alert.setHeaderText(null);
 
         alert.getDialogPane().setContent(gp);
 
         Optional<ButtonType> result;
         boolean valido = false;
+        String fatorS;
+        
         while (!valido) {
             result = alert.showAndWait();
-
+            fatorS = tfFator.getText().replace(",", ".");
+            
             if (result.get() == confirma) {
-                if (Validate.fatores(plantio.getText(), quimica.getText(), fisica.getText(), estrati.getText())) {
+                
+                if (validar.fator(fatorS)) {
+                    double fator = Double.parseDouble(fatorS);
+                    tp.setFator(fator);
+                    tpDAO.update(tp.getId(), fator);
                     valido = true;
-                    fatores[0] = Double.parseDouble(plantio.getText());
-                    fatores[1] = Double.parseDouble(quimica.getText());
-                    fatores[2] = Double.parseDouble(fisica.getText());
-                    fatores[3] = Double.parseDouble(estrati.getText());
+                }
+                
+            } else {
+                valido = true;
+            }
+        }
+    }
 
-                    Semente.setFatores(fatores[0], fatores[1], fatores[2], fatores[3]);
-                    FatoresDAO fdao = new FatoresDAO();
-                    fdao.update(fatores[0], fatores[1], fatores[2], fatores[3]);
+    public void fator(QuebraDormencia qd) {
+        Alert alert = new Alert(AlertType.WARNING);
+        GridPane gp = new GridPane();
+        Validate validar = new Validate();
+        QuebraDormenciaDAO qdDAO = new QuebraDormenciaDAO();
+        TextField tfFator = new TextField();
+
+        ButtonType confirma = new ButtonType("Salvar");
+        ButtonType cancela = new ButtonType("Cancelar");
+
+        tfFator.setText(String.valueOf(qd.getFator()).replace(".", ","));
+
+        gp.add(new Label("O fator é unico para cada tipo de plantio.\n"
+                + "As alterações feitas são aplicáveis a todas sementes."), 0, 0);
+        gp.add(new Label("\n" + qd.getNome()), 0, 1);
+        gp.add(tfFator, 0, 2);
+
+        alert.getButtonTypes().setAll(confirma, cancela);
+
+        alert.initStyle(StageStyle.UNDECORATED);
+        alert.getDialogPane().setStyle("-fx-pref-width: 500px; -fx-background-color: #ABCDEF;");
+        alert.setHeaderText(null);
+
+        alert.getDialogPane().setContent(gp);
+
+        Optional<ButtonType> result;
+        boolean valido = false;
+        String fatorS = tfFator.getText().replace(",", ".");
+        while (!valido) {
+            result = alert.showAndWait();
+            if (result.get() == confirma) {
+                if (validar.fator(fatorS)) {
+                    double fator = Double.parseDouble(fatorS);
+                    qdDAO.update(qd.getId(), fator);
                 }
             } else {
                 valido = true;

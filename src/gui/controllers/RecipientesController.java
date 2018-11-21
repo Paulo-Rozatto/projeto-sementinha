@@ -104,12 +104,13 @@ public class RecipientesController extends Controller<Recipiente> implements Ini
     @Override
     protected void salvar() {
         IDAO dao = new RecipienteDAO();
+        Validate validar = new Validate();
         Recipiente r;
         String nome = tfNome.getText();
         String volumeString = tfVolume.getText().replace(",", ".");
         String precoString = tfPreco.getText().replace(",", ".");
 
-        if (Validate.recipiente(nome, volumeString, precoString)) {
+        if (validar.recipiente(nome, volumeString, precoString)) {
             double volume = Double.parseDouble(volumeString);
             double preco = Double.parseDouble(precoString);
             r = new Recipiente();

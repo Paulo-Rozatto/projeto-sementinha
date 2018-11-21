@@ -82,6 +82,7 @@ public class SubstratoDAO implements IDAO<Substrato> {
         return substratos;
     }
 
+    @Override
     public Substrato read(int id) {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
