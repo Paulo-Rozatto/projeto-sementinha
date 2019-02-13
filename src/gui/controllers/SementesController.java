@@ -313,7 +313,7 @@ public class SementesController extends Controller<Semente> implements Initializ
     protected void load() {
         IDAO<Semente> semDAO = new SementeDAO();
         lista = FXCollections.observableArrayList();
-        lista.addAll(semDAO.read());
+        lista.setAll(semDAO.read());
         tbl.setItems(lista);
 
         IDAO<TipoPlantio> tpDAO = new TipoPlantioDAO();
@@ -323,7 +323,9 @@ public class SementesController extends Controller<Semente> implements Initializ
         IDAO<QuebraDormencia> qdDAO = new QuebraDormenciaDAO();
         qdLista = new ArrayList();
         qdLista.addAll(qdDAO.read());
-
+        
+        cbPlantio.getItems().clear();
+        cbDormencia.getItems().clear();
         tpLista.forEach((tp) -> cbPlantio.getItems().add(tp.getNome()));
         qdLista.forEach((qd) -> cbDormencia.getItems().add(qd.getNome()));
     }
